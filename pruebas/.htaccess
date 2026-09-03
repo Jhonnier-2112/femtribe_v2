@@ -1,0 +1,17 @@
+# ==============================================================================
+# ARCHIVO DE CONFIGURACIÓN APACHE (.htaccess) - SUBDOMINIO / ENTORNO PRUEBAS
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Permitir servir archivos o directorios físicamente existentes (imágenes, CSS, JS, etc.)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirigir todas las demás URLs al Front Controller index.php de pruebas
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+# Desactivar la navegación de directorios por seguridad
+Options -Indexes

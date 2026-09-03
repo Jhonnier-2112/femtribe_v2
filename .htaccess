@@ -1,0 +1,22 @@
+# ==============================================================================
+# ARCHIVO DE CONFIGURACIÓN APACHE (.htaccess) - DOMINIO PRINCIPAL (HOSTINGER)
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Excluir la carpeta de pruebas para que sus peticiones las maneje pruebas/.htaccess
+    RewriteCond %{REQUEST_URI} ^/pruebas [NC]
+    RewriteRule ^ - [L]
+
+    # Permitir servir archivos o directorios físicamente existentes (imágenes, CSS, JS, etc.)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+
+    # Redirigir todas las demás URLs al Front Controller index.php
+    RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+# Desactivar la navegación de directorios por seguridad
+Options -Indexes
