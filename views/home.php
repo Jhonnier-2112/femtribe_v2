@@ -269,71 +269,54 @@
   </div>
 </section>
 
-
 <!-- =========================================================================
-     SECCIÓN: PATROCINADORES Y ALIADOS OFICIALES
+     SECCIÓN: RICAURTE (LA FOTO DE LA IGLESIA ES LA PROTAGONISTA)
      ========================================================================= -->
-<section class="section-sponsors py-5" id="patrocinadores">
-  <div class="container py-4">
+<!-- =========================================================================
+     SECCIÓN: INFORMACIÓN DE RICAURTE (FONDO AZUL OSCURO OFICIAL)
+     ========================================================================= -->
+<section class="section-ricaurte-info py-5">
+  <div class="container py-3">
+    <div class="row justify-content-center text-center">
+      <div class="col-12 col-lg-10 col-xl-9" data-aos="fade-up" data-aos-duration="800">
+        
+        <p class="ricaurte-info-text mb-4">
+          <strong>Ricaurte, Cundinamarca</strong>, el escenario perfecto para vivir la experiencia. Te recibe con su clima cálido, la fuerza del <strong>río Magdalena</strong> y la hospitalidad de una comunidad que sabe hacerte sentir en casa.
+        </p>
 
-    <div class="section-header text-center mb-5" data-aos="fade-up">
-      <span class="section-tagline">NUESTROS ALIADOS</span>
-      <h2 class="section-title">PATROCINADORES OFICIALES</h2>
-      <p class="section-subtitle">Marcas e instituciones que hacen posible la gran fiesta de Corre Con FEMTRIBE 2.0</p>
-      <div class="section-divider"></div>
-    </div>
+        <p class="ricaurte-info-text mb-4">
+          Sus paisajes, sus lugares emblemáticos y la energía de su gente serán el escenario de <strong>CORRE CON FEMTRIBE 2.0</strong>, una experiencia donde cada kilómetro te permitirá descubrir un destino que <strong>se vive, se disfruta y se queda en la memoria.</strong>
+        </p>
 
-    <!-- Grilla de Logos de Patrocinadores -->
-    <div class="row g-4 align-items-center justify-content-center text-center">
-
-      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="100">
-        <div class="sponsor-logo-box">
-          <img src="assets/img/ricaurte.png" alt="Alcaldía de Ricaurte" class="img-fluid sponsor-logo"
-            onerror="this.style.display='none'">
-          <span class="sponsor-name-fallback">RICAURTE</span>
+        <div class="mt-4 pt-2">
+          <a href="https://www.instagram.com/alcaldiadericaurtecundinamarca?igsi=azRvd3FyNjF1bXZv" target="_blank" rel="noopener noreferrer" class="btn-ricaurte-ig">
+            CONOCE MÁS DE RICAURTE AQUÍ
+          </a>
         </div>
-      </div>
 
-      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="200">
-        <div class="sponsor-logo-box">
-          <img src="assets/img/femtribe_verde.png" alt="FEMTRIBE Running" class="img-fluid sponsor-logo">
-        </div>
       </div>
-
-      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="300">
-        <div class="sponsor-logo-box">
-          <i class="fas fa-bolt text-accent fa-2x mb-2"></i>
-          <span class="d-block fw-bold text-white small">GATORADE</span>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="400">
-        <div class="sponsor-logo-box">
-          <i class="fas fa-heartbeat text-accent fa-2x mb-2"></i>
-          <span class="d-block fw-bold text-white small">CLÍNICA SALUD</span>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="500">
-        <div class="sponsor-logo-box">
-          <i class="fas fa-shoe-prints text-accent fa-2x mb-2"></i>
-          <span class="d-block fw-bold text-white small">RUNNER STORE</span>
-        </div>
-      </div>
-
-      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="600">
-        <div class="sponsor-logo-box">
-          <i class="fas fa-tint text-accent fa-2x mb-2"></i>
-          <span class="d-block fw-bold text-white small">AGUA PURA</span>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
 
 <!-- =========================================================================
-     SECCIÓN: PREGUNTAS FRECUENTES (FAQ ACORDEÓN)
+     SECCIÓN: FOTO DE LA IGLESIA (SOLO LA IMAGEN A TAMAÑO COMPLETO SIN TEXTO)
+     ========================================================================= -->
+<section class="section-iglesia-full p-0 overflow-hidden" data-aos="fade-up">
+  <img src="assets/img/CorreconFemtribe2.0/iglesia.png" alt="Iglesia de Ricaurte - Corre Con FEMTRIBE 2.0" class="img-fluid w-100 d-block img-iglesia-standalone">
+</section>
+
+
+
+
+
+
+
+
+
+
+<!-- =========================================================================
+     SECCIÓN: PATROCINADORES Y ALIADOS OFICIALES (FONDO VERDE OFICIAL #B2D81F)
      ========================================================================= -->
 <section class="section-sponsors-green" id="patrocinadores">
   <div class="container">
@@ -372,6 +355,1172 @@
           <div class="aliado-item" data-logo="ap" data-aos="zoom-in" data-aos-delay="600">
             <div class="aliado-logo-box">
               <img src="assets/img/CorreconFemtribe2.0/aliado_AP.png" alt="Aliado AP Andrés Peña" class="aliado-logo-img img-fluid">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN: ¿ESTÁS LISTO? — LEAD / CONTACTO (FONDO AZUL CLARO OFICIAL)
+     ========================================================================= -->
+<section class="section-femtribe-lead" id="lead-femtribe">
+  <div class="container">
+    <div class="row align-items-center justify-content-between g-4 g-lg-5">
+
+      <!-- COLUMNA IZQUIERDA: banner.png centrado + FECHA en blanco -->
+      <div class="col-12 col-lg-5 text-center" data-aos="fade-right">
+        <div class="ft-lead-banner-wrapper">
+          <img src="assets/img/CorreconFemtribe2.0/banner.png" alt="Banner FEMTRIBE 2.0" class="ft-lead-banner img-fluid" onerror="this.onerror=null;this.src='assets/img/banner_camiseta_carrera.png';">
+        </div>
+        <p class="ft-lead-date">FECHA: 15 de Noviembre</p>
+      </div>
+
+      <!-- COLUMNA DERECHA: título + subtítulo + formulario -->
+      <div class="col-12 col-lg-7" data-aos="fade-left">
+        <h2 class="ft-lead-title">¿ESTÁS LISTO?</h2>
+        <p class="ft-lead-subtitle">Déjanos tus datos para brindarte toda la información.</p>
+        <form class="ft-lead-form" action="/contacto" method="POST" id="leadFormHome">
+          <div class="mb-3 mb-md-4">
+            <label for="leadNombre" class="ft-lead-label">Nombre</label>
+            <input type="text" class="ft-lead-input form-control" id="leadNombre" name="nombre" required placeholder="Tu nombre completo">
+          </div>
+          <div class="mb-3 mb-md-4">
+            <label for="leadEmail" class="ft-lead-label">Correo Electrónico</label>
+            <input type="email" class="ft-lead-input form-control" id="leadEmail" name="email" required placeholder="tu@correo.com">
+          </div>
+          <div class="mb-3 mb-md-4">
+            <label for="leadMensaje" class="ft-lead-label">Mensaje</label>
+            <textarea class="ft-lead-input ft-lead-textarea form-control" id="leadMensaje" name="mensaje" rows="4" required placeholder="¿En qué podemos ayudarte?"></textarea>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="ft-lead-btn">Enviar</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     ESTILOS ESPECÍFICOS DEL HOME (PALETA: NEGROS, BLANCOS Y VERDES LIMA)
+     ========================================================================= -->
+<style>
+  /* --- VARIABLES Y CONFIGURACIÓN GLOBAL --- */
+  :root {
+    --ft-bg-black: #0d0d10;
+    --ft-bg-dark: #131317;
+    --ft-bg-card: #1c1c22;
+    --ft-bg-card-hover: #24242c;
+    --ft-green-accent: #B2D81F;
+    --ft-green-primary: #87CC3E;
+    --ft-green-dark: #6ba829;
+    --ft-white: #ffffff;
+    --ft-gray-light: #e4e4e7;
+    --ft-gray-muted: #9ca3af;
+    --ft-border-subtle: rgba(255, 255, 255, 0.08);
+    --ft-border-green: rgba(178, 216, 31, 0.35);
+    --ft-glow-green: 0 0 25px rgba(178, 216, 31, 0.35);
+  }
+
+  body {
+    background-color: var(--ft-bg-black) !important;
+    color: var(--ft-gray-light) !important;
+    font-family: 'Montserrat', sans-serif !important;
+  }
+
+  .text-accent {
+    color: var(--ft-green-accent) !important;
+  }
+
+  /* --- FRANJA SUPERIOR COUNTDOWN INDEPENDIENTE (PALETA OFICIAL EVENTO) --- */
+  :root {
+    --ev-green: #B2D81F;
+    --ev-blue-dark: #003A77;
+    --ev-blue-light: #41CEB3;
+    --ev-white: #ffffff;
+  }
+
+  .countdown-top-bar {
+    background-color: var(--ev-blue-light);
+    position: relative;
+    padding-top: 8.5rem !important;
+    padding-bottom: 2.5rem !important;
+    overflow: hidden;
+  }
+
+  .countdown-top-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--ev-green) 50%, transparent 100%);
+    opacity: 0.7;
+  }
+
+  .countdown-top-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 58, 119, 0.18);
+    border: 1px solid rgba(0, 58, 119, 0.35);
+    color: var(--ev-blue-dark);
+    padding: 0.4rem 1.1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+    margin-bottom: 1.2rem;
+  }
+
+  .modern-countdown-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ESTRUCTURA PRINCIPAL FLEX: [LÍNEAS IZQ] [4 CUADROS] [LÍNEAS DER] */
+  .countdown-ends-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin: 0;
+    flex-wrap: nowrap;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Grupos de 3 líneas EN LOS EXTREMOS — salen HACIA AFUERA de los cuadros laterales */
+  .countdown-end-lines {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* LÍNEAS IZQUIERDA: nacen en el BORDE IZQUIERDO del bloque de cuadros → van HACIA LA IZQUIERDA hasta el borde pantalla */
+  .countdown-lines-left {
+    right: calc(100% + 0px);
+    width: 9999px;
+    max-width: 9999px;
+  }
+
+  /* LÍNEAS DERECHA: nacen en el BORDE DERECHO del bloque de cuadros → van HACIA LA DERECHA hasta el borde pantalla */
+  .countdown-lines-right {
+    left: calc(100% + 0px);
+    width: 9999px;
+    max-width: 9999px;
+  }
+
+  .countdown-end-line {
+    display: block;
+    height: 3.5px;
+    background-color: var(--ev-white);
+    border-radius: 3px;
+    width: 100%;
+  }
+
+  /* Gradientes en las líneas para efecto de fundido natural al salir de los cuadros */
+  .countdown-lines-left .countdown-end-line {
+    background: linear-gradient(270deg, var(--ev-white) 0%, transparent 30%);
+  }
+
+  .countdown-lines-right .countdown-end-line {
+    background: linear-gradient(90deg, var(--ev-white) 0%, transparent 30%);
+  }
+
+  /* Fila de los 4 CUADROS IGUALES (centrados, TAMAÑO REDUCIDO, ESTÉTICO Y SIMÉTRICO) */
+  .countdown-boxes-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    justify-items: center;
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 0;
+  }
+
+  .countdown-boxes-row .modern-countdown-item {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Cuadros: CASI CUADRADOS, TAMAÑO MÁS PEQUEÑO, ESTÉTICO Y SIMÉTRICO */
+  .modern-countdown-item {
+    background-color: var(--ev-blue-dark) !important;
+    border: 1.5px solid var(--ev-green) !important;
+    border-radius: 10px;
+    padding: 0.8rem 0.4rem 0.65rem !important;
+    min-height: 95px;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 18px rgba(0, 58, 119, 0.28), 0 0 12px rgba(178, 216, 31, 0.18);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+    text-align: center;
+    position: relative;
+    z-index: 3;
+  }
+
+  .modern-countdown-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--ev-green) !important;
+  }
+
+  .modern-countdown-number {
+    font-size: 2.2rem !important;
+    font-weight: 900 !important;
+    color: var(--ev-green) !important;
+    line-height: 1;
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 0 1px 5px rgba(178, 216, 31, 0.28);
+    margin: 0;
+  }
+
+  .modern-countdown-label {
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    color: var(--ev-white) !important;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 0.9rem;
+    display: block;
+  }
+
+  /* --- HERO SECTION --- */
+  .hero-slider {
+    min-height: 100vh;
+    position: relative;
+    background-color: var(--ft-bg-black);
+    overflow: hidden;
+  }
+
+  .hero-slider .carousel-item {
+    height: 100vh;
+    min-height: 650px;
+    background-size: cover;
+    background-position: center;
+    animation: none !important;
+    transform: none !important;
+    transition: transform 0.5s ease !important;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg,
+        rgba(13, 13, 16, 0.4) 0%,
+        rgba(13, 13, 16, 0.5) 50%,
+        rgba(13, 13, 16, 0.7) 100%);
+  }
+
+  .hero-content {
+    z-index: 10;
+    display: block;
+    pointer-events: none;
+  }
+
+  .hero-content>.container {
+    height: 100%;
+    position: relative;
+    pointer-events: none;
+    padding: 0;
+  }
+
+  .hero-content .logo-wrapper,
+  .hero-content .logo-wrapper *,
+  .hero-content .cta-buttons-ft,
+  .hero-content .cta-buttons-ft * {
+    pointer-events: auto;
+  }
+
+  .hero-content .logo-wrapper {
+    position: absolute;
+    top: 15.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .hero-content .cta-buttons-ft {
+    position: absolute;
+    bottom: 5.3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    margin: 0;
+  }
+
+  .hero-pill-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(178, 216, 31, 0.12);
+    border: 1px solid var(--ft-border-green);
+    color: var(--ft-white);
+    padding: 0.45rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
+  }
+
+  .logo-carrera {
+    max-height: 320px;
+    width: auto;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.7));
+    transition: transform 0.3s ease;
+  }
+
+  .logo-carrera:hover {
+    transform: scale(1.02);
+  }
+
+  /* --- CUENTA REGRESIVA --- */
+  .modern-countdown {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .modern-countdown-item {
+    background: rgba(28, 28, 34, 0.85);
+    border: 2px solid var(--ft-border-green);
+    border-radius: 16px;
+    padding: 0.9rem 1.4rem;
+    min-width: 105px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), var(--ft-glow-green);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+
+  .modern-countdown-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--ft-green-accent);
+  }
+
+  .modern-countdown-number {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--ft-green-accent);
+    line-height: 1;
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 0 2px 10px rgba(178, 216, 31, 0.4);
+  }
+
+  .modern-countdown-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ft-white);
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-top: 0.4rem;
+    display: block;
+  }
+
+  /* --- BOTONES CTA DE ALTO IMPACTO --- */
+  .btn-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #B2D81F;
+    /* 🟩 VERDE OFICIAL */
+    color: #000000 !important;
+    /* ⬛ LETRA NEGRA */
+    font-weight: 900;
+    font-size: 0.95rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 0.95rem 2.4rem;
+    border-radius: 50px;
+    border: none;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(178, 216, 31, 0.35);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .btn-cta-primary:hover {
+    background: #c6ec32;
+    /* hover: verde un poco más brillante */
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(178, 216, 31, 0.55);
+    color: #000000 !important;
+  }
+
+  .btn-cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #003A77;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0.95rem 2.2rem;
+    border-radius: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+    transition: all 0.25s ease;
+  }
+
+  .btn-cta-secondary:hover {
+    background: #004a93;
+    border-color: #41CEB3;
+    color: #ffffff !important;
+    transform: translateY(-3px);
+  }
+
+  .btn-cta-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--ft-white) !important;
+    font-weight: 700;
+    padding: 0.9rem 2rem;
+    border-radius: 50px;
+    border: 2px solid var(--ft-border-green);
+    text-decoration: none;
+    transition: all 0.25s ease;
+  }
+
+  .btn-cta-outline:hover {
+    background: rgba(178, 216, 31, 0.1);
+    border-color: var(--ft-green-accent);
+    color: var(--ft-green-accent) !important;
+  }
+
+  /* Indicadores de carrusel */
+  .carousel-indicators-ft {
+    margin-bottom: 2rem;
+  }
+
+  .carousel-indicators-ft [data-bs-target] {
+    width: 45px;
+    height: 5px;
+    border-radius: 4px;
+    background-color: rgba(178, 216, 31, 0.5);
+    /* 🟩 verde 50% opaco */
+    border: none;
+    transition: all 0.3s ease;
+  }
+
+  .carousel-indicators-ft .active {
+    width: 75px;
+    background-color: #B2D81F;
+    /* 🟩 VERDE OFICIAL 100% */
+    box-shadow: 0 0 12px rgba(178, 216, 31, 0.75);
+  }
+
+  /* --- QUICK HIGHLIGHTS BAR --- */
+  .quick-highlights-bar {
+    background: #111115;
+    border-top: 1px solid var(--ft-border-green);
+    border-bottom: 1px solid var(--ft-border-subtle);
+  }
+
+  .highlight-item {
+    color: var(--ft-gray-light);
+    font-size: 0.9rem;
+  }
+
+  .highlight-icon {
+    color: var(--ft-green-accent);
+    font-size: 1.25rem;
+  }
+
+  /* --- SECCIÓN: MUCHO MÁS QUE UNA CARRERA (fondo AZUL OSCURO OFICIAL) --- */
+  .more-than-race {
+    background-color: #003A77;
+  }
+
+  /* TÍTULO PRINCIPAL: TAMAÑO EXACTO IGUAL A "EQUIPAMIENTO PRO" (section-tagline)
+   NO tan grande, tal como lo dejaste tú — verde oficial */
+  .mtr-main-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #B2D81F;
+    margin-bottom: 0.4rem;
+    text-align: center;
+    display: block;
+  }
+
+  /* Párrafos — rediseño tipográfico limpio y profesional */
+  .mtr-paragraph {
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    font-size: 1.15rem;
+    line-height: 1.95;
+    color: rgba(255, 255, 255, 0.94);
+    margin: 0 auto 1.8rem auto;
+    max-width: 1020px;
+    letter-spacing: 0.25px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  /* Párrafo UNICO (2 frases juntas): ANCHO MÁS GRANDE + TAMAÑO LIGERAMENTE MÁS PEQUEÑO
+   → FUERZA que quede EN 2 LÍNEAS (nunca 3) */
+  .mtr-paragraph--two-lines {
+    max-width: 1380px;
+    /* casi todo el ancho desktop */
+    font-size: 1.07rem;
+    /* 8% más pequeño */
+    line-height: 1.75;
+    /* interlineado más compacto */
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 1200px) {
+    .mtr-paragraph--two-lines {
+      max-width: 1420px;
+      font-size: 1.05rem;
+    }
+  }
+
+  @media (max-width: 1199.98px) {
+    .mtr-paragraph--two-lines {
+      max-width: 100%;
+    }
+  }
+
+  .mtr-paragraph:last-child {
+    margin-bottom: 0;
+  }
+
+  .mtr-strong {
+    color: #B2D81F;
+    font-weight: 700;
+    letter-spacing: 0.15px;
+  }
+
+  /* =========================================================================
+   3 TARJETAS DE DISTANCIAS · TARJETA ÚNICA CONTINUA
+   (imagen + info fusionados DENTRO del mismo border-radius)
+   ========================================================================= */
+
+  /* CONTENEDOR PADRE: controla border-radius, overflow:hidden y HOVER CONJUNTO */
+  .distance-card {
+    position: relative;
+    width: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+    /* ← CLAVE: corta esquinas de imagen + info → UNA SOLA PIEZA */
+    box-shadow:
+      0 14px 34px rgba(0, 0, 0, 0.22),
+      0 6px 14px rgba(0, 0, 0, 0.12);
+    transition: all 0.32s cubic-bezier(.2, .7, .2, 1);
+    background: transparent;
+  }
+
+  .distance-card:hover {
+    transform: translateY(-7px);
+    /* ← TODO se eleva JUNTO: imagen + info */
+    box-shadow:
+      0 24px 54px rgba(0, 0, 0, 0.30),
+      0 10px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  /* La tarjeta de imagen AHORA NO tiene radio/sombra propios → lo hereda el padre */
+  .distance-image-card {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    border-radius: 0;
+    /* ← QUITADO: radio en el padre .distance-card */
+    overflow: visible;
+    box-shadow: none;
+    /* ← QUITADO: sombra en el padre */
+    transition: none;
+    /* ← QUITADO: hover en el padre */
+    text-decoration: none;
+  }
+
+  .distance-image-card:hover {
+    transform: none;
+    /* ← QUITADO: translate en el padre */
+    box-shadow: none;
+    text-decoration: none;
+  }
+
+  /* Tarjeta con botón + info abajo: imagen MÁS ALTA para mostrar logos inferiores (400px → 430px desktop) */
+  .distance-image-card--with-btn {
+    min-height: 430px;
+  }
+
+  /* La imagen OCUPA TODO el cuadro (punta a punta) */
+  .distance-image-card__img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    display: block;
+  }
+
+  /* =========================================================
+   BLOQUE INFO · BASE INFERIOR DE LA TARJETA (CONTINUO)
+   Raya superior VERDE 2px EXTREMO A EXTREMO (única marca)
+   Fondo azul 14% opacidad · Textos CENTRADOS (póster profesional)
+   ========================================================= */
+
+  .distance-info-block {
+    width: 100%;
+    /* ← ANCHO COMPLETO de la tarjeta */
+    max-width: none;
+    margin: 0;
+    /* ← PEGADO a la imagen: 0 margen */
+    padding: 1.25rem 1.1rem 1.35rem 1.1rem;
+
+    /* CLAVE SIMETRÍA TOTAL: MISMA ALTURA en las 3 tarjetas (sin importar líneas texto) */
+    min-height: 210px;
+    /* ← altura fija: 3K/5K/10K quedan EXACTAMENTE iguales */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    /* FONDO: BLANCO (neutro limpio, contrasta TOTAL sobre el fondo sección azul oscuro) */
+    background: #ffffff;
+
+    /* RAYA VERDE CONTINUA 2px EXTREMO A EXTREMO (marca visual limpia, sin cortes) */
+    border-top: 2px solid #B2D81F;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    /* ← SIN redondez: esquinas inf cortadas por overflow padre */
+
+    text-align: center;
+    /* ← CENTRADO = equilibrio póster */
+    position: relative;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .distance-card:hover .distance-info-block {
+    background: #fafcff;
+    /* hover: blanco + azulado sútil (no agresivo) */
+    box-shadow: inset 0 2px 14px rgba(0, 58, 119, 0.06);
+    /* sombra interna muy ligera */
+  }
+
+  /* Header: SIN barrita izquierda pseudo → la marca es la raya superior CONTINUA */
+  .distance-info-block__header {
+    position: relative;
+    padding-left: 0;
+    margin-bottom: 0.55rem;
+    width: 100%;
+  }
+
+  /* Título: AZUL OSCURO OFICIAL + fw900 + tamaño aumentado */
+  .distance-info-block__title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 1.02rem;
+    /* antes 0.9rem → +13% tamaño letra (SÓLO letra) */
+    line-height: 1.35;
+    letter-spacing: 0.4px;
+    color: #003A77;
+    /* � AZUL OSCURO OFICIAL (definitivo) */
+    margin: 0;
+  }
+
+  /* Descripción: AZUL OSCURO suavizado + tamaño aumentado */
+  .distance-info-block__desc {
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.96rem;
+    /* antes 0.86rem → +12% tamaño letra (SÓLO letra) */
+    line-height: 1.58;
+    letter-spacing: 0.15px;
+    color: #1a4a7a;
+    /* azul oscuro + claro (100% opaco, no tan duro como #000) */
+    margin: 0 auto 0.95rem auto;
+    max-width: 330px;
+    /* un poco + ancho (310→330 para que las letras nuevas quepan bien */
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  /* Botón SEMI-PILL compacto CENTRADO · AZUL CLARO OFICIAL + AZUL OSCURO (premium sobre blanco) */
+  .distance-info-block__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.55rem;
+    background: #41CEB3;
+    color: #003A77;
+    border: 1.5px solid #41CEB3;
+    border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.79rem;
+    letter-spacing: 0.95px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 5px 14px rgba(65, 206, 179, 0.32);
+    margin: auto auto 0 auto;
+    /* ← margin-top auto: BOTÓN ALINEADO SIEMPRE AL FONDO (simetría 3 tarjetas) */
+    flex-shrink: 0;
+  }
+
+  .distance-info-block__btn:hover {
+    background: #003A77;
+    /* hover: AZUL OSCURO OFICIAL + BLANCO (inversión elegante) */
+    color: #ffffff;
+    border-color: #003A77;
+    transform: translateY(-1.5px);
+    box-shadow: 0 8px 20px rgba(0, 58, 119, 0.32);
+    text-decoration: none;
+  }
+
+  /* --- Responsive tarjeta CONTINUA + bloque info (imagenes ALTAS +30px para logos | tamaños letra AUMENTADOS) --- */
+  @media (max-width: 1199.98px) {
+    .distance-image-card {
+      min-height: 460px;
+    }
+
+    .distance-image-card--with-btn {
+      min-height: 400px;
+    }
+
+    .distance-info-block {
+      padding: 1.15rem 1rem 1.25rem 1rem;
+      min-height: 215px;
+      /* ← +10px por las letras + grandes */
+    }
+
+    .distance-info-block__header {
+      margin-bottom: 0.5rem;
+    }
+
+    .distance-info-block__title {
+      font-size: 0.98rem;
+    }
+
+    /* antes 0.87rem → +13% */
+    .distance-info-block__desc {
+      font-size: 0.94rem;
+      margin-bottom: 0.88rem;
+      max-width: 310px;
+    }
+
+    /* antes 0.84rem→+12% | 290→310px ancho */
+    .distance-info-block__btn {
+      padding: 0.57rem 1.5rem;
+      font-size: 0.78rem;
+    }
+  }
+
+  @media (max-width: 991.98px) {
+    .mtr-paragraph {
+      font-size: 1.05rem;
+      line-height: 1.9;
+    }
+
+    .distance-card {
+      border-radius: 26px;
+    }
+
+    .distance-image-card {
+      min-height: 440px;
+    }
+
+    .distance-image-card--with-btn {
+      min-height: 460px;
+    }
+
+    .distance-info-block {
+      padding: 1.1rem 0.95rem 1.2rem 0.95rem;
+      min-height: 215px;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .distance-image-card {
+      min-height: 480px;
+    }
+
+    .distance-image-card--with-btn {
+      min-height: 500px;
+    }
+
+    .distance-info-block {
+      padding: 1.05rem 0.9rem 1.15rem 0.9rem;
+      min-height: 210px;
+    }
+
+    .distance-info-block__header {
+      margin-bottom: 0.48rem;
+    }
+
+    .distance-info-block__title {
+      font-size: 0.95rem;
+    }
+
+    /* antes 0.85rem → +12% */
+    .distance-info-block__desc {
+      font-size: 0.93rem;
+      line-height: 1.55;
+      margin-bottom: 0.85rem;
+      max-width: 310px;
+    }
+
+    /* antes 0.85rem→+9% | 290→310px */
+    .distance-info-block__btn {
+      padding: 0.55rem 1.45rem;
+      font-size: 0.79rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .mtr-paragraph {
+      font-size: 0.98rem;
+      line-height: 1.85;
+    }
+
+    .distance-card {
+      border-radius: 22px;
+    }
+
+    .distance-image-card {
+      min-height: 430px;
+    }
+
+    .distance-image-card--with-btn {
+      min-height: 465px;
+    }
+
+    .distance-info-block {
+      padding: 1rem 0.85rem 1.1rem 0.85rem;
+      border-top-width: 1.8px;
+      min-height: 208px;
+    }
+
+    .distance-info-block__header {
+      margin-bottom: 0.45rem;
+    }
+
+    .distance-info-block__title {
+      font-size: 0.95rem;
+      letter-spacing: 0.25px;
+    }
+
+    /* antes 0.85rem → +12% */
+    .distance-info-block__desc {
+      font-size: 0.94rem;
+      line-height: 1.52;
+      margin-bottom: 0.82rem;
+      max-width: 300px;
+    }
+
+    /* antes 0.86rem→+9% | 280→300px */
+    .distance-info-block__btn {
+      padding: 0.53rem 1.4rem;
+      font-size: 0.78rem;
+      border-radius: 13px;
+    }
+  }
+
+  /* =========================================================================
+   ZONA CONSULTA DE INSCRIPCIÓN (2 columnas: texto IZQ + foto DIFUMINADA DER)
+   Inspirado en MMM: foto asimétrica derecha, blend con fondo azul oscuro
+   ========================================================================= */
+
+  .consulta-inscripcion {
+    position: relative;
+    width: 100%;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* COLUMNA IZQUIERDA: texto + botón (alineado centro-izquierda) */
+  .consulta-inscripcion__text-col {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .consulta-inscripcion__text-wrap {
+    max-width: 560px;
+    margin: 0 0 0 auto;
+    /* desplazado a la DERECHA para estar más cerca de la atleta */
+    padding: 1rem 1.8rem 1rem 1.2rem;
+    /* padding vertical equilibrado para centrado vertical */
+    text-align: left;
+  }
+
+  /* Título principal estilo MMM */
+  .consulta-inscripcion__title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.9rem, 2.8vw, 2.7rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.4px;
+    color: #B2D81F;
+    /* VERDE OFICIAL (igual que MMM amarillo neon) */
+    margin: 0 0 0.3rem 0;
+    /* ANTES 0.6rem → MÍNIMO 0.3rem */
+    text-align: left;
+  }
+
+  /* Subtítulo */
+  .consulta-inscripcion__subtitle {
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0 0 0.8rem 0;
+    /* ANTES 1.3rem → MUY POCO espacio para botón */
+    max-width: 500px;
+    text-align: left;
+    font-weight: 400;
+  }
+
+  /* BOTÓN CONSULTA INSCRIPCIÓN: AZUL CLARO OFICIAL + LETRA NEGRA */
+  .btn-consulta-inscripcion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.72rem 1.9rem;
+    /* ANTES 0.85rem 2.2rem → BOTÓN MÁS COMPACTO */
+    background: #41CEB3;
+    /* fondo AZUL CLARO OFICIAL */
+    color: #000000;
+    /* letras NEGRAS */
+    border: 2px solid #41CEB3;
+    /* borde mismo azul claro (no borde blanco) */
+    border-radius: 999px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.88rem;
+    /* un poco más pequeño todavía */
+    letter-spacing: 1.05px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.28s ease;
+    box-shadow: 0 8px 22px rgba(65, 206, 179, 0.3);
+  }
+
+  .btn-consulta-inscripcion:hover {
+    background: #B2D81F;
+    /* hover: verde oficial */
+    color: #000000;
+    border-color: #B2D81F;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(178, 216, 31, 0.38);
+    text-decoration: none;
+  }
+
+  /* COLUMNA DERECHA: FOTO DIFUMINADA (asímetrica, sale un poco a la derecha) */
+  .consulta-inscripcion__photo-col {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    /* FOTO CENTRADA verticalmente respecto al texto */
+    justify-content: flex-end;
+    min-height: 390px;
+    overflow: visible;
+  }
+  .consulta-inscripcion__photo {
+    max-width: 150%;
+    /* 35% MÁS GRANDE que antes (antes 112%) */
+    max-height: 700px;
+    /* 120px MÁS ALTA que antes (antes 560px) */
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: center right;
+    /* Centrado vertical con respecto al contenedor */
+    position: relative;
+    right: 3rem;
+    /* MUCHO más saliente a la derecha */
+    top: 0;
+    /* Centrado vertical con el texto */
+    display: block;
+
+    /* 🔑 FOTO NÍTIDA (no blend):
+     - quitamos mix-blend-mode (ya no se "fusiona" con el fondo azul, se VE CLARA)
+     - opacity 100% (completamente visible)
+     - solo drop-shadow elegante */
+    opacity: 1;
+    filter:
+      drop-shadow(-18px 22px 36px rgba(0, 0, 0, 0.42)) contrast(1.02);
+  }
+
+  /* --- Responsive Consulta Inscripción --- */
+  @media (max-width: 1399.98px) {
+    .consulta-inscripcion__photo {
+      max-width: 130%;
+      max-height: 560px;
+      right: -3.5rem;
+    }
+
+    .consulta-inscripcion__photo-col {
+      min-height: 510px;
+    }
+  }
+
+  @media (max-width: 1199.98px) {
+    .consulta-inscripcion {
+      min-height: 460px;
+    }
+
+    .consulta-inscripcion__photo-col {
+      min-height: 460px;
+    }
+
+    .consulta-inscripcion__photo {
+      max-width: 125%;
+      max-height: 520px;
+      right: -2.5rem;
+    }
+
+    .consulta-inscripcion__text-wrap {
+      padding: 1.6rem 2rem 1.6rem 1rem;
+    }
+  }
+
+  @media (max-width: 991.98px) {
+
+    /* tablet y móviles: se apilan VERTICALMENTE. Foto ARRIBA, texto CENTRADO debajo */
+    .consulta-inscripcion {
+      min-height: auto;
+      margin: 1.8rem 0 1.8rem 0 !important;
+    }
+
+    .consulta-inscripcion__photo-col {
+      min-height: auto;
+      order: 1;
+      margin-bottom: 1.2rem;
+      /* Espacio de separación entre la foto y el título en pantallas pequeñas */
+      justify-content: center;
+    }
+
+    .consulta-inscripcion__photo {
+      max-height: 400px;
+      right: 0;
+      bottom: 0;
+      max-width: 100%;
+    }
+
+    .consulta-inscripcion__text-col {
+      order: 2;
+    }
+
+    .consulta-inscripcion__text-wrap {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0.5rem 1rem 1rem 1rem;
+      text-align: center;
+    }
+
+    .consulta-inscripcion__title {
+      text-align: center;
+      margin-bottom: 0.55rem;
+    }
+
+    .consulta-inscripcion__subtitle {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 1.1rem;
+    }
+
+    .btn-consulta-inscripcion {
+      padding: 0.82rem 1.9rem;
+      font-size: 0.88rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .consulta-inscripcion {
+      margin: 1.6rem 0 1.4rem 0 !important;
+    }
+
+    .consulta-inscripcion__photo-col {
+      min-height: auto;
+      margin-bottom: 1rem;
+    }
+
+    .consulta-inscripcion__photo {
+      max-height: 310px;
+      opacity: 1;
+    }
+
+    .consulta-inscripcion__text-wrap {
+      padding: 0.4rem 0.5rem 0.5rem 0.5rem;
+    }
+
+    .consulta-inscripcion__subtitle {
+      font-size: 0.93rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .btn-consulta-inscripcion {
+      padding: 0.82rem 1.7rem;
+      font-size: 0.84rem;
+    }
+  }
+
+  /* --- FRANJA CTA: ¡Anímate a vivir esta gran experiencia! --- */
+  .cta-accent-bar {
+    background-color: #41CEB3;
+  }
+
+  .cta-accent-bar__title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    /* antes 800 → MENOS negrilla */
+    font-size: clamp(1.45rem, 2.7vw, 2.05rem);
+    /* antes clamp(1.6rem,3vw,2.3rem) → LETRA MÁS PEQUEÑA */
+    letter-spacing: 0.9px;
+    color: #003A77;
+    margin: 0;
+    text-align: center;
+    line-height: 1.3;
+  }
+
   /* --- SECCIÓN RICAURTE INFO (FONDO AZUL OSCURO OFICIAL) --- */
   .section-ricaurte-info {
     position: relative;
