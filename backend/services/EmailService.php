@@ -46,7 +46,7 @@ class EmailService {
             $this->mailer->Port = $port;
             $this->mailer->CharSet = 'UTF-8';
 
-            $fromName = getenv('MAIL_FROM_NAME') ?: 'FemTribe';
+            $fromName = getenv('MAIL_FROM_NAME') ?: 'FEMTRIBE';
             $this->mailer->setFrom($user, $fromName);
 
         } catch (Exception $e) {
@@ -66,12 +66,12 @@ class EmailService {
             $this->mailer->addAddress($participantData['email'], $participantData['nombres'] . ' ' . $participantData['apellidos']);
             
             // Configurar remitente
-            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FemTribe');
-            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FemTribe');
+            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
+            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
             
             // Configurar el correo
             $this->mailer->isHTML(true);
-            $this->mailer->Subject = '🎉 ¡Gracias por inscribirte a Corre con FemTribe! 🎉 - Confirmación de Inscripción';
+            $this->mailer->Subject = '🎉 ¡Gracias por inscribirte a Corre con FEMTRIBE! 🎉 - Confirmación de Inscripción';
             
             // Embeber la imagen del logo
             $logoPath = __DIR__ . '/../../img/logocorreo.png';
@@ -101,11 +101,11 @@ class EmailService {
             $nombre = trim(($user['nombres'] ?? '') . ' ' . ($user['apellidos'] ?? ''));
             $this->mailer->addAddress($user['email'], $nombre ?: $user['email']);
 
-            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FemTribe');
-            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FemTribe');
+            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
+            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
 
             $this->mailer->isHTML(true);
-            $this->mailer->Subject = '🔒 Restauración de Contraseña - FemTribe Runner';
+            $this->mailer->Subject = '🔒 Restauración de Contraseña - FEMTRIBE Runner';
 
             $logoPath = __DIR__ . '/../../img/logocorreo.png';
             if (file_exists($logoPath)) {
@@ -146,11 +146,11 @@ class EmailService {
     <div class="container">
         <div class="header">
             <h2 style="margin:0; font-size: 22px;">🔑 Restauración de Contraseña</h2>
-            <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px;">Comunidad FemTribe Runner</p>
+            <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px;">Comunidad FEMTRIBE Runner</p>
         </div>
         <div class="content">
             <p>Hola <strong>' . ($nombre ?: 'Corredor') . '</strong>,</p>
-            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en <strong>FemTribe Runner</strong>.</p>
+            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en <strong>FEMTRIBE Runner</strong>.</p>
             <p>Haz clic en el siguiente botón para crear tu nueva contraseña. Este enlace es válido únicamente durante <strong>1 hora</strong> por razones de seguridad:</p>
             <div style="text-align: center;">
                 <a href="' . $resetUrlEsc . '" class="btn-reset">Restablecer mi Contraseña</a>
@@ -161,7 +161,7 @@ class EmailService {
             <p style="font-size: 12px; color: #888;">Si no solicitaste este cambio, puedes ignorar este correo de forma segura. Tu contraseña actual seguirá siendo la misma.</p>
         </div>
         <div class="footer">
-            <p style="margin:0;">&copy; ' . date('Y') . ' FemTribe. Todos los derechos reservados.</p>
+            <p style="margin:0;">&copy; ' . date('Y') . ' FEMTRIBE. Todos los derechos reservados.</p>
         </div>
     </div>
 </body>
@@ -178,7 +178,7 @@ class EmailService {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido a FemTribe</title>
+    <title>Bienvenido a FEMTRIBE</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -277,9 +277,9 @@ class EmailService {
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <img src="cid:femtribe_logo" alt="FemTribe Logo" class="logo">
+                <img src="cid:femtribe_logo" alt="FEMTRIBE Logo" class="logo">
             </div>
-            <h1 class="header-title">¡Bienvenido a FemTribe!</h1>
+            <h1 class="header-title">¡Bienvenido a FEMTRIBE!</h1>
             <p class="header-subtitle">Cuerpo fuerte, mente libre, alma en tribu</p>
         </div>
         
@@ -287,7 +287,7 @@ class EmailService {
             <div class="welcome-text">
                 <p>¡Hola <strong>' . $nombre . '</strong>!</p>
                 <p><strong>Identificado con:</strong> ' . $tipoDocumento . ' - ' . $documento . '</p>
-                <p>¡Gracias por unirte a <strong>Corre con FemTribe</strong>! 🙌 Estamos muy felices de que hagas parte de esta experiencia única.</p>
+                <p>¡Gracias por unirte a <strong>Corre con FEMTRIBE</strong>! 🙌 Estamos muy felices de que hagas parte de esta experiencia única.</p>
             </div>
             
             <div class="info-card">
@@ -310,7 +310,7 @@ class EmailService {
         </div>
         
         <div class="signature">
-            <p>Con cariño,<br><strong>Equipo FemTribe</strong></p>
+            <p>Con cariño,<br><strong>Equipo FEMTRIBE</strong></p>
         </div>
     </div>
 </body>

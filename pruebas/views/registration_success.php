@@ -5,7 +5,7 @@
     <div class="col-md-8">
       <div class="alert alert-success shadow-sm">
         <h4 class="alert-heading">¡Inscripción exitosa!</h4>
-        <p>Gracias por inscribirte en Corre con FemTribe Ricaurte 2025.</p>
+        <p>Gracias por inscribirte en Corre con FEMTRIBE Ricaurte 2025.</p>
         <p class="mb-2"><strong>Nombre:</strong> <?= htmlspecialchars(($participantData['nombres'] ?? '') . ' ' . ($participantData['apellidos'] ?? '')) ?></p>
         <p class="mb-2"><strong>Email:</strong> <?= htmlspecialchars($participantData['email'] ?? '') ?></p>
         <p class="mb-2"><strong>Teléfono:</strong> <?= htmlspecialchars($participantData['telefono'] ?? '') ?></p>

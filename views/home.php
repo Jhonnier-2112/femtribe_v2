@@ -274,7 +274,7 @@
     <div class="section-header text-center mb-5" data-aos="fade-up">
       <span class="section-tagline">NUESTROS ALIADOS</span>
       <h2 class="section-title">PATROCINADORES OFICIALES</h2>
-      <p class="section-subtitle">Marcas e instituciones que hacen posible la gran fiesta de Corre Con FemTribe 2.0</p>
+      <p class="section-subtitle">Marcas e instituciones que hacen posible la gran fiesta de Corre Con FEMTRIBE 2.0</p>
       <div class="section-divider"></div>
     </div>
 
@@ -291,7 +291,7 @@
 
       <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="200">
         <div class="sponsor-logo-box">
-          <img src="assets/img/femtribe_verde.png" alt="FemTribe Running" class="img-fluid sponsor-logo">
+          <img src="assets/img/femtribe_verde.png" alt="FEMTRIBE Running" class="img-fluid sponsor-logo">
         </div>
       </div>
 

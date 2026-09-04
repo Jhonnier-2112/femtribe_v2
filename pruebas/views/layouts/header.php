@@ -19,8 +19,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #1a1a1a; padding: 2px 0; min-height: 1px; line-height: 0.5 !important;">
         <div class="container" style="margin-top: -5px;">
             <a class="navbar-brand d-flex align-items-center" href="/" style="margin-top: 0 !important; margin-bottom: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important;">
-                <img src="/assets/img/logoverde.png" alt="FemTribe Logo" style="height: 50px; margin-right: 4px;">
-                <img src="/assets/img/nombre.png" alt="FemTribe" style="height: 30px;">
+                <img src="/assets/img/logoverde.png" alt="FEMTRIBE Logo" style="height: 50px; margin-right: 4px;">
+                <img src="/assets/img/nombre.png" alt="FEMTRIBE" style="height: 30px;">
             </a>
             
             <button class="navbar-toggler" type="button" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" id="navbarToggler">
@@ -92,7 +92,7 @@
                         <div class="d-inline-flex align-items-center justify-content-center bg-dark text-warning rounded-circle mb-3 shadow-sm" style="width: 55px; height: 55px; border: 2px solid #87CC3E;">
                             <i class="fas fa-running fa-2x" style="color: #87CC3E;"></i>
                         </div>
-                        <h4 class="fw-bold text-dark mb-1" id="authModalTitle">Acceso FemTribe Runner</h4>
+                        <h4 class="fw-bold text-dark mb-1" id="authModalTitle">Acceso FEMTRIBE Runner</h4>
                         <p class="text-muted small mb-0">Inicia sesión o regístrate para comprar y participar en carreras</p>
                     </div>
 

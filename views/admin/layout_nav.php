@@ -361,7 +361,7 @@ body.admin-light .style-admin-bg span.text-white-50.small { color: #6c757d !impo
             <div class="card-body p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
                 <div>
                     <h4 class="fw-bold mb-1" style="color: #B2D81F;">
-                        <i class="fas fa-user-shield me-2"></i>Panel de Administración FemTribe
+                        <i class="fas fa-user-shield me-2"></i>Panel de Administración FEMTRIBE
                     </h4>
                     <p class="text-white-50 small mb-0">Gestión de corredores, catálogo de productos, categorías, pedidos e historial de visitas.</p>
                 </div>

@@ -75,7 +75,7 @@ class Event {
 
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([
-                ':title' => $data['title'] ?? 'Carrera Corre Con FemTribe',
+                ':title' => $data['title'] ?? 'Carrera Corre Con FEMTRIBE',
                 ':location' => $data['location'] ?? 'Cali, Valle del Cauca',
                 ':total_slots' => (int)($data['total_slots'] ?? 600),
                 ':presale_start_date' => !empty($data['presale_start_date']) ? $data['presale_start_date'] : null,

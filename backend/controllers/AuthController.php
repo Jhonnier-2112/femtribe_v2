@@ -179,7 +179,7 @@ class AuthController extends Controller {
             if ($isAjax) {
                 $this->json([
                     'success' => true, 
-                    'message' => '¡Registro exitoso! Bienvenido a FemTribe Runner.', 
+                    'message' => '¡Registro exitoso! Bienvenido a FEMTRIBE Runner.', 
                     'redirect' => $redirectTo,
                     'tokens' => $tokenData
                 ]);
@@ -570,10 +570,10 @@ class AuthController extends Controller {
                     : \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port       = $cfg['port'];
                 $mail->CharSet    = 'UTF-8';
-                $mail->setFrom($cfg['username'], 'FemTribe Debug');
+                $mail->setFrom($cfg['username'], 'FEMTRIBE Debug');
                 $mail->addAddress($testTo);
                 $mail->isHTML(true);
-                $mail->Subject = 'Test SMTP FemTribe — ' . date('H:i:s');
+                $mail->Subject = 'Test SMTP FEMTRIBE — ' . date('H:i:s');
                 $mail->Body    = '<h2 style="color:#6da632">✅ SMTP funcionando</h2>'
                                . '<p><b>Config:</b> ' . htmlspecialchars($cfg['label']) . '</p>'
                                . '<p><b>Hora:</b> ' . date('Y-m-d H:i:s') . '</p>';
@@ -595,7 +595,7 @@ class AuthController extends Controller {
         }
         ?>
 <!DOCTYPE html><html lang="es"><head>
-<meta charset="UTF-8"><title>Debug Email — FemTribe</title>
+<meta charset="UTF-8"><title>Debug Email — FEMTRIBE</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:monospace;background:#0f0f1a;color:#e0e0e0;padding:24px;line-height:1.6}
@@ -612,7 +612,7 @@ button:hover{background:#87cc3e}
 pre{background:#0a0a14;border:1px solid #2a2a40;padding:12px;border-radius:4px;font-size:.78rem;white-space:pre-wrap;max-height:420px;overflow-y:auto}
 .val{color:#a8d8ff}.wt{color:#e6a800}
 </style></head><body>
-<h1>🔍 Diagnóstico SMTP — FemTribe</h1>
+<h1>🔍 Diagnóstico SMTP — FEMTRIBE</h1>
 
 <h2>1. Comparación EmailConfig.php vs .env</h2>
 <div class="card warn">
@@ -622,7 +622,7 @@ pre{background:#0a0a14;border:1px solid #2a2a40;padding:12px;border-radius:4px;f
 <td><?= _b(($env['MAIL_HOST'] ?? '') === 'smtp.gmail.com', '✓ Igual', '⚠ Difieren') ?></td></tr>
 <tr><td>Puerto</td><td class="val">587 (STARTTLS)</td><td class="wt"><?= htmlspecialchars($env['MAIL_PORT'] ?? 'N/A') ?></td>
 <td><?= _b(($env['MAIL_PORT'] ?? '') == 587, '✓ Igual', '⚠ Difieren') ?></td></tr>
-<tr><td>Usuario</td><td class="val">femtribe25@gmail.com</td><td class="wt"><?= htmlspecialchars($env['MAIL_USER'] ?? 'N/A') ?></td>
+<tr><td>Usuario</td><td class="val">FEMTRIBE25@gmail.com</td><td class="wt"><?= htmlspecialchars($env['MAIL_USER'] ?? 'N/A') ?></td>
 <td><?= _b(($env['MAIL_USER'] ?? '') === 'femtribe25@gmail.com', '✓ Igual', '⚠ Difieren') ?></td></tr>
 <tr><td>Contraseña App</td><td class="val">zsxc cuss qgvy yxba</td><td class="wt"><?= htmlspecialchars($env['MAIL_PASS'] ?? 'N/A') ?></td>
 <td><?= _b(($env['MAIL_PASS'] ?? '') === 'zsxc cuss qgvy yxba', '✓ Igual', '⚠ DIFERENTE — causa probable') ?></td></tr>

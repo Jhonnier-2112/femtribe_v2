@@ -107,7 +107,7 @@
 
                     <div class="mb-3">
                         <label for="event_title" class="form-label text-white fw-semibold">Nombre del Evento *</label>
-                        <input type="text" class="form-control bg-dark text-white border-secondary border-opacity-50 py-2 rounded-3" id="event_title" name="event_title" value="<?= htmlspecialchars($event['title'] ?? 'Carrera Corre Con FemTribe') ?>" required>
+                        <input type="text" class="form-control bg-dark text-white border-secondary border-opacity-50 py-2 rounded-3" id="event_title" name="event_title" value="<?= htmlspecialchars($event['title'] ?? 'Carrera Corre Con FEMTRIBE') ?>" required>
                     </div>
 
                     <div class="mb-3">

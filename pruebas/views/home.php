@@ -39,7 +39,7 @@
     <div class="container text-center" data-aos="fade-up" data-aos-delay="200">
       <!-- Logo Carrera 2.0 TAL CUAL, SIN tags, SIN filtros -->
       <div class="logo-wrapper mb-4">
-        <img src="assets/img/CorreconFemtribe2.0/logocarrera2.0.png" alt="Corre Con FemTribe 2.0" class="logo-carrera img-fluid" onerror="this.src='assets/img/logocarrera.png'; this.onerror=null;">
+        <img src="assets/img/CorreconFemtribe2.0/logocarrera2.0.png" alt="Corre Con FEMTRIBE 2.0" class="logo-carrera img-fluid" onerror="this.src='assets/img/logocarrera.png'; this.onerror=null;">
       </div>
       <h1 class="hero-title-ft">TU CARRERA EMPIEZA EN</h1>
       
@@ -2280,7 +2280,7 @@
                 </div>
                 <div class="premio-info-modern">
                   <h5 class="fw-bold mb-2">Premios en Efectivo</h5>
-                  <p class="text-muted small mb-0">Para las categorías FemTribe y MenTribe</p>
+                  <p class="text-muted small mb-0">Para las categorías FEMTRIBE y MenTribe</p>
                 </div>
               </div>
             </div>
@@ -2702,7 +2702,7 @@
     <div class="row">
       <div class="col-lg-8 mx-auto text-center text-white" data-aos="fade-up">
         <h6 class="text-primary fw-bold mb-3">ÚNETE A NOSOTROS</h6>
-        <h2 class="display-4 fw-bold mb-4">¿Lista para correr con Femtribe?</h2>
+        <h2 class="display-4 fw-bold mb-4">¿Lista para correr con FEMTRIBE?</h2>
         <p class="lead mb-5">No te pierdas la oportunidad de ser parte de esta increíble experiencia. ¡Inscríbete ahora y vive la carrera de tus sueños!</p>
         <div class="d-flex justify-content-center gap-3">
           <a href="/inscripcion" class="btn btn-primary btn-lg">INSCRÍBETE AHORA</a>
@@ -2734,7 +2734,7 @@ FIN COMENTARIO CALL TO ACTION -->
             </h2>
             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                La carrera Corre con Femtribe se realizará el 5 de diciembre de 2025. La hora de inicio será a las 7:00 AM para todas las categorías.
+                La carrera Corre con FEMTRIBE se realizará el 5 de diciembre de 2025. La hora de inicio será a las 7:00 AM para todas las categorías.
               </div>
             </div>
           </div>
@@ -2782,7 +2782,7 @@ FIN COMENTARIO CALL TO ACTION -->
 FIN COMENTARIO FAQ -->
 
 <script>
-// Cuenta regresiva FemTribe 2.0
+// Cuenta regresiva FEMTRIBE 2.0
 // Fecha objetivo: 10 de agosto de 2026, 06:00:00 Hora Colombia (UTC-5)
 // Colombia no tiene horario de verano, siempre UTC-5
 function getColombiaTargetDate() {

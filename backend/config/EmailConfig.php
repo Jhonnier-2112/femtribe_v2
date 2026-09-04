@@ -13,7 +13,7 @@ class EmailConfig {
     
     // Información del remitente
     const FROM_EMAIL = 'femtribe25@gmail.com';    // Cambiar por el correo real
-    const FROM_NAME = 'FEMTRIBE - Corre con FemTribe';
+    const FROM_NAME = 'FEMTRIBE - Corre con FEMTRIBE';
     
     // Configuración del correo
     const CHARSET = 'UTF-8';

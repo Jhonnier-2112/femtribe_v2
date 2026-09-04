@@ -103,7 +103,7 @@ class ChatbotService {
     // ─── RESPUESTAS ─────────────────────────────────────────────────────────
 
     private function iSaludo(): array {
-        $nombre = $this->event['title'] ?? 'Corre con FemTribe';
+        $nombre = $this->event['title'] ?? 'Corre con FEMTRIBE';
         return [
             'reply' => "¡Hola! 👋 Bienvenido/a al asistente de **{$nombre}**.\n¿En qué te puedo ayudar hoy? Puedo contarte sobre precios, fechas, cupos, inscripciones y mucho más. 🏃‍♀️",
             'suggestions' => ['¿Cuánto cuesta?', '¿Cuándo es la carrera?', '¿Cómo me inscribo?', '¿Cuántos cupos quedan?'],
@@ -251,7 +251,7 @@ class ChatbotService {
     private function iProductos(): array {
         if (empty($this->products)) {
             return [
-                'reply'       => "🛍️ Tenemos una tienda con ropa y accesorios FemTribe.\n\n¡Visita nuestra tienda para ver todos los productos disponibles!",
+                'reply'       => "🛍️ Tenemos una tienda con ropa y accesorios FEMTRIBE.\n\n¡Visita nuestra tienda para ver todos los productos disponibles!",
                 'suggestions' => ['Ver tienda'],
                 'action'      => ['label' => '🛍️ Ver tienda', 'url' => '/productos'],
             ];
@@ -309,7 +309,7 @@ class ChatbotService {
         $wa = getenv('WHATSAPP_BUSINESS_NUMBER') ?: '573104771933';
         $waLink = "https://wa.me/{$wa}";
         return [
-            'reply' => "📱 **Contáctanos:**\n\n💬 **WhatsApp:** " . substr($wa, 2) . "\n📸 **Instagram:** @fem_tribe\n📘 **Facebook:** FemTribe\n\n¡Nuestro equipo estará feliz de ayudarte! 💚",
+            'reply' => "📱 **Contáctanos:**\n\n💬 **WhatsApp:** " . substr($wa, 2) . "\n📸 **Instagram:** @fem_tribe\n📘 **Facebook:** FEMTRIBE\n\n¡Nuestro equipo estará feliz de ayudarte! 💚",
             'suggestions' => ['¿Cómo me inscribo?', '¿Cuándo es el evento?'],
             'action'      => ['label' => '💬 WhatsApp', 'url' => $waLink],
         ];

@@ -335,7 +335,7 @@
     <div class="col-12">
       <div class="description-card">
         <p class="description-text">
-          <strong style="color: #87CC3E;">Corre Con FemTribe</strong> es más que una carrera, es un movimiento global: un tour de carreras que recorre municipios y ciudades, llevando el deporte como herramienta de transformación. Reconstrúyete y fortalécete con nosotros. Únete a una experiencia única donde la pasión por el running se combina con valores de inclusión, bienestar y excelencia deportiva. <em style="color: #87CC3E;">¡Forma parte de nuestra tribu y descubre tu mejor versión!</em>
+          <strong style="color: #87CC3E;">Corre Con FEMTRIBE</strong> es más que una carrera, es un movimiento global: un tour de carreras que recorre municipios y ciudades, llevando el deporte como herramienta de transformación. Reconstrúyete y fortalécete con nosotros. Únete a una experiencia única donde la pasión por el running se combina con valores de inclusión, bienestar y excelencia deportiva. <em style="color: #87CC3E;">¡Forma parte de nuestra tribu y descubre tu mejor versión!</em>
         </p>
       </div>
     </div>
@@ -867,7 +867,7 @@
                   <span class="fs-5">Términos Legales y Autorizaciones de la Carrera</span>
                 </div>
                 <p class="text-muted small mb-3">
-                  Para participar en la <strong>Carrera Corre Con FemTribe</strong>, debes declarar tu estado de salud y autorizar los documentos legales obligatorios conforme a la normativa vigente en Colombia. Puedes consultar cada documento formal a continuación:
+                  Para participar en la <strong>Carrera Corre Con FEMTRIBE</strong>, debes declarar tu estado de salud y autorizar los documentos legales obligatorios conforme a la normativa vigente en Colombia. Puedes consultar cada documento formal a continuación:
                 </p>
 
                 <div class="d-flex flex-wrap gap-2 mb-4">
