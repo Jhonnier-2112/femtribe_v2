@@ -9,8 +9,8 @@ if (!defined('WHATSAPP_BUSINESS_NUMBER')) {
 ?>
 <?php include __DIR__ . '/layouts/header.php'; ?>
 
-<main class="page-content" style="padding-top: 115px; min-height: 75vh;">
-<section class="container" style="max-width: 980px; margin: 0 auto 60px;">
+<main class="page-content" style="padding-top: 150px !important; min-height: 75vh;">
+<section class="container" style="max-width: 980px; margin: 20px auto 60px; padding-top: 10px;">
   <h1 style="font-size: 28px; margin-bottom: 16px; font-weight: 800;">TU CARRITO</h1>
   <p style="color:#666; margin-bottom: 24px;">Revisa tus productos y envía un único pedido por WhatsApp.</p>
 
