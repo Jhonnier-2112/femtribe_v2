@@ -29,9 +29,10 @@ class Database {
         $this->conn = null;
 
         try {
-            // Detectar socket Unix de MAMP Pro para evitar problemas de puerto en desarrollo
+            // Detectar socket Unix de MAMP — solo en entorno de desarrollo local
             $mampSocket = '/Applications/MAMP/tmp/mysql/mysql.sock';
-            if (file_exists($mampSocket)) {
+            $isDev = defined('APP_ENV') && APP_ENV === 'development';
+            if ($isDev && file_exists($mampSocket)) {
                 $dsn = "mysql:unix_socket={$mampSocket};dbname={$this->db_name};charset=utf8mb4";
             } else {
                 $dsn = "mysql:host={$this->host};port={$this->port};dbname={$this->db_name};charset=utf8mb4";

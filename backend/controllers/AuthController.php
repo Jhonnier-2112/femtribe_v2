@@ -68,10 +68,12 @@ class AuthController extends Controller {
             unset($_SESSION['redirect_after_login']);
 
             if ($isAjax) {
+                // En AJAX (modal) no enviamos redirect del servidor — el front usa su propio sessionStorage
+                // para evitar redireccionamientos a rutas protegidas visitadas anteriormente (ej. /carrito)
                 $this->json([
                     'success' => true, 
                     'message' => '¡Bienvenido de nuevo!', 
-                    'redirect' => $redirectTo,
+                    'redirect' => null,
                     'tokens' => $tokenData
                 ]);
             }
@@ -177,10 +179,11 @@ class AuthController extends Controller {
             unset($_SESSION['redirect_after_login']);
 
             if ($isAjax) {
+                // En AJAX (modal) no enviamos redirect del servidor — el front usa su propio sessionStorage
                 $this->json([
                     'success' => true, 
                     'message' => '¡Registro exitoso! Bienvenido a FEMTRIBE Runner.', 
-                    'redirect' => $redirectTo,
+                    'redirect' => null,
                     'tokens' => $tokenData
                 ]);
             }

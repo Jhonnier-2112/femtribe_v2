@@ -71,7 +71,7 @@ class AuthController extends Controller {
                 $this->json([
                     'success' => true, 
                     'message' => '¡Bienvenido de nuevo!', 
-                    'redirect' => $redirectTo,
+                    'redirect' => null,
                     'tokens' => $tokenData
                 ]);
             }
@@ -180,7 +180,7 @@ class AuthController extends Controller {
                 $this->json([
                     'success' => true, 
                     'message' => '¡Registro exitoso! Bienvenido a FEMTRIBE Runner.', 
-                    'redirect' => $redirectTo,
+                    'redirect' => null,
                     'tokens' => $tokenData
                 ]);
             }

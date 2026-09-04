@@ -1,0 +1,22 @@
+# Variables de entorno — NO subir credenciales
+.env
+.env.local
+.env.*.local
+
+# Dependencias
+vendor/
+node_modules/
+
+# Logs
+*.log
+logs/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
