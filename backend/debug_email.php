@@ -35,12 +35,12 @@ if (file_exists($envFile)) {
 }
 
 $configs = [
-    'Gmail_hardcoded' => [
+    'Gmail_app_password' => [
         'host'     => 'smtp.gmail.com',
         'port'     => 587,
         'secure'   => PHPMailer::ENCRYPTION_STARTTLS,
         'username' => 'femtribe25@gmail.com',
-        'password' => 'zsxc cuss qgvy yxba',
+        'password' => $env['MAIL_PASS'] ?? 'vmzl libi wrji cjsi',
     ],
     'Hostinger_env' => [
         'host'     => $env['MAIL_HOST'] ?? 'smtp.hostinger.com',
@@ -88,7 +88,7 @@ pre{background:#0a0a14;border:1px solid #333;padding:12px;border-radius:4px;over
 <td><?= ($env['MAIL_PORT'] ?? '') != 587 ? '<span class="b-warn">⚠ Difieren</span>' : '<span class="b-ok">✓ Igual</span>' ?></td></tr>
 <tr><td>Usuario</td><td>FEMTRIBE25@gmail.com</td><td><?= htmlspecialchars($env['MAIL_USER'] ?? 'N/A') ?></td>
 <td><?= ($env['MAIL_USER'] ?? '') !== 'femtribe25@gmail.com' ? '<span class="b-warn">⚠ Difieren</span>' : '<span class="b-ok">✓ Igual</span>' ?></td></tr>
-<tr><td>Contraseña App</td><td>zsxc cuss qgvy yxba</td><td><?= htmlspecialchars(substr($env['MAIL_PASS'] ?? '', 0, 8)) ?>...</td><td>—</td></tr>
+<tr><td>Contraseña App</td><td><?= htmlspecialchars(substr($env['MAIL_PASS'] ?? 'vmzl...', 0, 8)) ?>...</td><td><?= htmlspecialchars(substr($env['MAIL_PASS'] ?? '', 0, 8)) ?>...</td><td>—</td></tr>
 </table>
 </div>
 

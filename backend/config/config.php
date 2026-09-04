@@ -27,7 +27,7 @@ if (!defined('APP_VERSION')) define('APP_VERSION', '1.0.0');
 
 // Detectar entorno automáticamente
 $host = $_SERVER['HTTP_HOST'] ?? '';
-$isLocal = (bool)preg_match('/^(localhost|127\.0\.0\.1)(:\\d+)?$/', $host);
+$isLocal = (bool)preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?$/', $host);
 $envApp = getenv('APP_ENV') ?: ($isLocal ? 'development' : 'production');
 $isProduction = ($envApp === 'production');
 
