@@ -1,7 +1,7 @@
 <?php require_once __DIR__ . '/layouts/header.php'; ?>
 <link rel="stylesheet" href="/assets/css/products.css">
 
-<section class="py-4" style="margin-top: 100px;">
+<section class="py-4" style="margin-top: 120px;">
     <div class="container">
         <?php
             $total = isset($pagination['total']) ? (int)$pagination['total'] : 0;

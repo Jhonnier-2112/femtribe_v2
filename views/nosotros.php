@@ -9,7 +9,7 @@
     <div class="row justify-content-center">
       <div class="col-lg-8">
         <h1 class="hero-title display-2 fw-bold text-white mb-4" style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);">
-          CONOCE A <span style="color: #87CC3E; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);">FEMTRIBE</span>
+          CONOCE A <span style="color: #B2D81F; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);">FEMTRIBE</span>
         </h1>
         <p class="lead text-white mb-0" style="font-size: 1.2rem; text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);">
           Una comunidad dedicada a crear espacios seguros y motivadores para todos los corredores
@@ -24,7 +24,7 @@
   <div class="container py-4">
     <div class="row justify-content-center mb-5" data-aos="fade-up">
       <div class="col-lg-7 text-center">
-        <h5 class="fw-bold mb-0" style="color: #87CC3E;">NUESTRA HISTORIA</h5>
+        <h5 class="fw-bold mb-0" style="color: #B2D81F;">NUESTRA HISTORIA</h5>
       </div>
     </div>
 
@@ -53,12 +53,13 @@
               <div class="p-5 h-100 d-flex flex-column justify-content-center" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
                 <!-- Historia Completa -->
                 <div class="mb-4">
-                  <h3 class="h4 fw-bold text-dark mb-3">Empoderamiento a través del deporte</h3>
-                  <p class="text-muted mb-3 fs-6">FEMTRIBE nació del camino de transformación de una mujer a través del running. Lo que empezó como un escape se convirtió en un espacio de libertad, fortaleza y crecimiento.</p>
-                  <p class="text-muted mb-3">Kilómetro a kilómetro fue reconstruyéndose, y sin darse cuenta, su experiencia personal empezó a inspirar a otras mujeres. Entonces entendió que aquello que estaba viviendo no era solo para ella, sino para compartirlo.</p>
-                  <p class="text-muted mb-3">Así nació una tribu pensada, en un inicio, para ellas. Una comunidad femenina que encontraba en el deporte un refugio y un impulso para avanzar.</p>
-                  <p class="text-muted mb-3">Con el tiempo descubrimos que la verdadera fuerza se multiplica cuando sumamos, y que hombres y mujeres, juntos, podemos construir un movimiento mucho más grande.</p>
-                  <p class="text-muted mb-0">Hoy FEMTRIBE es una comunidad abierta, donde el deporte es motor de transformación, unión y libertad. Un lugar para crecer, compartir y correr en tribu.</p>
+                  <h3 class="h4 fw-bold text-dark mb-3">Historia de transformación </h3>
+                  <p class="text-muted mb-3 fs-6">FEMTRIBE nació de una historia de transformación a través del running. Lo que comenzó para una mujer como una forma de escapar de un momento difícil, poco a poco se convirtió en un espacio de libertad, fortaleza y crecimiento.</p>
+                  <p class="text-muted mb-3">Kilómetro a kilómetro, correr se convirtió en una manera de volver a encontrarse, recuperar su fuerza y descubrir una nueva versión de sí misma. Sin darse cuenta, su experiencia personal comenzó a inspirar a otras personas y nació una idea: <strong class="ft-nosotros-bold">compartir aquello que el deporte estaba transformando en ella.</strong></p>
+                  <p class="text-muted mb-3">Así comenzó FEMTRIBE, con la intención de crear un espacio donde el deporte fuera mucho más que correr: un lugar para conectar, compartir, superarse y disfrutar del camino.</p>
+                  <p class="text-muted mb-3">Lo que empezó como una experiencia personal fue creciendo hasta convertirse en una comunidad mixta y abierta, formada por personas con diferentes historias, ritmos y razones para correr, pero unidas por las mismas ganas de avanzar.</p>
+                   <p class="text-muted mb-3"><strong class="ft-nosotros-bold">De una historia personal nació una comunidad que sigue creciendo, conectando y transformándose.</strong></p>
+                  <p class="text-muted mb-0">Hoy seguimos creyendo en el poder del deporte para transformar, pero sobre todo en el poder de hacerlo juntos. Porque cada persona tiene su propio camino, y cuando esos caminos se encuentran, <strong class="ft-nosotros-bold">corremos en tribu.</strong></p>
                 </div>
                 
                 <!-- Misión y Visión -->
@@ -66,10 +67,10 @@
                   <div class="col-md-6 mb-3">
                     <div class="bg-white p-4 rounded-3 shadow-sm h-100">
                       <div class="d-flex align-items-center mb-3">
-                        <div class="text-white rounded-circle p-2 me-3" style="background-color: #87CC3E;">
-                          <i class="fas fa-bullseye"></i>
+                        <div class="ft-icon-circle rounded-circle d-flex align-items-center justify-content-center me-3">
+                          <i class="fas fa-crosshairs ft-icon-size"></i>
                         </div>
-                        <h5 class="fw-bold mb-0" style="color: #87CC3E;">MISIÓN</h5>
+                        <h5 class="fw-bold mb-0" style="color: #B2D81F;">MISIÓN</h5>
                       </div>
                       <p class="text-muted small mb-0">En FEMTRIBE convertimos el deporte en un motor de vida. Creamos experiencias que van más allá del rendimiento: son símbolos de transformación, resiliencia y pertenencia a una tribu que no se detiene.</p>
                     </div>
@@ -77,10 +78,10 @@
                   <div class="col-md-6 mb-3">
                     <div class="bg-white p-4 rounded-3 shadow-sm h-100">
                       <div class="d-flex align-items-center mb-3">
-                          <div class="text-white rounded-circle p-2 me-3" style="background-color: #87CC3E;">
-                            <i class="fas fa-eye"></i>
+                          <div class="ft-icon-circle rounded-circle d-flex align-items-center justify-content-center me-3">
+                            <i class="fas fa-binoculars ft-icon-size"></i>
                           </div>
-                          <h5 class="fw-bold mb-0" style="color: #87CC3E;">VISIÓN</h5>
+                          <h5 class="fw-bold mb-0" style="color: #B2D81F;">VISIÓN</h5>
                         </div>
                         <p class="text-muted small mb-0">Ser un movimiento global que desafía los límites. Inspirar a millones a transformar su cuerpo, mente y espíritu a través del deporte, siendo la marca que enciende la fuerza de una nueva generación.</p>
                       </div>
@@ -102,7 +103,7 @@
             <div class="bg-white rounded-4 shadow-lg p-5">
               <!-- Título de la sección -->
               <div class="text-center mb-4">
-                <h5 class="fw-bold mb-3" style="color: #87CC3E;">NUESTROS VALORES</h5>
+                <h5 class="fw-bold mb-3" style="color: #B2D81F;">NUESTROS VALORES</h5>
                 <p class="text-muted fs-5">Los pilares que nos definen como tribu</p>
               </div>
               
@@ -112,37 +113,37 @@
                   <div class="row">
                     <div class="col-md-6 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="100">
                       <div class="text-center bg-light p-4 rounded-3 shadow-sm h-100">
-                        <div class="bg-gradient-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; background: linear-gradient(45deg, #87CC3E, #7fb069);">
-                          <i class="fas fa-users fa-lg"></i>
+                        <div class="ft-icon-circle-lg rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                          <i class="fas fa-users ft-icon-size-lg"></i>
                         </div>
-                        <h5 class="fw-bold" style="color: #87CC3E;">Comunidad</h5>
+                        <h5 class="fw-bold" style="color: #B2D81F;">Comunidad</h5>
                         <p class="text-muted small mb-0">Unidos por la pasión del deporte y el crecimiento mutuo</p>
                       </div>
                     </div>
                     <div class="col-md-6 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="200">
                       <div class="text-center bg-light p-4 rounded-3 shadow-sm h-100">
-                        <div class="bg-gradient-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; background: linear-gradient(45deg, #87CC3E, #7fb069);">
-                          <i class="fas fa-heart fa-lg"></i>
+                        <div class="ft-icon-circle-lg rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                          <i class="fas fa-hands-helping ft-icon-size-lg"></i>
                         </div>
-                        <h5 class="fw-bold" style="color: #87CC3E;">Inclusión</h5>
+                        <h5 class="fw-bold" style="color: #B2D81F;">Inclusión</h5>
                         <p class="text-muted small mb-0">Espacio abierto donde todos encuentran su lugar</p>
                       </div>
                     </div>
                     <div class="col-md-6 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="300">
                       <div class="text-center bg-light p-4 rounded-3 shadow-sm h-100">
-                        <div class="bg-gradient-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; background: linear-gradient(45deg, #87CC3E, #7fb069);">
-                          <i class="fas fa-fist-raised fa-lg"></i>
+                        <div class="ft-icon-circle-lg rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                          <i class="fas fa-dumbbell ft-icon-size-lg"></i>
                         </div>
-                        <h5 class="fw-bold" style="color: #87CC3E;">Empoderamiento</h5>
+                        <h5 class="fw-bold" style="color: #B2D81F;">Empoderamiento</h5>
                         <p class="text-muted small mb-0">Fortaleciendo cuerpo, mente y espíritu</p>
                       </div>
                     </div>
                     <div class="col-md-6 col-lg-3 mb-4" data-aos="fade-up" data-aos-delay="400">
                       <div class="text-center bg-light p-4 rounded-3 shadow-sm h-100">
-                        <div class="bg-gradient-primary text-white rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; background: linear-gradient(45deg, #87CC3E, #7fb069);">
-                          <i class="fas fa-trophy fa-lg"></i>
+                        <div class="ft-icon-circle-lg rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                          <i class="fas fa-medal ft-icon-size-lg"></i>
                         </div>
-                        <h5 class="fw-bold" style="color: #87CC3E;">Superación</h5>
+                        <h5 class="fw-bold" style="color: #B2D81F;">Superación</h5>
                         <p class="text-muted small mb-0">Alcanzando nuevas metas cada día</p>
                       </div>
                     </div>
@@ -162,7 +163,7 @@
   <div class="container py-6">
     <div class="row justify-content-center mb-4" data-aos="fade-up">
       <div class="col-lg-7 text-center">
-        <h5 class="fw-bold mb-4" style="color: #87CC3E;">¿POR QUÉ CORRER CON NOSOTROS?</h5>
+        <h5 class="fw-bold mb-4" style="color: #B2D81F;">¿POR QUÉ CORRER CON NOSOTROS?</h5>
         <h2 class="display-7 fw-bold">Una experiencia única para todos</h2>
       </div>
     </div>
@@ -176,11 +177,11 @@
               id="velocidadVideo"
               class="w-100" 
               controls 
-              poster="assets/img/correr.png"
+              poster="assets/img/CorreconFemtribe2.0/portada_video.png"
               style="height: 600px; object-fit: cover;"
               preload="metadata"
             >
-              <source src="assets/videos/velocidad.mp4" type="video/mp4">
+              <source src="assets/img/CorreconFemtribe2.0/video_nosotros.MOV" type="video/mp4">
               Tu navegador no soporta el elemento de video.
             </video>
             
@@ -201,7 +202,7 @@
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-      background: linear-gradient(45deg, #87CC3E, #20c997);
+      background: linear-gradient(45deg, #B2D81F, #41CEB3);
       padding: 4px;
     }
     
@@ -218,7 +219,7 @@
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #87CC3E, #20c997);
+      background: linear-gradient(135deg, #B2D81F, #41CEB3);
       border: none;
       color: white;
       font-size: 24px;
@@ -276,8 +277,8 @@
       <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="100">
         <div class="card h-100 border-0 shadow-sm p-4 feature-card">
           <div class="card-body">
-            <div class="mb-4" style="color: #87CC3E;">
-              <i class="fas fa-route fa-3x"></i>
+            <div class="ft-icon-circle-xl rounded-circle mb-4 d-flex align-items-center justify-content-center">
+              <i class="fas fa-map-marked-alt ft-icon-size-xl"></i>
             </div>
             <h4>Rutas Increíbles</h4>
             <p>Recorre las mejores rutas de la ciudad, diseñadas para disfrutar del paisaje mientras te desafías a ti mismo.</p>
@@ -287,8 +288,8 @@
       <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="200">
         <div class="card h-100 border-0 shadow-sm p-4 feature-card">
           <div class="card-body">
-            <div class="mb-4" style="color: #87CC3E;">
-              <i class="fas fa-users fa-3x"></i>
+            <div class="ft-icon-circle-xl rounded-circle mb-4 d-flex align-items-center justify-content-center">
+              <i class="fas fa-running ft-icon-size-xl"></i>
             </div>
             <h4>Comunidad FEMTRIBE</h4>
             <p>Forma parte de una comunidad que se apoyan mutuamente para alcanzar sus metas deportivas.</p>
@@ -298,8 +299,8 @@
       <div class="col-md-4 mb-4" data-aos="fade-up" data-aos-delay="300">
         <div class="card h-100 border-0 shadow-sm p-4 feature-card">
           <div class="card-body">
-            <div class="mb-4" style="color: #87CC3E;">
-              <i class="fas fa-gift fa-3x"></i>
+            <div class="ft-icon-circle-xl rounded-circle mb-4 d-flex align-items-center justify-content-center">
+              <i class="fas fa-shopping-bag ft-icon-size-xl"></i>
             </div>
             <h4>Kit Exclusivo</h4>
             <p>Recibe un kit de carrera exclusivo con tula, dorsal y muchas sorpresas.</p>
@@ -315,7 +316,7 @@
   <div class="container py-8">
     <div class="row justify-content-center mb-5" data-aos="fade-up">
       <div class="col-lg-7 text-center">
-        <h5 class="fw-bold mb-3" style="color: #87CC3E;">TESTIMONIOS</h5>
+        <h5 class="fw-bold mb-3" style="color: #B2D81F;">TESTIMONIOS</h5>
         <h2 class="display-7 fw-bold">Lo que dicen nuestros corredores</h2>
       </div>
     </div>
@@ -415,7 +416,7 @@
     }
     
     .testimonial-rating i {
-      color: var(--primary-color);
+      color: #B2D81F;
       margin-right: 2px;
     }
     
@@ -452,7 +453,7 @@
   <div class="container py-5 position-relative" style="z-index: 2;">
     <div class="row">
       <div class="col-lg-8 mx-auto text-center text-white" data-aos="fade-up">
-        <h6 class="fw-bold mb-3" style="color: #7fb069;">ÚNETE A NOSOTRAS</h6>
+        <h6 class="fw-bold mb-3" style="color: #98BB1B;">ÚNETE A NOSOTRAS</h6>
         <h2 class="display-4 fw-bold mb-4">¿Lista para correr con FEMTRIBE?</h2>
         <p class="lead mb-5">No te pierdas la oportunidad de ser parte de esta increíble experiencia. ¡Inscríbete ahora y vive la carrera de tus sueños!</p>
         <div class="d-flex justify-content-center gap-3">
@@ -464,5 +465,80 @@
   </div>
 </section>
 -->
+
+<style>
+  /* =========================================================
+     NOSOTROS — Estilos personalizados
+     ========================================================= */
+
+  /* Frases en negrilla del texto Historia (color VERDE OFICIAL) */
+  .ft-nosotros-bold {
+    color: #B2D81F;
+    font-weight: 800;
+  }
+
+  /* === ICONOS PROFESIONALES — outline clean / círculo blanco con borde verde ===
+     Tres tamaños: small (Misión/Visión) · large (Valores 70px) · xlarge (Features 88px)
+     Todos usan fondo blanco + borde delgado verde + icono verde.
+     Hover: invierte colores y levanta ligeramente. */
+
+  /* Tamaño SMALL → Misión / Visión */
+  .ft-icon-circle {
+    width: 44px;
+    height: 44px;
+    background-color: #FFFFFF;
+    border: 2px solid #B2D81F;
+    color: #B2D81F;
+    flex-shrink: 0;
+    transition: all 0.28s ease;
+  }
+  .ft-icon-size { font-size: 1.05rem; }
+
+  /* Tamaño LARGE → Valores (mantiene 70px del layout original) */
+  .ft-icon-circle-lg {
+    width: 70px;
+    height: 70px;
+    background-color: #FFFFFF;
+    border: 2.3px solid #B2D81F;
+    color: #B2D81F;
+    flex-shrink: 0;
+    transition: all 0.28s ease;
+  }
+  .ft-icon-size-lg { font-size: 1.55rem; }
+
+  /* Tamaño XLARGE → Features cards */
+  .ft-icon-circle-xl {
+    width: 88px;
+    height: 88px;
+    background-color: #FFFFFF;
+    border: 2.5px solid #B2D81F;
+    color: #B2D81F;
+    flex-shrink: 0;
+    transition: all 0.28s ease;
+  }
+  .ft-icon-size-xl { font-size: 1.95rem; }
+
+  /* Hover uniforme en todos los círculos */
+  .ft-icon-circle:hover,
+  .ft-icon-circle-lg:hover,
+  .ft-icon-circle-xl:hover {
+    background-color: #B2D81F;
+    color: #FFFFFF;
+    transform: translateY(-2.5px);
+    box-shadow: 0 9px 20px rgba(178, 216, 31, 0.28);
+  }
+
+  /* Ajuste: feature-card título h4 que no tiene peso y párrafos → mejorar legibilidad */
+  .feature-card h4 {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+  }
+  .feature-card p {
+    color: #6b7280;
+    line-height: 1.55;
+    margin: 0;
+  }
+</style>
 
 <?php include 'layouts/footer.php'; ?>
