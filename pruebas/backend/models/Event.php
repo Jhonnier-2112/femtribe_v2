@@ -162,12 +162,13 @@ class Event {
             $database = new Database();
             $db = $database->getConnection();
 
-            // Auto-migración para agregar la columna presale_slots_limit si no existe
-            try {
-                $db->exec("ALTER TABLE race_stages ADD COLUMN presale_slots_limit INT(11) DEFAULT NULL");
-            } catch (PDOException $e) {}
+            // Auto-migración para agregar columnas necesarias en race_stages si no existen
+            try { $db->exec("ALTER TABLE race_stages ADD COLUMN event_id INT(11) DEFAULT 1"); } catch (PDOException $e) {}
+            try { $db->exec("ALTER TABLE race_stages ADD COLUMN slots_limit INT(11) DEFAULT NULL"); } catch (PDOException $e) {}
+            try { $db->exec("ALTER TABLE race_stages ADD COLUMN presale_price DECIMAL(12,2) DEFAULT 0.00"); } catch (PDOException $e) {}
+            try { $db->exec("ALTER TABLE race_stages ADD COLUMN presale_slots_limit INT(11) DEFAULT NULL"); } catch (PDOException $e) {}
 
-            $stmt = $db->prepare("SELECT *, COALESCE(slots_limit, NULL) AS slots_limit, COALESCE(presale_slots_limit, NULL) AS presale_slots_limit FROM race_stages WHERE event_id = :event_id ORDER BY id ASC");
+            $stmt = $db->prepare("SELECT *, COALESCE(slots_limit, NULL) AS slots_limit, COALESCE(presale_slots_limit, NULL) AS presale_slots_limit FROM race_stages WHERE (event_id = :event_id OR event_id IS NULL OR event_id = 0) ORDER BY id ASC");
             $stmt->execute([':event_id' => $eventId]);
             $stages = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
 

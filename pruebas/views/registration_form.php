@@ -381,8 +381,11 @@
               <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center justify-content-between p-3" style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white;">
                 <div>
                   <h6 class="fw-bold mb-0"><i class="fas fa-fire me-2"></i>¡Tarifas de Preventa Activas!</h6>
-                  <small>Aprovecha los precios de preventa por tiempo limitado hasta el <?= !empty($event['presale_end_date']) ? date('d/m/Y g:i A', strtotime($event['presale_end_date'])) : '' ?></small>
-                </div>
+<small>
+    Aprovecha los precios de preventa por tiempo limitado hasta el
+    <?= !empty($event['presale_end_date']) ? date('d/m/Y g:i A', strtotime($event['presale_end_date'])) : '' ?>
+    o hasta agotar existencias de cupos.
+</small>                </div>
                 <span class="badge bg-white text-success fw-bold px-3 py-2 rounded-pill">PREVENTA</span>
               </div>
             <?php endif; ?>
@@ -419,7 +422,7 @@
               <label class="form-label-sport fw-bold mb-2">Etapas y Kilometrajes Disponibles *</label>
               <div class="row g-3" id="stagesContainer">
                 <?php 
-                $stagesList = $stages ?? [
+                $stagesList = !empty($stages) ? $stages : [
                   ['id' => 1, 'name' => '3K Perro y Adulto (Pet Run)', 'category_type' => 'mascota', 'price' => 55000, 'presale_price' => 45000, 'active_price' => 45000, 'distance' => '3K'],
                   ['id' => 2, 'name' => '3K Niño y Adulto (Infantil)', 'category_type' => 'nino', 'price' => 50000, 'presale_price' => 40000, 'active_price' => 40000, 'distance' => '3K'],
                   ['id' => 3, 'name' => '5K Adulto', 'category_type' => 'adulto', 'price' => 65000, 'presale_price' => 55000, 'active_price' => 55000, 'distance' => '5K'],

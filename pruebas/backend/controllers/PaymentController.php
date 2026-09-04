@@ -198,8 +198,12 @@ class PaymentController extends Controller {
                         $registration = \App\Models\Registration::findByOrderNumber($ref);
                         if ($registration && $registration['payment_status'] !== 'paid') {
                             \App\Models\Registration::updatePaymentStatusByOrder($ref, 'paid');
+                            $registration['payment_status'] = 'paid';
+                            if (!empty($order['total'])) {
+                                $registration['payment_amount'] = $order['total'];
+                            }
                             
-                            // Enviar email de bienvenida asíncronamente
+                            // Enviar email de confirmación y bienvenida al participante
                             try {
                                 $emailService = new \App\Services\EmailService();
                                 $emailService->sendWelcomeEmail($registration);
@@ -306,6 +310,10 @@ class PaymentController extends Controller {
                     $registration = \App\Models\Registration::findByOrderNumber($reference);
                     if ($registration && $registration['payment_status'] !== 'paid') {
                         \App\Models\Registration::updatePaymentStatusByOrder($reference, 'paid');
+                        $registration['payment_status'] = 'paid';
+                        if (!empty($order['total'])) {
+                            $registration['payment_amount'] = $order['total'];
+                        }
                         
                         // Enviar email de bienvenida asíncronamente
                         try {

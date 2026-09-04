@@ -151,6 +151,62 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Genérico de Próximamente (Inscripciones / Productos) -->
+    <div class="modal fade" id="proximamenteModal" tabindex="-1" aria-labelledby="proximamenteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden text-center position-relative" style="background: #ffffff;">
+                <div class="modal-header border-0 pb-0 pe-4 pt-4 justify-content-end">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body px-4 px-md-5 pb-5 pt-0">
+                    <!-- Icono dinámico -->
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow-sm" id="proxModalIconWrap" style="width: 76px; height: 76px; background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%); border: 3px solid #6da632;">
+                        <i class="fas fa-running fa-2x" id="proxModalIcon" style="color: #6da632;"></i>
+                    </div>
+
+                    <!-- Badge de Categoría -->
+                    <div>
+                        <span class="badge px-3 py-1.5 rounded-pill text-uppercase fw-bold mb-2" id="proxModalBadge" style="background-color: #eaf7e3; color: #2e7d32; font-size: 11px; letter-spacing: 1px;">
+                            🏃‍♀️ Carrera FEMTRIBE
+                        </span>
+                    </div>
+
+                    <!-- Título -->
+                    <h3 class="fw-bold text-dark mb-2" id="proxModalTitle" style="font-size: 24px;">
+                        ¡Inscripciones Próximamente!
+                    </h3>
+
+                    <!-- Mensaje Principal -->
+                    <p class="text-muted mb-3" id="proxModalMessage" style="font-size: 15px; line-height: 1.6;">
+                        Estamos ultimando los detalles para que vivas una experiencia única en <strong>Corre con FEMTRIBE</strong>. Las inscripciones se habilitarán muy pronto.
+                    </p>
+
+                    <!-- Caja informativa -->
+                    <div class="p-3 rounded-3 mb-4 text-start" id="proxModalNotice" style="background: #f8faf6; border-left: 4px solid #6da632;">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="fas fa-bell text-success mt-1"></i>
+                            <span class="small text-secondary" id="proxModalNoticeText">
+                                Mantente atenta(o) a nuestras redes oficiales o escríbenos a WhatsApp para ser de las primeras en enterarte de la apertura oficial.
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="d-flex flex-column gap-2">
+                        <a href="https://wa.me/573104771933?text=Hola%20FEMTRIBE,%20quisiera%20recibir%20notificaci%C3%B3n%20cuando%20se%20habiliten%20las%20inscripciones." target="_blank" class="btn btn-dark w-100 py-2.5 rounded-pill fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm" id="proxModalWhatsappBtn" style="background: #25D366; border-color: #25D366; color: #ffffff;">
+                            <i class="fab fa-whatsapp fs-5"></i>
+                            <span id="proxModalWhatsappText">Avisarme por WhatsApp</span>
+                        </a>
+
+                        <button type="button" class="btn btn-outline-secondary w-100 py-2 rounded-pill fw-semibold" data-bs-dismiss="modal">
+                            Entendido, ¡gracias!
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <style>
         /* Reglas globales: altura del navbar, sticky footer y espacio de contenido */
@@ -264,6 +320,60 @@
     </style>
 
     <script>
+        // Variables globales de configuración de módulos
+        window.FEMTRIBE_CONFIG = {
+            registrationsEnabled: <?= (defined('ENABLE_REGISTRATIONS') && ENABLE_REGISTRATIONS) ? 'true' : 'false' ?>,
+            productsEnabled: <?= (defined('ENABLE_PRODUCTS') && ENABLE_PRODUCTS) ? 'true' : 'false' ?>
+        };
+
+        // Función global para desplegar el Modal de Próximamente (Inscripciones / Productos)
+        window.showProximamenteModal = function(type = 'inscripciones', customData = {}) {
+            const modalEl = document.getElementById('proximamenteModal');
+            if (!modalEl) return;
+
+            const iconEl = document.getElementById('proxModalIcon');
+            const badgeEl = document.getElementById('proxModalBadge');
+            const titleEl = document.getElementById('proxModalTitle');
+            const messageEl = document.getElementById('proxModalMessage');
+            const noticeTextEl = document.getElementById('proxModalNoticeText');
+            const waBtn = document.getElementById('proxModalWhatsappBtn');
+            const waText = document.getElementById('proxModalWhatsappText');
+
+            if (type === 'productos') {
+                if (iconEl) iconEl.className = 'fas fa-shopping-bag fa-2x';
+                if (badgeEl) {
+                    badgeEl.textContent = '🛍️ Tienda FEMTRIBE';
+                    badgeEl.style.backgroundColor = '#eef2ff';
+                    badgeEl.style.color = '#3730a3';
+                }
+                if (titleEl) titleEl.textContent = customData.title || '¡Tienda Oficial Próximamente!';
+                if (messageEl) messageEl.innerHTML = customData.message || 'Nuestra colección exclusiva deportiva y accesorios estará disponible muy pronto para ti.';
+                if (noticeTextEl) noticeTextEl.textContent = customData.notice || 'Estamos preparando prendas de alto rendimiento y productos exclusivos. ¡Muy pronto abriremos compras!';
+                if (waBtn) {
+                    waBtn.href = 'https://wa.me/573104771933?text=' + encodeURIComponent('Hola FEMTRIBE, me gustaría recibir información sobre el lanzamiento de los productos de la tienda.');
+                }
+                if (waText) waText.textContent = 'Consultar Productos por WhatsApp';
+            } else {
+                // Default: inscripciones
+                if (iconEl) iconEl.className = 'fas fa-running fa-2x';
+                if (badgeEl) {
+                    badgeEl.textContent = '🏃‍♀️ Carrera FEMTRIBE';
+                    badgeEl.style.backgroundColor = '#eaf7e3';
+                    badgeEl.style.color = '#2e7d32';
+                }
+                if (titleEl) titleEl.textContent = customData.title || '¡Inscripciones Próximamente!';
+                if (messageEl) messageEl.innerHTML = customData.message || 'Estamos ultimando los detalles para que vivas una experiencia única en <strong>Corre con FEMTRIBE</strong>. Las inscripciones se habilitarán muy pronto.';
+                if (noticeTextEl) noticeTextEl.textContent = customData.notice || 'Mantente atenta(o) a nuestras redes oficiales o escríbenos a WhatsApp para ser de las primeras en enterarte de la apertura de cupos.';
+                if (waBtn) {
+                    waBtn.href = 'https://wa.me/573104771933?text=' + encodeURIComponent('Hola FEMTRIBE, quisiera recibir notificación cuando se habiliten las inscripciones de la carrera.');
+                }
+                if (waText) waText.textContent = 'Avisarme por WhatsApp';
+            }
+
+            const bsModal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            bsModal.show();
+        };
+
         // Función global para desplegar el Modal de Autenticación
         window.isUserLoggedIn = <?= !empty($_SESSION['user_id']) ? 'true' : 'false' ?>;
         window.showAuthModal = function(redirectUrl = '') {
@@ -293,6 +403,45 @@
                         navbarCollapse.classList.add('show');
                     }
                 });
+            }
+
+            // Detectar si la URL contiene parámetro ?proximamente=... (redirección desde backend)
+            const urlParams = new URLSearchParams(window.location.search);
+            const proxParam = urlParams.get('proximamente');
+            if (proxParam) {
+                setTimeout(() => {
+                    window.showProximamenteModal(proxParam);
+                }, 350);
+
+                // Limpiar parámetro de la URL sin recargar
+                urlParams.delete('proximamente');
+                const remaining = urlParams.toString();
+                const cleanUrl = window.location.pathname + (remaining ? '?' + remaining : '');
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+
+            // Interceptar clics en enlaces de inscripciones si están deshabilitadas
+            if (!window.FEMTRIBE_CONFIG.registrationsEnabled) {
+                document.addEventListener('click', function(e) {
+                    const targetLink = e.target.closest('a[href="/inscribirse"], a[href="/registrar"], .inscribete-btn-link');
+                    if (targetLink) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.showProximamenteModal('inscripciones');
+                    }
+                }, true);
+            }
+
+            // Interceptar clics en enlaces de productos si están deshabilitados
+            if (!window.FEMTRIBE_CONFIG.productsEnabled) {
+                document.addEventListener('click', function(e) {
+                    const targetLink = e.target.closest('a[href="/productos"], a[href^="/producto?"]');
+                    if (targetLink) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.showProximamenteModal('productos');
+                    }
+                }, true);
             }
         });
     </script>
