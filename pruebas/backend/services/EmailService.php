@@ -28,8 +28,8 @@ class EmailService {
         try {
             $host = getenv('MAIL_HOST') ?: \EmailConfig::SMTP_HOST;
             $port = (int)(getenv('MAIL_PORT') ?: \EmailConfig::SMTP_PORT);
-            $user = getenv('MAIL_USER') ?: \EmailConfig::SMTP_USERNAME;
-            $pass = getenv('MAIL_PASS') ?: \EmailConfig::SMTP_PASSWORD;
+            $user = \EmailConfig::getUsername();
+            $pass = \EmailConfig::getPassword();
             $enc  = strtolower(getenv('MAIL_ENCRYPTION') ?: \EmailConfig::SMTP_SECURE);
 
             $this->mailer->isSMTP();
@@ -66,8 +66,8 @@ class EmailService {
             $this->mailer->addAddress($participantData['email'], $participantData['nombres'] . ' ' . $participantData['apellidos']);
             
             // Configurar remitente
-            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
-            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
+            $this->mailer->setFrom(\EmailConfig::getUsername(), \EmailConfig::getFromName());
+            $this->mailer->addReplyTo(\EmailConfig::getUsername(), \EmailConfig::getFromName());
             
             // Configurar el correo
             $this->mailer->isHTML(true);
@@ -101,8 +101,8 @@ class EmailService {
             $nombre = trim(($user['nombres'] ?? '') . ' ' . ($user['apellidos'] ?? ''));
             $this->mailer->addAddress($user['email'], $nombre ?: $user['email']);
 
-            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
-            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
+            $this->mailer->setFrom(\EmailConfig::getUsername(), \EmailConfig::getFromName());
+            $this->mailer->addReplyTo(\EmailConfig::getUsername(), \EmailConfig::getFromName());
 
             $this->mailer->isHTML(true);
             $this->mailer->Subject = '🔒 Restauración de Contraseña - FEMTRIBE Runner';
