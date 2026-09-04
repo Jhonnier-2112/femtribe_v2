@@ -262,7 +262,9 @@ if (!defined('WHATSAPP_BUSINESS_NUMBER')) {
         if (imgCell) imgCell.appendChild(buildImageForSlug(it.slug, it.name));
       });
       totalEl.textContent = `Total: ${fmtCurrency(total)}`;
-      waBtn.href = buildWhatsAppUrl(items, total, peekOrderCode());
+      if (waBtn) {
+        waBtn.href = buildWhatsAppUrl(items, total, peekOrderCode());
+      }
       writeCart(items);
     }
 
@@ -324,17 +326,19 @@ if (!defined('WHATSAPP_BUSINESS_NUMBER')) {
     });
 
     // Limpiar carrito tras enviar por WhatsApp usando código secuencial
-    waBtn.addEventListener('click', function(ev){
-      ev.preventDefault();
-      const items = readCart();
-      if (!items.length) return;
-      let total = 0; items.forEach(i => { total += Number(i.price||0) * Number(i.qty||1); });
-      const code = nextOrderCode();
-      const url = buildWhatsAppUrl(items, total, code);
-      try { window.open(url, '_blank'); } catch(_){ location.href = url; }
-      writeCart([]);
-      render();
-    });
+    if (waBtn) {
+      waBtn.addEventListener('click', function(ev){
+        ev.preventDefault();
+        const items = readCart();
+        if (!items.length) return;
+        let total = 0; items.forEach(i => { total += Number(i.price||0) * Number(i.qty||1); });
+        const code = nextOrderCode();
+        const url = buildWhatsAppUrl(items, total, code);
+        try { window.open(url, '_blank'); } catch(_){ location.href = url; }
+        writeCart([]);
+        render();
+      });
+    }
 
     const btnCheckoutPay = document.getElementById('btn-checkout-pay');
     if (btnCheckoutPay) {
