@@ -24,7 +24,14 @@ class RegistrationConfig {
      * Verifica si las inscripciones están abiertas
      */
     public static function inscripcionesAbiertas() {
-        return self::INSCRIPCIONES_ABIERTAS;
+        if (defined('ENABLE_REGISTRATIONS')) {
+            return (bool)ENABLE_REGISTRATIONS;
+        }
+        $env = getenv('ENABLE_REGISTRATIONS') !== false ? getenv('ENABLE_REGISTRATIONS') : (getenv('INSCRIPCIONES_ABIERTAS') !== false ? getenv('INSCRIPCIONES_ABIERTAS') : null);
+        if ($env !== null) {
+            return filter_var($env, FILTER_VALIDATE_BOOLEAN);
+        }
+        return (bool)self::INSCRIPCIONES_ABIERTAS;
     }
     
     /**

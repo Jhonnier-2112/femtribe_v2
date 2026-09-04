@@ -2629,6 +2629,11 @@
     const inscribeteBtns = document.querySelectorAll('.inscribete-btn-link');
     inscribeteBtns.forEach(function (btn) {
       btn.addEventListener('click', function (e) {
+        if (window.FEMTRIBE_CONFIG && !window.FEMTRIBE_CONFIG.registrationsEnabled) {
+          e.preventDefault();
+          window.showProximamenteModal('inscripciones');
+          return false;
+        }
         if (window.isUserLoggedIn) {
           btn.setAttribute('href', '/inscribirse');
         } else {

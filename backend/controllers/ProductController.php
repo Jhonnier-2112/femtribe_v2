@@ -7,6 +7,11 @@ use App\Core\Controller;
 
 class ProductController extends Controller {
     public function index() {
+        if (defined('ENABLE_PRODUCTS') && !ENABLE_PRODUCTS) {
+            header('Location: /?proximamente=productos');
+            exit;
+        }
+
         $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
         $perPage = isset($_GET['per_page']) ? max(1, (int)$_GET['per_page']) : 12;
         $order = isset($_GET['order']) ? $_GET['order'] : 'created_at DESC';
@@ -46,6 +51,11 @@ class ProductController extends Controller {
     }
 
     public function show() {
+        if (defined('ENABLE_PRODUCTS') && !ENABLE_PRODUCTS) {
+            header('Location: /?proximamente=productos');
+            exit;
+        }
+
         $slug = isset($_GET['slug']) ? trim((string)$_GET['slug']) : '';
         if ($slug === '') {
             http_response_code(404);

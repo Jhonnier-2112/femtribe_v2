@@ -1,2798 +1,2541 @@
 <?php include 'layouts/header.php'; ?>
 <?php $inscribeteUrl = !empty($_SESSION['user_id']) ? '/inscribirse' : '/registro'; ?>
+<script>
+  // Al estar en el home, limpiamos cualquier redirect_after_auth residual de sesiones anteriores
+  // para evitar que al hacer login rediriga a /carrito o /checkout inesperadamente
+  sessionStorage.removeItem('redirect_after_auth');
+</script>
 
-<!-- Hero Section con Slider -->
-<section class="hero-slider position-relative">
-  <!-- Slider principal -->
-  <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-    <!-- Indicadores de navegación (Líneas horizontales) -->
+<!-- =========================================================================
+     FRANJA SUPERIOR: RELOJ CUENTA REGRESIVA INDEPENDIENTE
+     ========================================================================= -->
+<section class="countdown-top-bar py-4 py-lg-5" id="countdown-bar">
+  <div class="container" data-aos="fade-up" data-aos-duration="800">
+
+    <!-- Reloj Cuenta Regresiva: ESTRUCTURA [LÍNEAS IZQ] [4 CUADROS] [LÍNEAS DER] -->
+    <div class="modern-countdown-wrapper">
+      <div class="countdown-ends-row">
+        <!-- GRUPO 1: 3 LÍNEAS A LA IZQUIERDA (antes del primer cuadro) -->
+        <div class="countdown-end-lines countdown-lines-left" aria-hidden="true">
+          <span class="countdown-end-line"></span>
+          <span class="countdown-end-line"></span>
+          <span class="countdown-end-line"></span>
+        </div>
+
+        <!-- GRUPO 2: LOS 4 CUADROS IGUALES (Días / Horas / Minutos / Segundos) -->
+        <div class="countdown-boxes-row">
+          <div class="modern-countdown-item">
+            <span id="countdown-days" class="modern-countdown-number">00</span>
+            <span class="modern-countdown-label">Días</span>
+          </div>
+          <div class="modern-countdown-item">
+            <span id="countdown-hours" class="modern-countdown-number">00</span>
+            <span class="modern-countdown-label">Horas</span>
+          </div>
+          <div class="modern-countdown-item">
+            <span id="countdown-minutes" class="modern-countdown-number">00</span>
+            <span class="modern-countdown-label">Minutos</span>
+          </div>
+          <div class="modern-countdown-item">
+            <span id="countdown-seconds" class="modern-countdown-number">00</span>
+            <span class="modern-countdown-label">Segundos</span>
+          </div>
+        </div>
+
+        <!-- GRUPO 3: 3 LÍNEAS A LA DERECHA (después del último cuadro) -->
+        <div class="countdown-end-lines countdown-lines-right" aria-hidden="true">
+          <span class="countdown-end-line"></span>
+          <span class="countdown-end-line"></span>
+          <span class="countdown-end-line"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     HERO SECTION CON CARRUSEL DE ALTO IMPACTO
+     ========================================================================= -->
+<section class="hero-slider position-relative" id="inicio">
+  <!-- Carrusel de fondo -->
+  <div id="heroCarousel" class="carousel slide">
     <div class="carousel-indicators carousel-indicators-ft">
-      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"
+        aria-label="Slide 1"></button>
       <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
       <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="4" aria-label="Slide 5"></button>
     </div>
+
     <div class="carousel-inner">
-      <div class="carousel-item active" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo1.png'); background-size: cover; background-position: center; height: 100vh;">
-        <div class="carousel-overlay"></div>
+      <div class="carousel-item active" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo1.png');">
+        <div class="hero-overlay"></div>
       </div>
-      <div class="carousel-item" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo2.png'); background-size: cover; background-position: center; height: 100vh;">
-        <div class="carousel-overlay"></div>
+      <div class="carousel-item" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo2.png');">
+        <div class="hero-overlay"></div>
       </div>
-      <div class="carousel-item" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo3.png'); background-size: cover; background-position: center; height: 100vh;">
-        <div class="carousel-overlay"></div>
+      <div class="carousel-item" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo3.png');">
+        <div class="hero-overlay"></div>
       </div>
-      <!-- 
-      <div class="carousel-item" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo4.png'); background-size: cover; background-position: center; height: 100vh;">
-        <div class="carousel-overlay"></div>
+      <div class="carousel-item" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo4.png');">
+        <div class="hero-overlay"></div>
       </div>
-      <div class="carousel-item" style="background-image: url('assets/img/carrusel4.png'); background-size: cover; background-position: center; height: 100vh;">
-        <div class="carousel-overlay"></div>
+      <div class="carousel-item" style="background-image: url('assets/img/CorreconFemtribe2.0/fondo5.png');">
+        <div class="hero-overlay"></div>
       </div>
-      <div class="carousel-item" style="background-image: url('assets/img/carrusel5.png'); background-size: cover; background-position: center; height: 100vh;">
-        <div class="carousel-overlay"></div>
-      </div> -->
     </div>
   </div>
-  
-  <!-- Contenido superpuesto -->
-  <div class="hero-content position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center">
-    <div class="container text-center" data-aos="fade-up" data-aos-delay="200">
-      <!-- Logo Carrera 2.0 TAL CUAL, SIN tags, SIN filtros -->
+
+  <!-- Contenido superpuesto del Hero: Logo + Botones CTA -->
+  <div
+    class="hero-content position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+    <div class="container text-center py-4" data-aos="fade-up" data-aos-duration="1000">
+
+      <!-- Logo Oficial de la Carrera -->
       <div class="logo-wrapper mb-4">
-        <img src="assets/img/CorreconFemtribe2.0/logocarrera2.0.png" alt="Corre Con FEMTRIBE 2.0" class="logo-carrera img-fluid" onerror="this.src='assets/img/logocarrera.png'; this.onerror=null;">
+        <img src="assets/img/CorreconFemtribe2.0/logocarrera2.0.png" alt="Corre Con FemTribe 2.0"
+          class="logo-carrera img-fluid" onerror="this.src='assets/img/logocarrera.png'; this.onerror=null;">
       </div>
-      <h1 class="hero-title-ft">TU CARRERA EMPIEZA EN</h1>
-      
-      <!-- Modern Countdown -->
-      <div class="modern-countdown mb-5">
-        <div class="modern-countdown-item">
-          <span id="countdown-days" class="modern-countdown-number">00</span>
-          <span class="modern-countdown-label">Días</span>
-        </div>
-        <div class="modern-countdown-item">
-          <span id="countdown-hours" class="modern-countdown-number">00</span>
-          <span class="modern-countdown-label">Horas</span>
-        </div>
-        <div class="modern-countdown-item">
-          <span id="countdown-minutes" class="modern-countdown-number">00</span>
-          <span class="modern-countdown-label">Minutos</span>
-        </div>
-        <div class="modern-countdown-item">
-          <span id="countdown-seconds" class="modern-countdown-number">00</span>
-          <span class="modern-countdown-label">Segundos</span>
-        </div>
-      </div>
-      
+
+      <!-- [TMP COMENTADO] Botón CTA del carrusel (comentado temporalmente para visualización sin botón)
       <div class="d-flex justify-content-center gap-3 cta-buttons-ft">
         <a href="<?= $inscribeteUrl ?>" class="btn-cta-primary inscribete-btn-link">
-          <i class="fas fa-running me-2"></i>INSCRÍBETE AHORA
-        </a>
-        <a href="/consultar" class="btn-cta-secondary">
-          <i class="fas fa-search me-2"></i>CONSULTA INSCRIPCIÓN
+          ¡INSCRÍBETE AHORA!
         </a>
       </div>
-      
-      <style>
-        .cta-buttons-ft {
-          flex-wrap: wrap;
-          margin-top: 0.2rem;
-        }
-        .btn-cta-primary {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0.85rem 2rem;
-          font-family: 'Montserrat', sans-serif;
-          font-weight: 800;
-          font-size: 0.9rem;
-          letter-spacing: 1.3px;
-          text-transform: uppercase;
-          text-decoration: none;
-          color: #000;
-          background-color: #B2D81F;
-          border: 2px solid #B2D81F;
-          border-radius: 999px;
-          box-shadow: 0 5px 14px rgba(0, 0, 0, 0.25);
-          transition: all 0.2s ease;
-        }
-        .btn-cta-primary:hover {
-          background-color: #9fc41a;
-          border-color: #9fc41a;
-          color: #000;
-          transform: translateY(-2px);
-          box-shadow: 0 7px 18px rgba(0, 0, 0, 0.32);
-        }
-        
-        .btn-cta-secondary {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          padding: 0.85rem 2rem;
-          font-family: 'Montserrat', sans-serif;
-          font-weight: 700;
-          font-size: 0.9rem;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-          text-decoration: none;
-          color: #ffffff;
-          background-color: rgba(0, 0, 0, 0.35);
-          border: 2px solid #ffffff;
-          border-radius: 999px;
-          box-shadow: 0 5px 14px rgba(0, 0, 0, 0.25);
-          transition: all 0.2s ease;
-        }
-        .btn-cta-secondary:hover {
-          background-color: rgba(0, 0, 0, 0.5);
-          border-color: #ffffff;
-          color: #ffffff;
-          transform: translateY(-2px);
-          box-shadow: 0 7px 18px rgba(0, 0, 0, 0.32);
-        }
-        
-        @media (max-width: 576px) {
-          .cta-buttons-ft {
-            flex-direction: column;
-            gap: 10px !important;
-            align-items: center;
-            padding: 0 15px;
-          }
-          .btn-cta-primary,
-          .btn-cta-secondary {
-            width: 100%;
-            max-width: 310px;
-            padding: 0.8rem 1.4rem;
-            font-size: 0.82rem;
-          }
-        }
-      </style>
+      -->
+
     </div>
   </div>
-  
 </section>
 
+<!-- =========================================================================
+     SECCIÓN: MUCHO MÁS QUE UNA CARRERA
+     ========================================================================= -->
+<section class="more-than-race py-5" id="presentacion">
+  <div class="container py-4">
 
+    <!-- PÁRRAFO UNICO (2 frases juntas, 2 LÍNEAS MÁXIMO, ANCHO COMPLETO) -->
+    <div class="row justify-content-center" style="margin-bottom: 3.5rem;">
+      <div class="col-12 col-xl-11 text-center">
 
-<!-- Video Section -->
-<section id="conoce-mas" class="video-section py-5 position-relative overflow-hidden">
-  <div class="video-bg-overlay"></div>
-  <div class="container py-6">
-    <div class="row justify-content-center mb-3" data-aos="fade-up">
-      <div class="col-lg-8 text-center">
-        <h5 class="fw-bold mb-3" style="color: #87CC3E;">CONOCE MÁS</h5>
-        <p class="lead text-muted mb-4">Descubre todo lo que te espera en nuestra carrera más emocionante del año</p>
+        <p class="mtr-paragraph mtr-paragraph--lead mtr-paragraph--two-lines" data-aos="fade-up" data-aos-duration="900"
+          data-aos-delay="100">
+          <strong class="mtr-strong">CORRE CON FEMTRIBE 2.0</strong>
+          es una experiencia que invita a <strong class="mtr-strong">moverte, superarte, conectar y disfrutar.</strong>
+          Elige tu reto entre <strong class="mtr-strong">3K, 5K y 10K</strong>
+          y prepárate para vivir una jornada llena de
+          <strong class="mtr-strong">movimiento, música, emoción, conexión y momentos</strong> que querrás recordar.
+        </p>
+
       </div>
     </div>
-    
-    <!-- Race Info Section - Card Style -->
-    <div class="row justify-content-center mb-5" data-aos="fade-up" data-aos-delay="200">
-      <div class="col-lg-8">
-        <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-          <div class="card-body p-4 text-center" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-            <h4 class="text-dark fw-bold mb-4">
-              <i class="fas fa-map-marked-alt text-primary me-2"></i>
-              Recorrido de la carrera
-            </h4>
-            <p class="text-muted mb-4">Conoce el recorrido 5K por los lugares más emblemáticos del Municipio de Ricaurte</p>
-            <div class="map-features d-flex justify-content-center flex-wrap gap-4 align-items-center">
-              <div class="feature-item">
-                <i class="fas fa-route text-primary me-2"></i>
-                <span class="text-muted">Recorrido urbano</span>
-              </div>
-              <div class="feature-item">
-                <i class="fas fa-tint text-info me-2"></i>
-                <span class="text-muted">Puntos de hidratación</span>
-              </div>
-              <div class="feature-item">
-                <i class="fas fa-clock text-success me-2"></i>
-                <span class="text-muted">Acompañamiento de pacers</span>
-              </div>
-              <div class="feature-item">
-                <i class="fas fa-sign text-warning me-2"></i>
-                <span class="text-muted">Señalización</span>
-              </div>
+
+    <!-- =========================================================================
+         GRID 3 TARJETAS DE DISTANCIAS (3K / 5K / 10K) · IMAGEN 100% CUADRO
+         ========================================================================= -->
+    <div class="row g-4 justify-content-center align-items-stretch" id="distancias" style="margin-bottom: 0.4rem;">
+
+      <!-- ============ TARJETA 3K · TARJETA ÚNICA CONTINUA (imagen + info fusionados) ============ -->
+      <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="distance-card">
+          <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
+            <img src="assets/img/CorreconFemtribe2.0/tarjeta3k.png" alt="3K Niños y Mascotas Corre Con FemTribe 2.0"
+              class="distance-image-card__img" loading="lazy"
+              onerror="this.onerror=null;this.src='assets/img/CorreconFemtribe2.0/fondo1.png';">
+          </a>
+
+          <!-- BLOQUE INFO PEGADO A LA IMAGEN (misma tarjeta continua) · 3K -->
+          <div class="distance-info-block">
+            <div class="distance-info-block__header">
+              <h4 class="distance-info-block__title">
+                3K · Niños y mascotas
+              </h4>
             </div>
+            <p class="distance-info-block__desc">
+              La distancia perfecta para los más pequeños y sus mejores amigos.
+            </p>
+            <a href="<?= $inscribeteUrl ?>" class="distance-info-block__btn inscribete-btn-link">
+              INSCRÍBETE AQUÍ
+            </a>
           </div>
         </div>
       </div>
+
+      <!-- ============ TARJETA 5K · TARJETA ÚNICA CONTINUA ============ -->
+      <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="distance-card">
+          <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
+            <img src="assets/img/CorreconFemtribe2.0/tarjeta5k.png" alt="5K Para Todos Corre Con FemTribe 2.0"
+              class="distance-image-card__img" loading="lazy"
+              onerror="this.onerror=null;this.src='assets/img/CorreconFemtribe2.0/fondo2.png';">
+          </a>
+
+          <!-- BLOQUE INFO PEGADO A LA IMAGEN · 5K -->
+          <div class="distance-info-block">
+            <div class="distance-info-block__header">
+              <h4 class="distance-info-block__title">
+                5K · Para todos
+              </h4>
+            </div>
+            <p class="distance-info-block__desc">
+              La distancia perfecta para los que buscan un reto accesible, emocionante y lleno de energía.
+            </p>
+            <a href="<?= $inscribeteUrl ?>" class="distance-info-block__btn inscribete-btn-link">
+              INSCRÍBETE AQUÍ
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ TARJETA 10K · TARJETA ÚNICA CONTINUA ============ -->
+      <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="distance-card">
+          <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
+            <img src="assets/img/CorreconFemtribe2.0/tarjeta10k.png" alt="10K Superación Corre Con FemTribe 2.0"
+              class="distance-image-card__img" loading="lazy"
+              onerror="this.onerror=null;this.src='assets/img/CorreconFemtribe2.0/fondo3.png';">
+          </a>
+
+          <!-- BLOQUE INFO PEGADO A LA IMAGEN · 10K -->
+          <div class="distance-info-block">
+            <div class="distance-info-block__header">
+              <h4 class="distance-info-block__title">
+                10K · Para los que quieren más
+              </h4>
+            </div>
+            <p class="distance-info-block__desc">
+              La distancia para los que buscan superarse, desafiar sus límites y sentir el poder de cada kilómetro.
+            </p>
+            <a href="<?= $inscribeteUrl ?>" class="distance-info-block__btn inscribete-btn-link">
+              INSCRÍBETE AQUÍ
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- fin row tarjetas distancias -->
+
+    <!-- =========================================================================
+         ZONA CONSULTA DE INSCRIPCIÓN (2 columnas: texto+botón IZQ + foto DIFUMINADA DER)
+         ========================================================================= -->
+    <div class="row g-0 align-items-center justify-content-center consulta-inscripcion"
+      style="margin: 0.05rem 0 0.3rem 0;" data-aos="fade-up">
+
+      <!-- COLUMNA IZQUIERDA: Título + subtítulo + BOTÓN CONSULTA -->
+      <div class="col-12 col-lg-6 consulta-inscripcion__text-col">
+        <div class="consulta-inscripcion__text-wrap">
+
+          <h3 class="consulta-inscripcion__title">
+            Valida tu inscripción
+          </h3>
+
+          <p class="consulta-inscripcion__subtitle">
+            Verifica tu inscripción y consulta los datos de tu registro.
+          </p>
+
+          <a href="<?= $inscribeteUrl ?>" class="btn-consulta-inscripcion inscribete-btn-link">
+            CONSULTA DE INSCRIPCIÓN
+          </a>
+
+        </div>
+      </div>
+
+      <!-- COLUMNA DERECHA: FOTO DIFUMINADA (sin fondo, blend overlay, asimétrica derecha) -->
+      <div class="col-12 col-lg-6 consulta-inscripcion__photo-col">
+        <img src="assets/img/CorreconFemtribe2.0/difuminada.png" alt="Atleta Corre Con FemTribe 2.0"
+          class="consulta-inscripcion__photo" loading="lazy"
+          onerror="this.onerror=null;this.src='assets/img/CorreconFemtribe2.0/fondo5.png';">
+      </div>
+
     </div>
-    
-    <div class="row justify-content-center" data-aos="zoom-in" data-aos-delay="400">
-      <div class="col-lg-10">
-        <!-- Video Section -->
-        <div class="video-container position-relative mb-5">
-          <div class="video-wrapper">
-            <video 
-              id="femtribeVideo" 
-              class="w-100 rounded-4 shadow-lg" 
-              controls 
-              preload="metadata"
-              playsinline>
-              <source src="assets/videos/video.mp4" type="video/mp4">
-              <source src="assets/videos/video.webm" type="video/webm">
-              Tu navegador no soporta el elemento de video.
-            </video>
-            
-            <!-- Custom Play Button Overlay -->
-            <div class="play-button-overlay position-absolute top-50 start-50 translate-middle" id="playButtonOverlay">
-              <button class="custom-play-btn" onclick="playVideo()">
-                <i class="fas fa-play"></i>
+
+  </div>
+</section>
+
+<!-- =========================================================================
+     FRANJA CTA: ¡Anímate a vivir esta gran experiencia!
+     ========================================================================= -->
+<section class="cta-accent-bar py-5">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-12 text-center">
+        <h3 class="cta-accent-bar__title" data-aos="fade-up" data-aos-duration="800">
+          ¡Anímate a vivir esta gran experiencia!
+        </h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- =========================================================================
+     SECCIÓN: PATROCINADORES Y ALIADOS OFICIALES
+     ========================================================================= -->
+<section class="section-sponsors py-5" id="patrocinadores">
+  <div class="container py-4">
+
+    <div class="section-header text-center mb-5" data-aos="fade-up">
+      <span class="section-tagline">NUESTROS ALIADOS</span>
+      <h2 class="section-title">PATROCINADORES OFICIALES</h2>
+      <p class="section-subtitle">Marcas e instituciones que hacen posible la gran fiesta de Corre Con FEMTRIBE 2.0</p>
+      <div class="section-divider"></div>
+    </div>
+
+    <!-- Grilla de Logos de Patrocinadores -->
+    <div class="row g-4 align-items-center justify-content-center text-center">
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="100">
+        <div class="sponsor-logo-box">
+          <img src="assets/img/ricaurte.png" alt="Alcaldía de Ricaurte" class="img-fluid sponsor-logo"
+            onerror="this.style.display='none'">
+          <span class="sponsor-name-fallback">RICAURTE</span>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="200">
+        <div class="sponsor-logo-box">
+          <img src="assets/img/femtribe_verde.png" alt="FEMTRIBE Running" class="img-fluid sponsor-logo">
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="300">
+        <div class="sponsor-logo-box">
+          <i class="fas fa-bolt text-accent fa-2x mb-2"></i>
+          <span class="d-block fw-bold text-white small">GATORADE</span>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="400">
+        <div class="sponsor-logo-box">
+          <i class="fas fa-heartbeat text-accent fa-2x mb-2"></i>
+          <span class="d-block fw-bold text-white small">CLÍNICA SALUD</span>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="500">
+        <div class="sponsor-logo-box">
+          <i class="fas fa-shoe-prints text-accent fa-2x mb-2"></i>
+          <span class="d-block fw-bold text-white small">RUNNER STORE</span>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="600">
+        <div class="sponsor-logo-box">
+          <i class="fas fa-tint text-accent fa-2x mb-2"></i>
+          <span class="d-block fw-bold text-white small">AGUA PURA</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN: PREGUNTAS FRECUENTES (FAQ ACORDEÓN)
+     ========================================================================= -->
+<section class="section-faq py-5" id="faq">
+  <div class="container py-4">
+
+    <div class="section-header text-center mb-5" data-aos="fade-up">
+      <span class="section-tagline">RESOLVEMOS TUS DUDAS</span>
+      <h2 class="section-title">PREGUNTAS FRECUENTES</h2>
+      <p class="section-subtitle">Todo lo que necesitas saber antes del gran día de la carrera</p>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8" data-aos="fade-up">
+        <div class="accordion custom-dark-accordion" id="faqAccordion">
+
+          <!-- Pregunta 1 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                aria-expanded="true" aria-controls="collapseOne">
+                <i class="fas fa-box-open me-3 text-accent"></i> ¿Dónde y cuándo se realiza la entrega de kits?
               </button>
-            </div>
-          </div>
-        </div>
-          
-          <!-- Video Stats -->
-          <div class="video-stats mt-4">
-            <div class="row text-center">
-              <div class="col-md-4">
-                <div class="stat-item">
-                  <div class="stat-icon">
-                    <i class="fas fa-users text-primary"></i>
-                  </div>
-                  <h4 class="text-dark fw-bold">600+</h4>
-                  <p class="text-muted">Participantes</p>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="stat-item">
-                  <div class="stat-icon">
-                    <i class="fas fa-route text-primary"></i>
-                  </div>
-                  <h4 class="text-dark fw-bold">5K</h4>
-                  <p class="text-muted">Distancia</p>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="stat-item">
-                  <div class="stat-icon">
-                    <i class="fas fa-trophy text-primary"></i>
-                  </div>
-                  <h4 class="text-dark fw-bold">20</h4>
-                  <p class="text-muted">Premios</p>
-                </div>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                La entrega de kits se llevará a cabo los días previos a la carrera en la Expo FemTribe. Debes
+                presentar tu cédula de ciudadanía original o el comprobante de inscripción que puedes descargar desde
+                esta misma plataforma.
               </div>
             </div>
           </div>
+
+          <!-- Pregunta 2 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <i class="fas fa-paw me-3 text-accent"></i> ¿Puedo participar con mi mascota o con niños pequeños?
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                ¡Sí! La distancia <strong>3K Recreativa</strong> es 100% familiar y Pet Friendly. Los niños menores de
+                12 años deben estar acompañados por un adulto responsable debidamente inscrito.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 3 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                <i class="fas fa-check-circle me-3 text-accent"></i> ¿Cómo confirmo que mi pago e inscripción fueron
+                exitosos?
+              </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Una vez completado el pago a través de Wompi (PSE, Tarjeta de Crédito, Nequi, etc.), recibirás un correo
+                electrónico de confirmación. Además, puedes verificar en cualquier momento tu estado en la sección <a
+                  href="/consultar" class="text-accent fw-bold">Consulta Tu Inscripción</a> ingresando tu número de
+                documento.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 4 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                <i class="fas fa-exchange-alt me-3 text-accent"></i> ¿Puedo transferir mi inscripción a otra persona?
+              </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Los cambios o cesiones de cupo se permiten hasta 15 días calendario antes del evento, contactando al
+                equipo organizador a través de nuestros canales oficiales o soporte de WhatsApp.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 5 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                <i class="fas fa-tshirt me-3 text-accent"></i> ¿Qué talla de camiseta debo elegir?
+              </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                En el formulario de inscripción dispondrás de la tabla de medidas exacta en centímetros para silueta
+                dama, caballero y niños. Te recomendamos verificarla para asegurar tu talla ideal.
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
+  </div>
 </section>
 
-<!-- Categories Section -->
-<section class="section py-5" style="background: linear-gradient(135deg, #87CC3E 0%, #6ca331 50%, #5a8f2a 100%); position: relative; overflow: hidden;">
-  <!-- Patrón geométrico de fondo -->
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: 
-    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 40%),
-    radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0%, transparent 30%);
-    z-index: 1;"></div>
-  
-  <div class="container py-4 position-relative" style="z-index: 2;">
-    <div class="row justify-content-center mb-5" data-aos="fade-up">
-      <div class="col-lg-8 text-center">
-        <h1 class="display-5 fw-bold mb-0" style="
-          color: #ffffff; 
-          font-weight: 900; 
-          text-shadow: 3px 3px 8px rgba(0,0,0,0.6), 0 0 30px rgba(255,255,255,0.3); 
-          letter-spacing: 2px;
-        ">DISTANCIAS</h1>
-      </div>
-    </div>
-    <div class="row justify-content-center gx-1 gy-4">
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="category-card modern-card" style="background-image: url('assets/img/CorreconFemtribe2.0/tarjeta3k.png');">
-          <div class="category-overlay"></div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="category-card modern-card" style="background-image: url('assets/img/CorreconFemtribe2.0/tarjeta5k.png');">
-          <div class="category-overlay"></div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-        <div class="category-card modern-card" style="background-image: url('assets/img/CorreconFemtribe2.0/tarjeta10k.png');">
-          <div class="category-overlay"></div>
-        </div>
-      </div>
-    </div>
-    <!-- Botón único centralizado -->
-    <div class="row justify-content-center mt-5" data-aos="fade-up" data-aos-delay="400">
-      <div class="col-auto">
-        <a href="<?= $inscribeteUrl ?>" class="btn btn-inscribete btn-lg px-5 py-3 inscribete-btn-link">
-          <i class="fas fa-running me-2"></i>
-          ¡Inscríbete Ahora!
+<!-- =========================================================================
+     BANNER FINAL CTA: ÚNETE A LA TRIBU
+     ========================================================================= -->
+<section class="section-final-cta py-5 position-relative text-center overflow-hidden">
+  <div class="final-cta-overlay"></div>
+  <div class="container py-5 position-relative" style="z-index: 2;" data-aos="zoom-in">
+    <div class="col-lg-8 mx-auto">
+      <span class="badge-ft-pill mb-3"><i class="fas fa-fire text-accent me-2"></i>CUPOS LIMITADOS</span>
+      <h2 class="display-5 fw-black text-white mb-3">¿ESTÁS LISTO PARA VIVIR LA EXPERIENCIA?</h2>
+      <p class="lead text-light text-opacity-90 mb-4">
+        No dejes pasar la oportunidad de correr, disfrutar y celebrar en comunidad. ¡Inscríbete hoy y asegura tu kit
+        oficial con precio de preventa!
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="<?= $inscribeteUrl ?>" class="btn-cta-primary btn-lg px-5 py-3 inscribete-btn-link">
+          <i class="fas fa-running me-2"></i>¡INSCRIBIRME AHORA!
+        </a>
+        <a href="/consultar" class="btn-cta-secondary btn-lg px-5 py-3">
+          <i class="fas fa-search me-2"></i>Validar Mi Inscripción
         </a>
       </div>
     </div>
   </div>
-  
-  <style>
-    .modern-card {
-      border-radius: 20px;
-      overflow: hidden;
-      aspect-ratio: 3 / 4;
-      min-height: 500px;
-      position: relative;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      cursor: pointer;
-      border: 3px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 
-        0 15px 50px rgba(0, 0, 0, 0.2),
-        0 8px 25px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(1px);
-    }
-    
-    .modern-card:hover {
-      transform: translateY(-12px) scale(1.03);
-      box-shadow: 
-        0 25px 70px rgba(0, 0, 0, 0.25),
-        0 15px 40px rgba(0, 0, 0, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      border-color: rgba(255, 255, 255, 0.95);
-    }
-    
-    .modern-card::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(
-        135deg,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.05) 50%,
-        transparent 100%
-      );
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    
-    .modern-card:hover::after {
-      opacity: 1;
-    }
-    
-    .category-overlay {
-      display: none;
-    }
-    
-    .btn-inscribete {
-      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-      border: 3px solid rgba(255, 255, 255, 0.9);
-      border-radius: 50px;
-      color: #000000;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 
-        0 12px 35px rgba(0, 0, 0, 0.15),
-        0 6px 20px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.8);
-      position: relative;
-      overflow: hidden;
-      font-size: 1.1rem;
-      backdrop-filter: blur(10px);
-    }
-    
-    .btn-inscribete:hover {
-      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-      transform: translateY(-3px) scale(1.05);
-      box-shadow: 
-        0 18px 50px rgba(0, 0, 0, 0.2),
-        0 8px 25px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.9);
-      color: #000000;
-      border-color: rgba(255, 255, 255, 1);
-    }
-    
-    .btn-inscribete::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.6s ease;
-    }
-    
-    .btn-inscribete:hover::before {
-      left: 100%;
-    }
-  </style>
 </section>
 
-
+<!-- =========================================================================
+     ESTILOS ESPECÍFICOS DEL HOME (PALETA: NEGROS, BLANCOS Y VERDES LIMA)
+     ========================================================================= -->
 <style>
-  .hero-slider {
-    height: 100vh;
-    overflow: hidden;
-    margin-top: 0;
-    padding-top: 0 !important;
-    background-color: #1a1a1a;
+  /* --- VARIABLES Y CONFIGURACIÓN GLOBAL --- */
+  :root {
+    --ft-bg-black: #0d0d10;
+    --ft-bg-dark: #131317;
+    --ft-bg-card: #1c1c22;
+    --ft-bg-card-hover: #24242c;
+    --ft-green-accent: #B2D81F;
+    --ft-green-primary: #87CC3E;
+    --ft-green-dark: #6ba829;
+    --ft-white: #ffffff;
+    --ft-gray-light: #e4e4e7;
+    --ft-gray-muted: #9ca3af;
+    --ft-border-subtle: rgba(255, 255, 255, 0.08);
+    --ft-border-green: rgba(178, 216, 31, 0.35);
+    --ft-glow-green: 0 0 25px rgba(178, 216, 31, 0.35);
   }
-  
-  /* ===== INDICADORES CARRUSEL FEMTRIBE 2.0: BARRAS ABAJO (donde estaban) ===== */
-  .carousel-indicators-ft {
-    z-index: 100 !important;
-    margin-bottom: 1.8rem !important;
-    bottom: 0;
+
+  body {
+    background-color: var(--ft-bg-black) !important;
+    color: var(--ft-gray-light) !important;
+    font-family: 'Montserrat', sans-serif !important;
   }
-  
-  .carousel-indicators-ft [data-bs-target] {
-    width: 55px !important;
-    height: 5px !important;
-    border-radius: 3px !important;
-    background-color: rgba(255, 255, 255, 0.5) !important;
-    border: none !important;
-    opacity: 1 !important;
-    margin: 0 8px !important;
-    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  .text-accent {
+    color: var(--ft-green-accent) !important;
   }
-  
-  .carousel-indicators-ft [data-bs-target]:hover {
-    background-color: rgba(255, 255, 255, 0.8) !important;
-    transform: scaleY(1.2);
+
+  /* --- FRANJA SUPERIOR COUNTDOWN INDEPENDIENTE (PALETA OFICIAL EVENTO) --- */
+  :root {
+    --ev-green: #B2D81F;
+    --ev-blue-dark: #003A77;
+    --ev-blue-light: #41CEB3;
+    --ev-white: #ffffff;
   }
-  
-  .carousel-indicators-ft .active {
-    width: 85px !important;
-    background-color: #B2D81F !important;
-    box-shadow: 
-      0 2px 12px rgba(178, 216, 31, 0.7),
-      0 0 20px rgba(178, 216, 31, 0.4) !important;
-  }
-  
-  .carousel-inner {
-    overflow: hidden;
-  }
-  
-  /* ===== HERO CONTENT: TODO ARRIBA, SIN SEPARACIONES EXTRA ===== */
-  .hero-content {
-    align-items: flex-start !important;
-    padding-top: 4.8rem !important;
-  }
-  
-  /* ===== LOGO CARRERA 2.0: 350px - SOLO ESTE SE MUEVE HACIA ABAJO (margin-top) ===== */
-  .logo-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 3.5rem !important;
-    margin-bottom: 0.1rem !important;
-  }
-  
-  .logo-carrera {
-    height: auto;
-    max-height: 350px !important;
-    max-width: 94%;
-    width: auto;
-    display: block;
-    margin: 0 auto;
-    filter: drop-shadow(0 5px 16px rgba(0, 0, 0, 0.55));
-  }
-  
-  /* ===== TÍTULO HERO: SIN MUCHO MARGEN ===== */
-  .hero-title-ft {
-    font-family: 'Montserrat', 'Oswald', 'Arial Black', Arial, sans-serif;
-    font-size: 2.05rem !important;
-    font-weight: 900 !important;
-    color: #ffffff !important;
-    letter-spacing: 2.8px;
-    line-height: 1.15;
-    margin: -9 0 1.8rem 0 !important;
+
+  .countdown-top-bar {
+    background-color: var(--ev-blue-light);
     position: relative;
-    top: -1.8rem;
+    padding-top: 8.5rem !important;
+    padding-bottom: 2.5rem !important;
+    overflow: hidden;
+  }
+
+  .countdown-top-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--ev-green) 50%, transparent 100%);
+    opacity: 0.7;
+  }
+
+  .countdown-top-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 58, 119, 0.18);
+    border: 1px solid rgba(0, 58, 119, 0.35);
+    color: var(--ev-blue-dark);
+    padding: 0.4rem 1.1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 1.3px;
     text-transform: uppercase;
-    text-shadow: 2.5px 2.5px 6px rgba(0, 0, 0, 0.85);
-    display: block;
-    text-align: center;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-stretch: condensed;
+    backdrop-filter: blur(10px);
+    margin-bottom: 1.2rem;
   }
-  
-  .hero-title-ft::after {
-    display: none !important;
+
+  .modern-countdown-wrapper {
+    max-width: 500px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
   }
-  
-  /* ===== RELOJ CUENTA REGRESIVA: márgenes compactos para no tocar las barras ===== */
-  .modern-countdown {
+
+  /* ESTRUCTURA PRINCIPAL FLEX: [LÍNEAS IZQ] [4 CUADROS] [LÍNEAS DER] */
+  .countdown-ends-row {
     display: flex;
+    flex-direction: row;
+    align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-bottom: 5rem;
+    gap: 0;
+    margin: 0;
+    flex-wrap: nowrap;
+    position: relative;
+    z-index: 2;
   }
-  
+
+  /* Grupos de 3 líneas EN LOS EXTREMOS — salen HACIA AFUERA de los cuadros laterales */
+  .countdown-end-lines {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* LÍNEAS IZQUIERDA: nacen en el BORDE IZQUIERDO del bloque de cuadros → van HACIA LA IZQUIERDA hasta el borde pantalla */
+  .countdown-lines-left {
+    right: calc(100% + 0px);
+    width: 9999px;
+    max-width: 9999px;
+  }
+
+  /* LÍNEAS DERECHA: nacen en el BORDE DERECHO del bloque de cuadros → van HACIA LA DERECHA hasta el borde pantalla */
+  .countdown-lines-right {
+    left: calc(100% + 0px);
+    width: 9999px;
+    max-width: 9999px;
+  }
+
+  .countdown-end-line {
+    display: block;
+    height: 3.5px;
+    background-color: var(--ev-white);
+    border-radius: 3px;
+    width: 100%;
+  }
+
+  /* Gradientes en las líneas para efecto de fundido natural al salir de los cuadros */
+  .countdown-lines-left .countdown-end-line {
+    background: linear-gradient(270deg, var(--ev-white) 0%, transparent 30%);
+  }
+
+  .countdown-lines-right .countdown-end-line {
+    background: linear-gradient(90deg, var(--ev-white) 0%, transparent 30%);
+  }
+
+  /* Fila de los 4 CUADROS IGUALES (centrados, TAMAÑO REDUCIDO, ESTÉTICO Y SIMÉTRICO) */
+  .countdown-boxes-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    justify-items: center;
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 0;
+  }
+
+  .countdown-boxes-row .modern-countdown-item {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Cuadros: CASI CUADRADOS, TAMAÑO MÁS PEQUEÑO, ESTÉTICO Y SIMÉTRICO */
   .modern-countdown-item {
+    background-color: var(--ev-blue-dark) !important;
+    border: 1.5px solid var(--ev-green) !important;
+    border-radius: 10px;
+    padding: 0.8rem 0.4rem 0.65rem !important;
+    min-height: 95px;
+    aspect-ratio: 1 / 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 58, 119, 0.9) !important;
-    border: 2px solid #41CEB3 !important;
-    border-radius: 14px !important;
-    padding: 1rem 1.2rem !important;
-    min-width: 108px !important;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 18px rgba(0, 58, 119, 0.28), 0 0 12px rgba(178, 216, 31, 0.18);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+    text-align: center;
     position: relative;
-    transition: border-color 0.2s ease;
+    z-index: 3;
   }
-  
+
   .modern-countdown-item:hover {
-    border-color: #B2D81F !important;
+    transform: translateY(-2px);
+    border-color: var(--ev-green) !important;
   }
-  
-  .modern-countdown-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: #41CEB3;
-    border-radius: 14px 14px 0 0;
-  }
-  
+
   .modern-countdown-number {
-    font-size: 2.9rem !important;
+    font-size: 2.2rem !important;
     font-weight: 900 !important;
-    color: #D426C8 !important;
-    line-height: 1 !important;
-    font-family: 'Montserrat', sans-serif !important;
-    letter-spacing: 0.5px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    color: var(--ev-green) !important;
+    line-height: 1;
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 0 1px 5px rgba(178, 216, 31, 0.28);
+    margin: 0;
   }
-  
+
   .modern-countdown-label {
-    font-size: 0.82rem !important;
+    font-size: 0.7rem !important;
     font-weight: 700 !important;
-    color: #41CEB3 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 2px !important;
-    margin-top: 0.5rem !important;
+    color: var(--ev-white) !important;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 0.9rem;
+    display: block;
   }
-  
-  /* ===== RESPONSIVE: SOLO LOGO BAJA, LO DEMAS QUIETO ===== */
-  @media (max-width: 991px) {
-    .hero-slider {
-      padding-top: 0 !important;
-    }
-    .hero-content { padding-top: 4rem !important; }
-    .carousel-indicators-ft { margin-bottom: 1.5rem !important; }
-    .logo-wrapper { margin-top: 1.5rem !important; margin-bottom: 0.1rem !important; }
-    .logo-carrera { max-height: 305px !important; max-width: 94%; }
-    .hero-title-ft {
-      font-size: 1.9rem !important;
-      letter-spacing: 2.3px;
-      margin: 0 0 0.8rem 0 !important;
-    }
-    .modern-countdown { margin-bottom: 1.1rem; }
-    .premios-content { padding-left: 0 !important; }
-  }
-  
-  @media (max-width: 768px) {
-    .hero-slider {
-      height: auto !important;
-      min-height: 100vh !important;
-      overflow: visible !important;
-      padding-top: 0 !important;
-      padding-bottom: 4rem !important;
-    }
-    .hero-slider .carousel,
-    .hero-slider .carousel-inner,
-    .hero-slider .carousel-item {
-      min-height: 100vh !important;
-      height: auto !important;
-    }
-    .modern-card {
-      min-height: 360px !important;
-    }
-    .hero-content { padding-top: 3.8rem !important; }
-    .carousel-indicators-ft { margin-bottom: 1.2rem !important; }
-    .carousel-indicators-ft [data-bs-target] { width: 40px !important; }
-    .carousel-indicators-ft .active { width: 60px !important; }
-    .logo-wrapper { margin-top: 1.2rem !important; margin-bottom: 0.08rem !important; }
-    .logo-carrera { max-height: 250px !important; max-width: 93%; }
-    .hero-title-ft {
-      font-size: 1.55rem !important;
-      letter-spacing: 1.8px;
-      margin: 0 0 0.7rem 0 !important;
-    }
-    .modern-countdown {
-      gap: 10px;
-      margin-bottom: 1rem;
-    }
-    .modern-countdown-item {
-      min-width: 82px !important;
-      padding: 0.85rem 0.7rem !important;
-      border-radius: 12px !important;
-    }
-    .modern-countdown-number {
-      font-size: 2rem !important;
-    }
-    .modern-countdown-label {
-      font-size: 0.7rem !important;
-      letter-spacing: 1.2px !important;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .modern-card {
-      min-height: 320px !important;
-      aspect-ratio: 4 / 5 !important;
-    }
-    .hero-content { padding-top: 3.5rem !important; }
-    .carousel-indicators-ft { margin-bottom: 1rem !important; }
-    .carousel-indicators-ft [data-bs-target] {
-      width: 28px !important;
-      height: 4px !important;
-      margin: 0 4px !important;
-    }
-    .carousel-indicators-ft .active { width: 42px !important; }
-    .logo-wrapper { margin-top: 1rem !important; margin-bottom: 0.06rem !important; }
-    .logo-carrera { max-height: 200px !important; max-width: 93%; }
-    .hero-title-ft {
-      font-size: 1.25rem !important;
-      letter-spacing: 1.3px;
-      margin: 0 0 0.6rem 0 !important;
-    }
-    .modern-countdown {
-      margin-bottom: 0.9rem;
-    }
-    .modern-countdown-item {
-      min-width: 68px !important;
-      padding: 0.72rem 0.5rem !important;
-    }
-    .modern-countdown-number {
-      font-size: 1.65rem !important;
-    }
-    .modern-countdown-label {
-      font-size: 0.62rem !important;
-      letter-spacing: 0.8px !important;
-      margin-top: 0.3rem !important;
-    }
-  }
-  
-  @media (max-width: 375px) {
-    .hero-content { padding-top: 3.2rem !important; }
-    .carousel-indicators-ft { margin-bottom: 0.8rem !important; }
-    .logo-wrapper { margin-top: 1.3rem !important; margin-bottom: 0.05rem !important; }
-    .logo-carrera { max-height: 165px !important; max-width: 92%; }
-    .hero-title-ft {
-      font-size: 1.05rem !important;
-      letter-spacing: 1px;
-      margin: 0 0 0.55rem 0 !important;
-    }
-    .modern-countdown {
-      gap: 6px !important;
-      margin-bottom: 0.8rem;
-    }
-    .modern-countdown-item {
-      min-width: 60px !important;
-      padding: 0.6rem 0.35rem !important;
-      border-radius: 10px !important;
-    }
-    .modern-countdown-number {
-      font-size: 1.4rem !important;
-    }
-    .modern-countdown-label {
-      font-size: 0.55rem !important;
-    }
-    .btn-cta-primary,
-    .btn-cta-secondary {
-      max-width: 270px !important;
-      font-size: 0.78rem !important;
-      padding: 0.7rem 1rem !important;
-    }
-  }
-  
-  /* Video Section Styles */
-  .video-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
+
+  /* --- HERO SECTION --- */
+  .hero-slider {
+    min-height: 100vh;
     position: relative;
-    min-height: 50vh;
-    display: flex;
-    align-items: center;
+    background-color: var(--ft-bg-black);
+    overflow: hidden;
   }
-  
-  .video-bg-overlay {
+
+  .hero-slider .carousel-item {
+    height: 100vh;
+    min-height: 650px;
+    background-size: cover;
+    background-position: center;
+    animation: none !important;
+    transform: none !important;
+    transition: transform 0.5s ease !important;
+  }
+
+  .hero-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: 
-      radial-gradient(circle at 20% 30%, rgba(40, 167, 69, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(32, 201, 151, 0.06) 0%, transparent 50%),
-      linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,249,250,0.95) 100%);
-    z-index: 1;
+    background: linear-gradient(180deg,
+        rgba(13, 13, 16, 0.4) 0%,
+        rgba(13, 13, 16, 0.5) 50%,
+        rgba(13, 13, 16, 0.7) 100%);
   }
-  
-  /* Premios Section Styles */
-  .premios-section {
-    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    position: relative;
-    min-height: auto;
-    padding: 60px 0;
-    border-top: 2px solid #e9ecef;
-    border-bottom: 2px solid #e9ecef;
+
+  .hero-content {
+    z-index: 10;
+    display: block;
+    pointer-events: none;
   }
-  
-  .premios-bg-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+
+  .hero-content>.container {
     height: 100%;
-    background: 
-      radial-gradient(circle at 20% 30%, rgba(135, 204, 62, 0.03) 0%, transparent 50%),
-      radial-gradient(circle at 80% 70%, rgba(135, 204, 62, 0.02) 0%, transparent 50%);
-    z-index: 1;
-  }
-  
-  .premios-section .container {
     position: relative;
-    z-index: 2;
+    pointer-events: none;
+    padding: 0;
   }
-  
-  .premios-header .premios-icon {
-    display: inline-block;
-    width: 70px;
-    height: 70px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, #6ca331 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 15px auto;
-    box-shadow: 0 10px 25px rgba(135, 204, 62, 0.3);
-    border: 3px solid rgba(135, 204, 62, 0.1);
+
+  .hero-content .logo-wrapper,
+  .hero-content .logo-wrapper *,
+  .hero-content .cta-buttons-ft,
+  .hero-content .cta-buttons-ft * {
+    pointer-events: auto;
   }
-  
-  .premios-header .premios-icon i {
-    font-size: 2rem;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  }
-  
-  .premios-section h2 {
-    color: #1a252f !important;
-    font-weight: 700;
-    font-size: 2.2rem;
-    margin-bottom: 15px;
-    position: relative;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  }
-  
-  .premios-section h2::after {
-    content: '';
+
+  .hero-content .logo-wrapper {
     position: absolute;
-    bottom: -10px;
+    top: 15.5rem;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color) 0%, #6ca331 100%);
-    border-radius: 2px;
-  }
-  
-  .premios-section .lead {
-    color: #495057 !important;
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 30px;
-    text-shadow: none;
-    line-height: 1.6;
-  }
-  
-  .premios-image-container {
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-    border: 2px solid rgba(135, 204, 62, 0.1);
-  }
-  
-  .premio-img-ft {
     width: 100%;
-    height: 400px;
-    object-fit: contain;
+    margin-bottom: 0;
   }
-  
-  @media (max-width: 991px) {
-    .premio-img-ft {
-      height: 280px !important;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .premio-img-ft {
-      height: 220px !important;
-    }
-  }
-  
-  .premios-image-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.12);
-    border-color: rgba(135, 204, 62, 0.2);
-  }
-  
-  .premios-image {
-    transition: all 0.3s ease;
-  }
-  
-  .premios-image-container:hover .premios-image {
-    transform: scale(1.05);
-  }
-  
-  .premios-image-overlay {
+
+  .hero-content .cta-buttons-ft {
     position: absolute;
-    top: 20px;
-    right: 20px;
-  }
-  
-  .premios-badge {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #6ca331 100%);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 25px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 20px rgba(135, 204, 62, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-  }
-  
-  .premios-content {
-    padding-left: 2rem;
-  }
-  
-  .premios-highlight {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
-    padding: 1rem;
-    border-radius: 12px;
-    border: 2px solid rgba(135, 204, 62, 0.3);
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(10px);
-    margin-bottom: 15px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-  }
-  
-  .premios-highlight h3 {
-    color: #2c3e50 !important;
-    font-weight: 700;
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-    text-shadow: none;
-  }
-  
-  .premios-highlight h3 .text-warning {
-    color: #87cc3e !important;
-    font-weight: 800;
-  }
-  
-  .premios-highlight p {
-    color: #6c757d !important;
-    font-size: 1rem;
-    line-height: 1.5;
-    font-weight: 400;
-  }
-  
-  .premios-highlight::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 80px;
-    height: 80px;
-    background: radial-gradient(circle, rgba(135, 204, 62, 0.08) 0%, transparent 70%);
-    border-radius: 50%;
-    transform: translate(30px, -30px);
-  }
-  
-  .premios-highlight::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: linear-gradient(180deg, #87cc3e 0%, #6ca331 100%);
-    border-radius: 0 2px 2px 0;
-  }
-  
-  .feature-card {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.4rem;
-    background: linear-gradient(135deg, rgba(248, 249, 250, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-    border-radius: 15px;
-    border: 2px solid rgba(135, 204, 62, 0.2);
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    margin-bottom: 15px;
-  }
-  
-  .feature-card:hover {
-    background: linear-gradient(135deg, rgba(248, 249, 250, 1) 0%, rgba(255, 255, 255, 0.95) 100%);
-    transform: translateX(10px);
-    box-shadow: 0 12px 30px rgba(135, 204, 62, 0.2);
-    border-color: rgba(135, 204, 62, 0.4);
-  }
-  
-  .feature-icon {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, #5a9c2a 100%);
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 6px 18px rgba(135, 204, 62, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-  }
-  
-  .feature-icon i {
-    font-size: 1.8rem;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
-  }
-  
-  .feature-content h6 {
-    color: #1a252f;
-    font-weight: 700;
-    font-size: 1.2rem;
-    margin-bottom: 5px;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  }
-  
-  .feature-content small {
-    color: #495057;
-    font-size: 0.95rem;
-    font-weight: 500;
-    text-shadow: none;
-  }
-  
-  .feature-card-compact {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 1rem;
-    background: linear-gradient(135deg, rgba(248, 249, 250, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-    border-radius: 12px;
-    border: 2px solid rgba(135, 204, 62, 0.2);
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-    margin-bottom: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  .feature-card-compact:hover {
-    background: linear-gradient(135deg, rgba(248, 249, 250, 1) 0%, rgba(255, 255, 255, 0.95) 100%);
-    transform: translateX(8px);
-    border-color: rgba(135, 204, 62, 0.4);
-    box-shadow: 0 8px 25px rgba(135, 204, 62, 0.15);
-  }
-  
-  .feature-icon-compact {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, #5a9c2a 100%);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(135, 204, 62, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-  }
-  
-  .feature-icon-compact i {
-    font-size: 1.4rem;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));
-  }
-  
-  .feature-content-compact h6 {
-    margin-bottom: 2px;
-    font-size: 1rem;
-    color: #1a252f;
-    font-weight: 700;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  }
-  
-  .feature-content-compact small {
-    font-size: 0.85rem;
-    color: #495057;
-    font-weight: 500;
-    text-shadow: none;
-  }
-  
-  .premios-cta .btn {
-    border-radius: 30px;
-    padding: 15px 35px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s ease;
-    font-size: 0.9rem;
-    border: 2px solid transparent;
-  }
-  
-  .premios-cta .btn-primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #6ca331 100%);
-    color: white;
-    box-shadow: 0 8px 25px rgba(135, 204, 62, 0.3);
-  }
-  
-  .premios-cta .btn-primary:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(135, 204, 62, 0.4);
-    background: linear-gradient(135deg, #6ca331 0%, var(--primary-color) 100%);
-  }
-  
-  .premios-cta .btn-outline-primary {
-    background: transparent;
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-  }
-  
-  .premios-cta .btn-outline-primary:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px rgba(135, 204, 62, 0.3);
-  }
-
-  /* Estilos modernos para las tarjetas de premios */
-  .premio-card-modern {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.2rem;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 249, 250, 0.95) 100%);
-    border-radius: 15px;
-    border: 2px solid rgba(135, 204, 62, 0.15);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    backdrop-filter: blur(15px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .premio-card-modern::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, rgba(135, 204, 62, 0.6), transparent);
-    transform: translateX(-100%);
-    transition: transform 0.6s ease;
-  }
-
-  .premio-card-modern:hover {
-    transform: translateY(-6px) scale(1.01);
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
-    border-color: rgba(135, 204, 62, 0.3);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(248, 249, 250, 0.98) 100%);
-  }
-
-  .premio-card-modern:hover::before {
-    transform: translateX(100%);
-  }
-
-  .premio-icon-modern {
-    width: 85px;
-    height: 85px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(135, 204, 62, 0.3);
-    transition: all 0.4s ease;
-  }
-
-  .premio-icon-modern::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-
-  .premio-card-modern:hover .premio-icon-modern::before {
-    opacity: 1;
-  }
-
-  .premio-icon-modern i {
-    font-size: 3.2rem;
-    color: white;
-    text-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-    transition: all 0.3s ease;
-    z-index: 1;
-    position: relative;
-  }
-
-  .premio-card-modern:hover .premio-icon-modern i {
-    transform: scale(1.2) rotate(8deg);
-  }
-
-  /* Colores del club para cada tipo de premio */
-  .medal-gold {
-    background: #87CC3E;
-    box-shadow: 0 8px 20px rgba(135, 204, 62, 0.3);
-  }
-
-  .money-green {
-    background: #87CC3E;
-    box-shadow: 0 8px 20px rgba(135, 204, 62, 0.3);
-  }
-
-  .gift-orange {
-    background: #87CC3E;
-    box-shadow: 0 8px 20px rgba(135, 204, 62, 0.3);
-  }
-
-  .voucher-blue {
-    background: #87CC3E;
-    box-shadow: 0 8px 20px rgba(135, 204, 62, 0.3);
-  }
-
-  .premio-info-modern h5 {
-    color: #2c3e50;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 4px;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    transition: color 0.3s ease;
-  }
-
-  .premio-card-modern:hover .premio-info-modern h5 {
-    color: #1a252f;
-  }
-
-  .premio-info-modern p {
-    color: #6c757d;
-    font-size: 0.95rem;
-    font-weight: 500;
-    line-height: 1.4;
+    bottom: 5.3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
     margin: 0;
-    transition: color 0.3s ease;
   }
 
-  .premio-card-modern:hover .premio-info-modern p {
-    color: #495057;
-  }
-  
-  @media (max-width: 991px) {
-    .premios-content {
-      padding-left: 0;
-      margin-top: 2rem;
-    }
-    
-    .premios-header .premios-icon {
-      width: 60px;
-      height: 60px;
-    }
-    
-    .premios-header .premios-icon i {
-      font-size: 2rem;
-    }
-    
-    .premios-highlight {
-      padding: 1.5rem;
-    }
-    
-    .feature-card {
-      padding: 0.8rem;
-    }
-  }
-  
-  .video-section .container {
-    position: relative;
-    z-index: 2;
-  }
-  
-  /* Content Grid Layout */
-  .content-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    align-items: start;
-  }
-  
-  .video-container {
-    max-width: 100%;
-    margin: 0 auto;
-  }
-  
-  /* Map Container Styles - Horizontal Layout */
-  .map-container-horizontal {
-    max-width: 100%;
-  }
-  
-  .map-wrapper-horizontal {
-    background: rgba(255,255,255,0.95);
-    border-radius: 20px;
-    padding: 2rem;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-    border: 1px solid rgba(40, 167, 69, 0.1);
-    backdrop-filter: blur(15px);
-    transition: all 0.3s ease;
-  }
-  
-  .map-wrapper-horizontal:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 50px rgba(0,0,0,0.15);
-  }
-  
-  .map-info-content h4 {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .map-badges .badge {
-    font-size: 0.9rem;
-    padding: 0.6rem 1.2rem;
-    border-radius: 25px;
-  }
-  
-  .feature-item {
-    display: flex;
+  .hero-pill-badge {
+    display: inline-flex;
     align-items: center;
-    font-size: 0.95rem;
+    background: rgba(178, 216, 31, 0.12);
+    border: 1px solid var(--ft-border-green);
+    color: var(--ft-white);
+    padding: 0.45rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    backdrop-filter: blur(10px);
   }
-  
-  .feature-item i {
-    width: 20px;
-    text-align: center;
+
+  .logo-carrera {
+    max-height: 320px;
+    width: auto;
+    filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.7));
+    transition: transform 0.3s ease;
   }
-  
-  .map-image-wrapper {
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-  }
-  
-  .map-image {
-    transition: all 0.3s ease;
-    border-radius: 15px;
-  }
-  
-  .map-image:hover {
+
+  .logo-carrera:hover {
     transform: scale(1.02);
   }
-  
-  .map-overlay {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    z-index: 10;
+
+  /* --- CUENTA REGRESIVA --- */
+  .modern-countdown {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
   }
-  
-  .map-info .badge {
-    font-size: 0.8rem;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-  }
-  
-  .video-wrapper {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-    width: 100%;
-    aspect-ratio: 16/9;
-  }
-  
-  .video-wrapper video {
+
+  .modern-countdown-item {
+    background: rgba(28, 28, 34, 0.85);
+    border: 2px solid var(--ft-border-green);
     border-radius: 16px;
+    padding: 0.9rem 1.4rem;
+    min-width: 105px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), var(--ft-glow-green);
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+
+  .modern-countdown-item:hover {
+    transform: translateY(-4px);
+    border-color: var(--ft-green-accent);
+  }
+
+  .modern-countdown-number {
+    font-size: 2.8rem;
+    font-weight: 900;
+    color: var(--ft-green-accent);
+    line-height: 1;
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    text-shadow: 0 2px 10px rgba(178, 216, 31, 0.4);
+  }
+
+  .modern-countdown-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ft-white);
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-top: 0.4rem;
+    display: block;
+  }
+
+  /* --- BOTONES CTA DE ALTO IMPACTO --- */
+  .btn-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #B2D81F;
+    /* 🟩 VERDE OFICIAL */
+    color: #000000 !important;
+    /* ⬛ LETRA NEGRA */
+    font-weight: 900;
+    font-size: 0.95rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 0.95rem 2.4rem;
+    border-radius: 50px;
+    border: none;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(178, 216, 31, 0.35);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .btn-cta-primary:hover {
+    background: #c6ec32;
+    /* hover: verde un poco más brillante */
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(178, 216, 31, 0.55);
+    color: #000000 !important;
+  }
+
+  .btn-cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #003A77;
+    color: #ffffff !important;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 0.95rem 2.2rem;
+    border-radius: 50px;
+    border: 2px solid rgba(255, 255, 255, 0.55);
+    text-decoration: none;
+    backdrop-filter: blur(10px);
+    transition: all 0.25s ease;
+  }
+
+  .btn-cta-secondary:hover {
+    background: #004a93;
+    border-color: #41CEB3;
+    color: #ffffff !important;
+    transform: translateY(-3px);
+  }
+
+  .btn-cta-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--ft-white) !important;
+    font-weight: 700;
+    padding: 0.9rem 2rem;
+    border-radius: 50px;
+    border: 2px solid var(--ft-border-green);
+    text-decoration: none;
+    transition: all 0.25s ease;
+  }
+
+  .btn-cta-outline:hover {
+    background: rgba(178, 216, 31, 0.1);
+    border-color: var(--ft-green-accent);
+    color: var(--ft-green-accent) !important;
+  }
+
+  /* Indicadores de carrusel */
+  .carousel-indicators-ft {
+    margin-bottom: 2rem;
+  }
+
+  .carousel-indicators-ft [data-bs-target] {
+    width: 45px;
+    height: 5px;
+    border-radius: 4px;
+    background-color: rgba(178, 216, 31, 0.5);
+    /* 🟩 verde 50% opaco */
+    border: none;
     transition: all 0.3s ease;
+  }
+
+  .carousel-indicators-ft .active {
+    width: 75px;
+    background-color: #B2D81F;
+    /* 🟩 VERDE OFICIAL 100% */
+    box-shadow: 0 0 12px rgba(178, 216, 31, 0.75);
+  }
+
+  /* --- QUICK HIGHLIGHTS BAR --- */
+  .quick-highlights-bar {
+    background: #111115;
+    border-top: 1px solid var(--ft-border-green);
+    border-bottom: 1px solid var(--ft-border-subtle);
+  }
+
+  .highlight-item {
+    color: var(--ft-gray-light);
+    font-size: 0.9rem;
+  }
+
+  .highlight-icon {
+    color: var(--ft-green-accent);
+    font-size: 1.25rem;
+  }
+
+  /* --- SECCIÓN: MUCHO MÁS QUE UNA CARRERA (fondo AZUL OSCURO OFICIAL) --- */
+  .more-than-race {
+    background-color: #003A77;
+  }
+
+  /* TÍTULO PRINCIPAL: TAMAÑO EXACTO IGUAL A "EQUIPAMIENTO PRO" (section-tagline)
+   NO tan grande, tal como lo dejaste tú — verde oficial */
+  .mtr-main-title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #B2D81F;
+    margin-bottom: 0.4rem;
+    text-align: center;
+    display: block;
+  }
+
+  /* Párrafos — rediseño tipográfico limpio y profesional */
+  .mtr-paragraph {
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    font-size: 1.15rem;
+    line-height: 1.95;
+    color: rgba(255, 255, 255, 0.94);
+    margin: 0 auto 1.8rem auto;
+    max-width: 1020px;
+    letter-spacing: 0.25px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  /* Párrafo UNICO (2 frases juntas): ANCHO MÁS GRANDE + TAMAÑO LIGERAMENTE MÁS PEQUEÑO
+   → FUERZA que quede EN 2 LÍNEAS (nunca 3) */
+  .mtr-paragraph--two-lines {
+    max-width: 1380px;
+    /* casi todo el ancho desktop */
+    font-size: 1.07rem;
+    /* 8% más pequeño */
+    line-height: 1.75;
+    /* interlineado más compacto */
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 1200px) {
+    .mtr-paragraph--two-lines {
+      max-width: 1420px;
+      font-size: 1.05rem;
+    }
+  }
+
+  @media (max-width: 1199.98px) {
+    .mtr-paragraph--two-lines {
+      max-width: 100%;
+    }
+  }
+
+  .mtr-paragraph:last-child {
+    margin-bottom: 0;
+  }
+
+  .mtr-strong {
+    color: #B2D81F;
+    font-weight: 700;
+    letter-spacing: 0.15px;
+  }
+
+  /* =========================================================================
+   3 TARJETAS DE DISTANCIAS · TARJETA ÚNICA CONTINUA
+   (imagen + info fusionados DENTRO del mismo border-radius)
+   ========================================================================= */
+
+  /* CONTENEDOR PADRE: controla border-radius, overflow:hidden y HOVER CONJUNTO */
+  .distance-card {
+    position: relative;
+    width: 100%;
+    border-radius: 30px;
+    overflow: hidden;
+    /* ← CLAVE: corta esquinas de imagen + info → UNA SOLA PIEZA */
+    box-shadow:
+      0 14px 34px rgba(0, 0, 0, 0.22),
+      0 6px 14px rgba(0, 0, 0, 0.12);
+    transition: all 0.32s cubic-bezier(.2, .7, .2, 1);
+    background: transparent;
+  }
+
+  .distance-card:hover {
+    transform: translateY(-7px);
+    /* ← TODO se eleva JUNTO: imagen + info */
+    box-shadow:
+      0 24px 54px rgba(0, 0, 0, 0.30),
+      0 10px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  /* La tarjeta de imagen AHORA NO tiene radio/sombra propios → lo hereda el padre */
+  .distance-image-card {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 520px;
+    border-radius: 0;
+    /* ← QUITADO: radio en el padre .distance-card */
+    overflow: visible;
+    box-shadow: none;
+    /* ← QUITADO: sombra en el padre */
+    transition: none;
+    /* ← QUITADO: hover en el padre */
+    text-decoration: none;
+  }
+
+  .distance-image-card:hover {
+    transform: none;
+    /* ← QUITADO: translate en el padre */
+    box-shadow: none;
+    text-decoration: none;
+  }
+
+  /* Tarjeta con botón + info abajo: imagen MÁS ALTA para mostrar logos inferiores (400px → 430px desktop) */
+  .distance-image-card--with-btn {
+    min-height: 430px;
+  }
+
+  /* La imagen OCUPA TODO el cuadro (punta a punta) */
+  .distance-image-card__img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
+    display: block;
   }
-  
-  .video-wrapper:hover video {
-    transform: scale(1.02);
+
+  /* =========================================================
+   BLOQUE INFO · BASE INFERIOR DE LA TARJETA (CONTINUO)
+   Raya superior VERDE 2px EXTREMO A EXTREMO (única marca)
+   Fondo azul 14% opacidad · Textos CENTRADOS (póster profesional)
+   ========================================================= */
+
+  .distance-info-block {
+    width: 100%;
+    /* ← ANCHO COMPLETO de la tarjeta */
+    max-width: none;
+    margin: 0;
+    /* ← PEGADO a la imagen: 0 margen */
+    padding: 1.25rem 1.1rem 1.35rem 1.1rem;
+
+    /* CLAVE SIMETRÍA TOTAL: MISMA ALTURA en las 3 tarjetas (sin importar líneas texto) */
+    min-height: 210px;
+    /* ← altura fija: 3K/5K/10K quedan EXACTAMENTE iguales */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    /* FONDO: BLANCO (neutro limpio, contrasta TOTAL sobre el fondo sección azul oscuro) */
+    background: #ffffff;
+
+    /* RAYA VERDE CONTINUA 2px EXTREMO A EXTREMO (marca visual limpia, sin cortes) */
+    border-top: 2px solid #B2D81F;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0;
+    /* ← SIN redondez: esquinas inf cortadas por overflow padre */
+
+    text-align: center;
+    /* ← CENTRADO = equilibrio póster */
+    position: relative;
+    transition: background 0.3s ease, box-shadow 0.3s ease;
   }
-  
-  /* Custom Play Button */
-  .custom-play-btn {
-    width: 80px;
-    height: 80px;
+
+  .distance-card:hover .distance-info-block {
+    background: #fafcff;
+    /* hover: blanco + azulado sútil (no agresivo) */
+    box-shadow: inset 0 2px 14px rgba(0, 58, 119, 0.06);
+    /* sombra interna muy ligera */
+  }
+
+  /* Header: SIN barrita izquierda pseudo → la marca es la raya superior CONTINUA */
+  .distance-info-block__header {
+    position: relative;
+    padding-left: 0;
+    margin-bottom: 0.55rem;
+    width: 100%;
+  }
+
+  /* Título: AZUL OSCURO OFICIAL + fw900 + tamaño aumentado */
+  .distance-info-block__title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    font-size: 1.02rem;
+    /* antes 0.9rem → +13% tamaño letra (SÓLO letra) */
+    line-height: 1.35;
+    letter-spacing: 0.4px;
+    color: #003A77;
+    /* � AZUL OSCURO OFICIAL (definitivo) */
+    margin: 0;
+  }
+
+  /* Descripción: AZUL OSCURO suavizado + tamaño aumentado */
+  .distance-info-block__desc {
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: 0.96rem;
+    /* antes 0.86rem → +12% tamaño letra (SÓLO letra) */
+    line-height: 1.58;
+    letter-spacing: 0.15px;
+    color: #1a4a7a;
+    /* azul oscuro + claro (100% opaco, no tan duro como #000) */
+    margin: 0 auto 0.95rem auto;
+    max-width: 330px;
+    /* un poco + ancho (310→330 para que las letras nuevas quepan bien */
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+  /* Botón SEMI-PILL compacto CENTRADO · AZUL CLARO OFICIAL + AZUL OSCURO (premium sobre blanco) */
+  .distance-info-block__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.6rem 1.55rem;
+    background: #41CEB3;
+    color: #003A77;
+    border: 1.5px solid #41CEB3;
+    border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.79rem;
+    letter-spacing: 0.95px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    box-shadow: 0 5px 14px rgba(65, 206, 179, 0.32);
+    margin: auto auto 0 auto;
+    /* ← margin-top auto: BOTÓN ALINEADO SIEMPRE AL FONDO (simetría 3 tarjetas) */
+    flex-shrink: 0;
+  }
+
+  .distance-info-block__btn:hover {
+    background: #003A77;
+    /* hover: AZUL OSCURO OFICIAL + BLANCO (inversión elegante) */
+    color: #ffffff;
+    border-color: #003A77;
+    transform: translateY(-1.5px);
+    box-shadow: 0 8px 20px rgba(0, 58, 119, 0.32);
+    text-decoration: none;
+  }
+
+  /* --- Responsive tarjeta CONTINUA + bloque info (imagenes ALTAS +30px para logos | tamaños letra AUMENTADOS) --- */
+  @media (max-width: 1199.98px) {
+    .distance-image-card {
+      min-height: 460px;
+    }
+
+    .distance-image-card--with-btn {
+      min-height: 400px;
+    }
+
+    .distance-info-block {
+      padding: 1.15rem 1rem 1.25rem 1rem;
+      min-height: 215px;
+      /* ← +10px por las letras + grandes */
+    }
+
+    .distance-info-block__header {
+      margin-bottom: 0.5rem;
+    }
+
+    .distance-info-block__title {
+      font-size: 0.98rem;
+    }
+
+    /* antes 0.87rem → +13% */
+    .distance-info-block__desc {
+      font-size: 0.94rem;
+      margin-bottom: 0.88rem;
+      max-width: 310px;
+    }
+
+    /* antes 0.84rem→+12% | 290→310px ancho */
+    .distance-info-block__btn {
+      padding: 0.57rem 1.5rem;
+      font-size: 0.78rem;
+    }
+  }
+
+  @media (max-width: 991.98px) {
+    .mtr-paragraph {
+      font-size: 1.05rem;
+      line-height: 1.9;
+    }
+
+    .distance-card {
+      border-radius: 26px;
+    }
+
+    .distance-image-card {
+      min-height: 440px;
+    }
+
+    .distance-image-card--with-btn {
+      min-height: 460px;
+    }
+
+    .distance-info-block {
+      padding: 1.1rem 0.95rem 1.2rem 0.95rem;
+      min-height: 215px;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .distance-image-card {
+      min-height: 480px;
+    }
+
+    .distance-image-card--with-btn {
+      min-height: 500px;
+    }
+
+    .distance-info-block {
+      padding: 1.05rem 0.9rem 1.15rem 0.9rem;
+      min-height: 210px;
+    }
+
+    .distance-info-block__header {
+      margin-bottom: 0.48rem;
+    }
+
+    .distance-info-block__title {
+      font-size: 0.95rem;
+    }
+
+    /* antes 0.85rem → +12% */
+    .distance-info-block__desc {
+      font-size: 0.93rem;
+      line-height: 1.55;
+      margin-bottom: 0.85rem;
+      max-width: 310px;
+    }
+
+    /* antes 0.85rem→+9% | 290→310px */
+    .distance-info-block__btn {
+      padding: 0.55rem 1.45rem;
+      font-size: 0.79rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .mtr-paragraph {
+      font-size: 0.98rem;
+      line-height: 1.85;
+    }
+
+    .distance-card {
+      border-radius: 22px;
+    }
+
+    .distance-image-card {
+      min-height: 430px;
+    }
+
+    .distance-image-card--with-btn {
+      min-height: 465px;
+    }
+
+    .distance-info-block {
+      padding: 1rem 0.85rem 1.1rem 0.85rem;
+      border-top-width: 1.8px;
+      min-height: 208px;
+    }
+
+    .distance-info-block__header {
+      margin-bottom: 0.45rem;
+    }
+
+    .distance-info-block__title {
+      font-size: 0.95rem;
+      letter-spacing: 0.25px;
+    }
+
+    /* antes 0.85rem → +12% */
+    .distance-info-block__desc {
+      font-size: 0.94rem;
+      line-height: 1.52;
+      margin-bottom: 0.82rem;
+      max-width: 300px;
+    }
+
+    /* antes 0.86rem→+9% | 280→300px */
+    .distance-info-block__btn {
+      padding: 0.53rem 1.4rem;
+      font-size: 0.78rem;
+      border-radius: 13px;
+    }
+  }
+
+  /* =========================================================================
+   ZONA CONSULTA DE INSCRIPCIÓN (2 columnas: texto IZQ + foto DIFUMINADA DER)
+   Inspirado en MMM: foto asimétrica derecha, blend con fondo azul oscuro
+   ========================================================================= */
+
+  .consulta-inscripcion {
+    position: relative;
+    width: 100%;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* COLUMNA IZQUIERDA: texto + botón (alineado centro-izquierda) */
+  .consulta-inscripcion__text-col {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .consulta-inscripcion__text-wrap {
+    max-width: 560px;
+    margin: 0 0 0 auto;
+    /* desplazado a la DERECHA para estar más cerca de la atleta */
+    padding: 1rem 1.8rem 1rem 1.2rem;
+    /* padding vertical equilibrado para centrado vertical */
+    text-align: left;
+  }
+
+  /* Título principal estilo MMM */
+  .consulta-inscripcion__title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(1.9rem, 2.8vw, 2.7rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: 0.4px;
+    color: #B2D81F;
+    /* VERDE OFICIAL (igual que MMM amarillo neon) */
+    margin: 0 0 0.3rem 0;
+    /* ANTES 0.6rem → MÍNIMO 0.3rem */
+    text-align: left;
+  }
+
+  /* Subtítulo */
+  .consulta-inscripcion__subtitle {
+    font-family: 'Inter', 'Montserrat', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0 0 0.8rem 0;
+    /* ANTES 1.3rem → MUY POCO espacio para botón */
+    max-width: 500px;
+    text-align: left;
+    font-weight: 400;
+  }
+
+  /* BOTÓN CONSULTA INSCRIPCIÓN: AZUL CLARO OFICIAL + LETRA NEGRA */
+  .btn-consulta-inscripcion {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.72rem 1.9rem;
+    /* ANTES 0.85rem 2.2rem → BOTÓN MÁS COMPACTO */
+    background: #41CEB3;
+    /* fondo AZUL CLARO OFICIAL */
+    color: #000000;
+    /* letras NEGRAS */
+    border: 2px solid #41CEB3;
+    /* borde mismo azul claro (no borde blanco) */
+    border-radius: 999px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.88rem;
+    /* un poco más pequeño todavía */
+    letter-spacing: 1.05px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.28s ease;
+    box-shadow: 0 8px 22px rgba(65, 206, 179, 0.3);
+  }
+
+  .btn-consulta-inscripcion:hover {
+    background: #B2D81F;
+    /* hover: verde oficial */
+    color: #000000;
+    border-color: #B2D81F;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(178, 216, 31, 0.38);
+    text-decoration: none;
+  }
+
+  /* COLUMNA DERECHA: FOTO DIFUMINADA (asímetrica, sale un poco a la derecha) */
+  .consulta-inscripcion__photo-col {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    /* FOTO CENTRADA verticalmente respecto al texto */
+    justify-content: flex-end;
+    min-height: 390px;
+    overflow: visible;
+  }
+
+  /* Foto: MÁS GRANDE (saliente más asimétrica derecha), SIN blend de opacidad
+   → la ves NÍTIDA, tal cual es, con su transparencia */
+  .consulta-inscripcion__photo {
+    max-width: 150%;
+    /* 35% MÁS GRANDE que antes (antes 112%) */
+    max-height: 700px;
+    /* 120px MÁS ALTA que antes (antes 560px) */
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: center right;
+    /* Centrado vertical con respecto al contenedor */
+    position: relative;
+    right: 3rem;
+    /* MUCHO más saliente a la derecha */
+    top: 0;
+    /* Centrado vertical con el texto */
+    display: block;
+
+    /* 🔑 FOTO NÍTIDA (no blend):
+     - quitamos mix-blend-mode (ya no se "fusiona" con el fondo azul, se VE CLARA)
+     - opacity 100% (completamente visible)
+     - solo drop-shadow elegante */
+    opacity: 1;
+    filter:
+      drop-shadow(-18px 22px 36px rgba(0, 0, 0, 0.42)) contrast(1.02);
+  }
+
+  /* --- Responsive Consulta Inscripción --- */
+  @media (max-width: 1399.98px) {
+    .consulta-inscripcion__photo {
+      max-width: 130%;
+      max-height: 560px;
+      right: -3.5rem;
+    }
+
+    .consulta-inscripcion__photo-col {
+      min-height: 510px;
+    }
+  }
+
+  @media (max-width: 1199.98px) {
+    .consulta-inscripcion {
+      min-height: 460px;
+    }
+
+    .consulta-inscripcion__photo-col {
+      min-height: 460px;
+    }
+
+    .consulta-inscripcion__photo {
+      max-width: 125%;
+      max-height: 520px;
+      right: -2.5rem;
+    }
+
+    .consulta-inscripcion__text-wrap {
+      padding: 1.6rem 2rem 1.6rem 1rem;
+    }
+  }
+
+  @media (max-width: 991.98px) {
+
+    /* tablet y móviles: se apilan VERTICALMENTE. Foto ARRIBA, texto CENTRADO debajo */
+    .consulta-inscripcion {
+      min-height: auto;
+      margin: 1.8rem 0 1.8rem 0 !important;
+    }
+
+    .consulta-inscripcion__photo-col {
+      min-height: auto;
+      order: 1;
+      margin-bottom: 1.2rem;
+      /* Espacio de separación entre la foto y el título en pantallas pequeñas */
+      justify-content: center;
+    }
+
+    .consulta-inscripcion__photo {
+      max-height: 400px;
+      right: 0;
+      bottom: 0;
+      max-width: 100%;
+    }
+
+    .consulta-inscripcion__text-col {
+      order: 2;
+    }
+
+    .consulta-inscripcion__text-wrap {
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0.5rem 1rem 1rem 1rem;
+      text-align: center;
+    }
+
+    .consulta-inscripcion__title {
+      text-align: center;
+      margin-bottom: 0.55rem;
+    }
+
+    .consulta-inscripcion__subtitle {
+      text-align: center;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 1.1rem;
+    }
+
+    .btn-consulta-inscripcion {
+      padding: 0.82rem 1.9rem;
+      font-size: 0.88rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .consulta-inscripcion {
+      margin: 1.6rem 0 1.4rem 0 !important;
+    }
+
+    .consulta-inscripcion__photo-col {
+      min-height: auto;
+      margin-bottom: 1rem;
+    }
+
+    .consulta-inscripcion__photo {
+      max-height: 310px;
+      opacity: 1;
+    }
+
+    .consulta-inscripcion__text-wrap {
+      padding: 0.4rem 0.5rem 0.5rem 0.5rem;
+    }
+
+    .consulta-inscripcion__subtitle {
+      font-size: 0.93rem;
+      margin-bottom: 1.1rem;
+    }
+
+    .btn-consulta-inscripcion {
+      padding: 0.82rem 1.7rem;
+      font-size: 0.84rem;
+    }
+  }
+
+  /* --- FRANJA CTA: ¡Anímate a vivir esta gran experiencia! --- */
+  .cta-accent-bar {
+    background-color: #41CEB3;
+  }
+
+  .cta-accent-bar__title {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    /* antes 800 → MENOS negrilla */
+    font-size: clamp(1.45rem, 2.7vw, 2.05rem);
+    /* antes clamp(1.6rem,3vw,2.3rem) → LETRA MÁS PEQUEÑA */
+    letter-spacing: 0.9px;
+    color: #003A77;
+    margin: 0;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  /* --- SECCIONES COMUNES --- */
+  .section-dark {
+    background-color: var(--ft-bg-dark);
+  }
+
+  .section-distances {
+    background: linear-gradient(180deg, var(--ft-bg-dark) 0%, var(--ft-bg-black) 100%);
+  }
+
+  .section-experience {
+    background-color: var(--ft-bg-black);
+  }
+
+  .section-kit {
+    background: linear-gradient(180deg, var(--ft-bg-black) 0%, var(--ft-bg-dark) 100%);
+  }
+
+  .section-validator {
+    background-color: var(--ft-bg-dark);
+  }
+
+  .section-premios {
+    background-color: var(--ft-bg-black);
+  }
+
+  .section-sponsors {
+    background-color: #0f0f13;
+  }
+
+  .section-faq {
+    background-color: var(--ft-bg-dark);
+  }
+
+  /* Encabezados de Sección */
+  .section-header {
+    max-width: 750px;
+    margin: 0 auto;
+  }
+
+  .section-tagline {
+    color: var(--ft-green-accent);
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .section-title {
+    color: var(--ft-white);
+    font-size: 2.3rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+
+  .section-subtitle {
+    color: var(--ft-gray-muted);
+    font-size: 1.05rem;
+    font-weight: 400;
+  }
+
+  .section-divider {
+    width: 70px;
+    height: 4px;
+    background: var(--ft-green-accent);
+    border-radius: 2px;
+    margin: 1.2rem auto 0;
+  }
+
+  /* --- TARJETAS DE ETAPAS DE PRECIOS --- */
+  .stage-card {
+    background: var(--ft-bg-card);
+    border: 1px solid var(--ft-border-subtle);
+    border-radius: 24px;
+    padding: 2.2rem 2rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all 0.35s ease;
+  }
+
+  .stage-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  .stage-card.stage-active {
+    border: 2px solid var(--ft-green-accent);
+    background: linear-gradient(180deg, rgba(178, 216, 31, 0.06) 0%, var(--ft-bg-card) 100%);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), var(--ft-glow-green);
+  }
+
+  .stage-badge-status {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ft-green-accent);
+    color: #000;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.35rem 1.1rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(178, 216, 31, 0.5);
+  }
+
+  .stage-badge-status.status-upcoming {
+    background: #33333e;
+    color: var(--ft-gray-muted);
+    box-shadow: none;
+  }
+
+  .status-pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: #000;
     border-radius: 50%;
-    background: linear-gradient(135deg, var(--primary-color), #20c997);
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 30px rgba(40, 167, 69, 0.4);
+    animation: pulse-dot 1.5s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0% {
+      transform: scale(0.95);
+      opacity: 0.8;
+    }
+
+    50% {
+      transform: scale(1.3);
+      opacity: 1;
+    }
+
+    100% {
+      transform: scale(0.95);
+      opacity: 0.8;
+    }
+  }
+
+  .stage-name {
+    color: var(--ft-white);
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-top: 0.5rem;
+    margin-bottom: 0.2rem;
+  }
+
+  .stage-tag {
+    color: var(--ft-gray-muted);
+    font-size: 0.85rem;
+  }
+
+  .stage-price-box {
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .stage-currency {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ft-green-accent);
+  }
+
+  .stage-price {
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--ft-white);
+    line-height: 1;
+  }
+
+  .stage-period {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ft-gray-muted);
+  }
+
+  .stage-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    flex-grow: 1;
+  }
+
+  .stage-features li {
+    padding: 0.55rem 0;
+    color: var(--ft-gray-light);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .btn-stage-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ft-green-accent);
+    color: #000 !important;
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.85rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .btn-stage-primary:hover {
+    background: #c2ea23;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(178, 216, 31, 0.4);
+  }
+
+  .btn-stage-disabled {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--ft-gray-muted);
+    border: 1px solid var(--ft-border-subtle);
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.85rem;
+    border-radius: 12px;
+    cursor: not-allowed;
+  }
+
+  /* --- TARJETAS PÓSTER DE DISTANCIAS --- */
+  .distance-poster-card {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    height: 520px;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--ft-border-subtle);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .distance-poster-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--ft-green-accent);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), var(--ft-glow-green);
+  }
+
+  .distance-poster-card.featured-distance {
+    border-color: var(--ft-green-accent);
+  }
+
+  .distance-poster-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg,
+        rgba(13, 13, 16, 0.1) 0%,
+        rgba(13, 13, 16, 0.6) 45%,
+        rgba(13, 13, 16, 0.96) 90%);
+    transition: background 0.3s ease;
+  }
+
+  .distance-poster-card:hover .distance-poster-overlay {
+    background: linear-gradient(180deg,
+        rgba(13, 13, 16, 0.2) 0%,
+        rgba(13, 13, 16, 0.7) 40%,
+        rgba(13, 13, 16, 0.98) 90%);
+  }
+
+  .popular-ribbon {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: var(--ft-green-accent);
+    color: #000;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    padding: 0.35rem 0.9rem;
+    border-radius: 50px;
+    z-index: 5;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  }
+
+  .distance-poster-content {
+    position: relative;
+    z-index: 4;
+    padding: 2rem;
+    width: 100%;
+  }
+
+  .distance-badge-pill {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--ft-white);
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    padding: 0.3rem 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+    backdrop-filter: blur(8px);
+  }
+
+  .distance-badge-pill.badge-featured {
+    background: var(--ft-green-accent);
+    color: #000;
+  }
+
+  .distance-card-title {
+    color: var(--ft-white);
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+
+  .distance-card-desc {
+    color: var(--ft-gray-light);
+    font-size: 0.88rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  .distance-specs-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1.3rem;
+  }
+
+  .spec-chip {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--ft-white);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border-radius: 50px;
+  }
+
+  .btn-distance-action {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
+    background: var(--ft-green-accent);
+    color: #000 !important;
+    font-weight: 800;
+    font-size: 0.88rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 0.8rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.25s ease;
   }
-  
+
+  .btn-distance-action:hover {
+    background: #c5ef23;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(178, 216, 31, 0.5);
+  }
+
+  /* --- STATS CARD (LA EXPERIENCIA) --- */
+  .stat-card {
+    background: var(--ft-bg-card);
+    border: 1px solid var(--ft-border-subtle);
+    border-radius: 16px;
+    padding: 1.2rem 0.6rem;
+    transition: all 0.25s ease;
+  }
+
+  .stat-card:hover {
+    border-color: var(--ft-green-accent);
+    transform: translateY(-3px);
+  }
+
+  .stat-number {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--ft-white);
+    margin-bottom: 0.2rem;
+    line-height: 1;
+  }
+
+  .stat-label {
+    color: var(--ft-gray-muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .lead-ft {
+    font-size: 1.15rem;
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  /* --- VIDEO PLAYER ESTILO PRO --- */
+  .video-container-card {
+    border: 2px solid var(--ft-border-green);
+    background: #000;
+  }
+
+  .custom-play-btn {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: var(--ft-green-accent);
+    color: #000;
+    border: none;
+    font-size: 1.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 0 35px rgba(178, 216, 31, 0.7);
+    transition: all 0.3s ease;
+  }
+
   .custom-play-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 15px 40px rgba(40, 167, 69, 0.6);
+    transform: scale(1.15);
+    background: #c7f225;
   }
-  
+
   .custom-play-btn i {
-    margin-left: 3px;
+    margin-left: 4px;
   }
-  
-  .play-button-overlay {
-    opacity: 1;
-    transition: opacity 0.3s ease;
-    z-index: 10;
-  }
-  
+
   .play-button-overlay.hidden {
     opacity: 0;
     pointer-events: none;
   }
-  
-  /* Video Stats */
-  .video-stats {
-    background: rgba(255,255,255,0.9);
+
+  .video-live-badge {
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--ft-green-accent);
+    font-size: 0.75rem;
+    font-weight: 800;
+    padding: 0.35rem 0.8rem;
+    border-radius: 50px;
+    border: 1px solid var(--ft-border-green);
+    backdrop-filter: blur(8px);
+  }
+
+  /* --- KIT OFICIAL ITEMS --- */
+  .kit-item-card {
+    background: var(--ft-bg-card);
+    border: 1px solid var(--ft-border-subtle);
     border-radius: 20px;
-    padding: 2.5rem;
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(40, 167, 69, 0.1);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    padding: 2rem 1.8rem;
+    height: 100%;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
   }
-  
-  .stat-item {
-    padding: 1rem;
+
+  .kit-item-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--ft-green-accent);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
   }
-  
-  .stat-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+
+  .kit-icon-box {
+    width: 58px;
+    height: 58px;
+    background: rgba(178, 216, 31, 0.12);
+    border: 1px solid var(--ft-border-green);
+    color: var(--ft-green-accent);
+    font-size: 1.6rem;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.2rem;
+    transition: transform 0.25s ease;
   }
-  
-  .stat-item h4 {
-    font-size: 2.5rem;
+
+  .kit-item-card:hover .kit-icon-box {
+    transform: scale(1.1) rotate(5deg);
+    background: var(--ft-green-accent);
+    color: #000;
+  }
+
+  .kit-item-title {
+    color: var(--ft-white);
+    font-size: 1.2rem;
+    font-weight: 800;
     margin-bottom: 0.5rem;
-    background: linear-gradient(135deg, var(--primary-color), #20c997);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
-  
-  /* Responsive Video Styles */
-  @media (max-width: 768px) {
-    .video-section {
-      min-height: auto;
-      padding: 3rem 0;
-    }
-    
-    .content-grid {
-      grid-template-columns: 1fr;
-      gap: 2rem;
-    }
-    
-    .map-wrapper-horizontal {
-      padding: 1.5rem;
-    }
-    
-    .map-wrapper-horizontal .row {
-      flex-direction: column-reverse;
-    }
-    
-    .map-info-content {
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    
-    .map-info-content h4 {
-      font-size: 1.3rem;
-    }
-    
-    .feature-item {
-      justify-content: center;
-    }
-    
-    .custom-play-btn {
-      width: 60px;
-      height: 60px;
-      font-size: 18px;
-    }
-    
-    .stat-item h4 {
-      font-size: 2rem;
-    }
-    
-    .floating-element {
-      display: none;
-    }
+
+  .kit-item-desc {
+    color: var(--ft-gray-muted);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    margin-bottom: 1.2rem;
+    flex-grow: 1;
   }
-  
-  @media (max-width: 992px) {
-    .content-grid {
-      gap: 2rem;
-    }
-    
-    .map-wrapper-horizontal {
-      padding: 1.8rem;
-    }
-    
-    .map-info-content h4 {
-      font-size: 1.4rem;
-    }
+
+  .kit-item-tag {
+    display: inline-block;
+    color: var(--ft-green-accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
   }
-  
-  .carousel-overlay {
+
+  /* --- MÓDULO VALIDADOR RÁPIDO --- */
+  .validator-box {
+    background: linear-gradient(135deg, #181820 0%, #1f1f28 100%);
+    border: 2px solid var(--ft-border-green);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), var(--ft-glow-green);
+  }
+
+  .validator-badge {
+    color: var(--ft-green-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  .validator-title {
+    color: var(--ft-white);
+    font-size: 1.65rem;
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+  }
+
+  .validator-desc {
+    color: var(--ft-gray-light);
+    font-size: 0.95rem;
+  }
+
+  .btn-validator-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ft-green-accent);
+    color: #000 !important;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 1rem 2.2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 6px 20px rgba(178, 216, 31, 0.4);
+    transition: all 0.25s ease;
+  }
+
+  .btn-validator-action:hover {
+    background: #c6ef24;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(178, 216, 31, 0.6);
+  }
+
+  /* --- RECORRIDOS PESTAÑAS --- */
+  .route-tab-btn {
+    background: var(--ft-bg-card) !important;
+    color: var(--ft-white) !important;
+    border: 1px solid var(--ft-border-subtle) !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    padding: 0.8rem 2rem !important;
+    border-radius: 50px !important;
+    transition: all 0.25s ease !important;
+  }
+
+  .route-tab-btn.active {
+    background: var(--ft-green-accent) !important;
+    color: #000 !important;
+    border-color: var(--ft-green-accent) !important;
+    box-shadow: 0 4px 15px rgba(178, 216, 31, 0.4) !important;
+  }
+
+  .route-card-box {
+    background: var(--ft-bg-card);
+    border: 1px solid var(--ft-border-subtle);
+  }
+
+  .badge-accent {
+    background: rgba(178, 216, 31, 0.15);
+    color: var(--ft-green-accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
+    display: inline-block;
+  }
+
+  .route-feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 1.2rem;
+  }
+
+  .feature-row {
+    color: var(--ft-gray-light);
+    font-size: 0.92rem;
+  }
+
+  .route-preview-placeholder {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    padding: 3rem 2rem;
+  }
+
+  /* --- PREMIACIÓN --- */
+  .award-card {
+    background: var(--ft-bg-card);
+    border: 1px solid var(--ft-border-subtle);
+    border-radius: 22px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    height: 100%;
+    transition: all 0.3s ease;
+  }
+
+  .award-card:hover {
+    transform: translateY(-8px);
+  }
+
+  .award-card.award-gold {
+    border: 2px solid var(--ft-green-accent);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), var(--ft-glow-green);
+  }
+
+  .award-trophy-icon {
+    width: 72px;
+    height: 72px;
+    background: rgba(178, 216, 31, 0.12);
+    border: 2px solid var(--ft-border-green);
+    color: var(--ft-green-accent);
+    font-size: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.3rem;
+  }
+
+  .award-position {
+    color: var(--ft-green-accent);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .award-title {
+    color: var(--ft-white);
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+  }
+
+  .award-desc {
+    color: var(--ft-gray-muted);
+    font-size: 0.88rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .award-pill {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--ft-gray-light);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.35rem 1rem;
+    border-radius: 50px;
+  }
+
+  /* --- PATROCINADORES --- */
+  .sponsor-logo-box {
+    background: var(--ft-bg-card);
+    border: 1px solid var(--ft-border-subtle);
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+  }
+
+  .sponsor-logo-box:hover {
+    border-color: var(--ft-green-accent);
+    transform: translateY(-4px);
+    background: #25252e;
+  }
+
+  .sponsor-logo {
+    max-height: 45px;
+    max-width: 80%;
+    filter: grayscale(100%) brightness(150%);
+    transition: filter 0.3s ease;
+  }
+
+  .sponsor-logo-box:hover .sponsor-logo {
+    filter: grayscale(0%) brightness(100%);
+  }
+
+  .sponsor-name-fallback {
+    color: var(--ft-white);
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+
+  /* --- PREGUNTAS FRECUENTES (FAQ) --- */
+  .custom-dark-accordion .accordion-item {
+    background: var(--ft-bg-card);
+    border: 1px solid var(--ft-border-subtle);
+    border-radius: 14px !important;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .custom-dark-accordion .accordion-button {
+    background: var(--ft-bg-card);
+    color: var(--ft-white);
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 1.3rem 1.5rem;
+    box-shadow: none !important;
+    border: none;
+  }
+
+  .custom-dark-accordion .accordion-button:not(.collapsed) {
+    color: var(--ft-green-accent);
+    background: #22222b;
+    border-bottom: 1px solid var(--ft-border-subtle);
+  }
+
+  .custom-dark-accordion .accordion-button::after {
+    filter: invert(1);
+  }
+
+  .custom-dark-accordion .accordion-button:not(.collapsed)::after {
+    filter: invert(75%) sepia(80%) saturate(1000%) hue-rotate(40deg);
+  }
+
+  .custom-dark-accordion .accordion-body {
+    color: var(--ft-gray-light);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    background: var(--ft-bg-card);
+    padding: 1.4rem 1.5rem;
+  }
+
+  /* --- BANNER FINAL CTA --- */
+  .section-final-cta {
+    background-image: url('assets/img/CorreconFemtribe2.0/fondo1.png');
+    background-size: cover;
+    background-position: center;
+  }
+
+  .final-cta-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.5));
+    background: rgba(13, 13, 16, 0.88);
   }
-  
-  .hero-content {
-    z-index: 10;
+
+  .fw-black {
+    font-weight: 900 !important;
   }
-  
-  .hero-title {
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-    font-size: 2.5rem !important;
-  }
-  
-  .hero-subtitle {
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-  }
-  
-  /* Estilos mejorados para el reloj de cuenta regresiva con diseño deportivo */
-  .modern-countdown {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 30px;
-  }
-  
-  .modern-countdown-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    border-radius: 8px;
-    padding: 15px 20px;
-    min-width: 110px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-    border: 3px solid var(--primary-color);
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .modern-countdown-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: var(--primary-color);
-  }
-  
-  .modern-countdown-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--primary-color);
-  }
-  
-  .modern-countdown-number {
-    font-size: 2.8rem;
+
+  .badge-ft-pill {
+    display: inline-block;
+    background: rgba(178, 216, 31, 0.15);
+    border: 1px solid var(--ft-border-green);
+    color: var(--ft-white);
     font-weight: 800;
-    color: #D426C8;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    line-height: 1;
-    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1.5px;
+    padding: 0.4rem 1.2rem;
+    border-radius: 50px;
   }
-  
-  .modern-countdown-label {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 5px;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    .modern-countdown {
-      gap: 10px;
+
+  /* --- RESPONSIVE OPTIMIZATIONS --- */
+  @media (max-width: 991.98px) {
+    .countdown-top-bar {
+      padding-top: 7.5rem !important;
+      padding-bottom: 4.5rem !important;
     }
-    
+
+    .countdown-end-lines {
+      gap: 4px;
+    }
+
+    .countdown-end-line {
+      height: 2.5px;
+    }
+
+    .countdown-boxes-row {
+      gap: 6px;
+    }
+
+    .modern-countdown-wrapper {
+      max-width: 460px;
+    }
+
     .modern-countdown-item {
-      min-width: 90px;
-      padding: 12px 15px;
+      padding: 0.7rem 0.35rem 0.55rem !important;
+      min-height: 85px;
+      aspect-ratio: 1 / 1.12;
+      border-radius: 9px;
     }
-    
+
     .modern-countdown-number {
-      font-size: 2.5rem;
+      font-size: 1.5rem !important;
     }
-    
+
     .modern-countdown-label {
-      font-size: 0.9rem;
+      font-size: 0.58rem !important;
+      letter-spacing: 1px;
+      margin-top: 0.35rem;
+    }
+
+    .section-title {
+      font-size: 1.85rem;
+    }
+
+    .logo-carrera {
+      max-height: 240px;
+    }
+
+    .distance-poster-card {
+      height: 460px;
     }
   }
-  
+
   @media (max-width: 576px) {
-    .modern-countdown-item {
-      min-width: 80px;
-      padding: 10px;
+    .countdown-top-bar {
+      padding-top: 6.5rem !important;
+      padding-bottom: 4rem !important;
     }
-    
-    .modern-countdown-number {
-      font-size: 2rem;
-    }
-    
-    .modern-countdown-label {
-      font-size: 0.8rem;
-    }
-  }
 
-  /* iPhone SE y pantallas muy pequeñas (375px y menores) */
-  @media (max-width: 375px) {
-    .carousel-item {
-      height: 100vh !important;
-      min-height: 650px !important;
+    .countdown-end-lines {
+      gap: 3px;
     }
-    
+
+    .countdown-end-line {
+      height: 2px;
+    }
+
+    .countdown-boxes-row {
+      gap: 4px;
+    }
+
+    .modern-countdown-wrapper {
+      max-width: 100%;
+      padding: 0 0.25rem;
+    }
+
+    .modern-countdown-item {
+      padding: 0.55rem 0.15rem 0.42rem !important;
+      border-radius: 7px !important;
+      border-width: 1.5px !important;
+      min-height: 70px;
+      aspect-ratio: 1 / 1.15;
+      box-shadow: 0 4px 12px rgba(0, 58, 119, 0.25), 0 0 9px rgba(178, 216, 31, 0.15);
+    }
+
+    .modern-countdown-number {
+      font-size: 1.05rem !important;
+      text-shadow: none;
+    }
+
+    .modern-countdown-label {
+      font-size: 0.44rem !important;
+      letter-spacing: 0.4px;
+      margin-top: 0.22rem;
+    }
+
+    .countdown-top-badge {
+      font-size: 0.63rem;
+      padding: 0.25rem 0.7rem;
+      letter-spacing: 0.6px;
+      margin-bottom: 0.8rem;
+    }
+
     .hero-content {
-      padding: 20px 0 !important;
-      justify-content: center !important;
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      text-align: center !important;
+      padding-top: 1.5rem;
     }
-    
-    .hero-content .container {
-      padding-left: 15px !important;
-      padding-right: 15px !important;
-      max-width: 100% !important;
+
+    .logo-carrera {
+      max-height: 180px;
     }
-    
-    .hero-content img {
-      max-height: 120px !important;
-      margin-bottom: 1.5rem !important;
-      width: auto !important;
+
+    .section-title {
+      font-size: 1.55rem;
     }
-    
-    .hero-title {
-      font-size: 1.6rem !important;
-      line-height: 1.3 !important;
-      margin-bottom: 1.5rem !important;
-      padding: 0 10px !important;
-      text-align: center !important;
-    }
-    
-    .modern-countdown {
-      gap: 8px !important;
-      margin-bottom: 2rem !important;
-      justify-content: center !important;
-      flex-wrap: wrap !important;
-    }
-    
-    .modern-countdown-item {
-      min-width: 70px !important;
-      padding: 8px 10px !important;
-    }
-    
-    .modern-countdown-number {
-      font-size: 1.6rem !important;
-    }
-    
-    .modern-countdown-label {
-      font-size: 0.7rem !important;
-    }
-    
-    .d-flex.justify-content-center.gap-3 {
-      flex-direction: column !important;
-      gap: 12px !important;
-      align-items: center !important;
-      padding: 0 15px !important;
-    }
-    
-    .btn-lg {
-      padding: 12px 20px !important;
-      font-size: 0.9rem !important;
-      width: 100% !important;
-      max-width: 300px !important;
-      border-radius: 25px !important;
-    }
-    
-    /* Ocultar scroll indicator en pantallas muy pequeñas para evitar solapamiento */
-    .scroll-down {
-      display: none !important;
-    }
-  }
-  
-  .scroll-down {
-    z-index: 20;
-    animation: bounce 2s infinite;
-  }
-  
-  @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% {
-      transform: translateY(0);
-    }
-    40% {
-      transform: translateY(-20px);
-    }
-    60% {
-      transform: translateY(-10px);
-    }
-  }
 
-  /* Benefits Section Styles - Simplified */
-  .benefits-section {
-    position: relative;
-    padding: 80px 0;
-  }
-
-  .benefits-header {
-    margin-bottom: 60px;
-  }
-
-  .benefits-title {
-    font-family: 'Poppins', sans-serif;
-    margin-bottom: 0;
-  }
-
-  .benefits-title-main {
-    display: block;
-    font-size: 3rem;
-    font-weight: 700;
-    color: #ffffff;
-    text-transform: none;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-  }
-
-  .benefits-title-subtitle {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: 300;
-    color: #b8c6db;
-    text-transform: none;
-    letter-spacing: 1px;
-  }
-
-  /* Estilos para el título de beneficios */
-  .benefits-header {
-    margin-bottom: 0rem;
-    margin-top: 5rem;
-  }
-
-  .benefits-title {
-    margin-bottom: 0.5rem;
-  }
-
-  .benefits-title-main {
-    display: block;
-    font-size: 3rem;
-    font-weight: 700;
-    color: #ffffff;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-    margin-bottom: 0.5rem;
-    letter-spacing: 1px;
-  }
-
-  .benefits-title-subtitle {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: 300;
-    color: #87CC3E;
-    text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
-    letter-spacing: 0.5px;
-  }
-
-  .benefits-divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 2rem 0;
-  }
-
-  .divider-line {
-    height: 2px;
-    width: 100px;
-    background: linear-gradient(90deg, transparent, #87CC3E, transparent);
-    margin: 0 1rem;
-  }
-
-  .divider-icon {
-    background: #87CC3E;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(135, 204, 62, 0.4);
-  }
-
-  .divider-icon i {
-    color: #ffffff;
-    font-size: 1.5rem;
-  }
-
-  .benefit-item {
-    display: flex;
-    align-items: center;
-    padding: 15px 20px;
-    margin-bottom: 1.5rem;
-    transition: all 0.3s ease;
-    border: none;
-    background: transparent;
-    justify-content: center;
-  }
-
-  .benefit-item:hover {
-    transform: translateX(10px) translateY(-5px);
-  }
-
-  .benefit-icon {
-    width: 80px;
-    height: 80px;
-    margin-right: 25px;
-    flex-shrink: 0;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .benefit-icon i {
-    font-size: 5rem !important;
-    color: #ffd700;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  }
-
-  .benefit-icon .benefit-image {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    filter: brightness(0) saturate(100%) invert(64%) sepia(85%) saturate(1392%) hue-rotate(74deg) brightness(95%) contrast(89%) drop-shadow(0 8px 16px rgba(135, 204, 62, 0.3));
-    -webkit-filter: brightness(0) saturate(100%) invert(64%) sepia(85%) saturate(1392%) hue-rotate(74deg) brightness(95%) contrast(89%) drop-shadow(0 8px 16px rgba(135, 204, 62, 0.3));
-    transition: all 0.3s ease;
-  }
-
-  .benefit-item:hover .benefit-icon i {
-    transform: scale(1.1);
-    color: #87CC3E;
-    text-shadow: 0 8px 16px rgba(135, 204, 62, 0.4);
-  }
-
-  .benefit-item:hover .benefit-icon .benefit-image {
-    transform: scale(1.1);
-    filter: brightness(0) saturate(100%) invert(64%) sepia(85%) saturate(1392%) hue-rotate(74deg) brightness(95%) contrast(89%) drop-shadow(0 12px 20px rgba(135, 204, 62, 0.5));
-    -webkit-filter: brightness(0) saturate(100%) invert(64%) sepia(85%) saturate(1392%) hue-rotate(74deg) brightness(95%) contrast(89%) drop-shadow(0 12px 20px rgba(135, 204, 62, 0.5));
-  }
-
-  .benefit-text {
-    flex: 1;
-  }
-
-  .benefit-item h4 {
-          color: white;
-          font-weight: 600;
-          font-size: 1.4rem;
-          text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-          margin: 0 0 0.5rem 0;
-        }
-        
-        .benefit-item p {
-          color: rgba(255,255,255,0.9);
-          font-size: 0.9rem;
-          text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-          margin: 0;
-        }
-
-  .benefit-item p {
-    color: rgba(255, 255, 255, 0.9);
-    font-size: 1rem;
-    line-height: 1.4;
-    margin: 0;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  }
-
-  /* Responsive adjustments for parallax section */
-  /* ===== RESPONSIVE DESIGN - BENEFITS SECTION ===== */
-  
-  /* Pantallas grandes (1200px y mayores) - Diseño base ya definido arriba */
-  
-  /* Tablets grandes (1199px - 993px) */
-  @media (max-width: 1199px) and (min-width: 993px) {
-    .benefits-title-main {
-      font-size: 2.5rem;
-    }
-    
-    .benefit-item {
-      padding: 12px 15px;
-    }
-    
-    .benefit-icon {
-      width: 70px;
-      height: 70px;
-      margin-right: 20px;
-    }
-    
-    .benefit-icon .benefit-image {
-      width: 70px;
-      height: 70px;
-    }
-    
-    .benefit-item h4 {
-      font-size: 1.3rem;
-    }
-  }
-
-  /* Tablets (992px y menores) */
-  @media (max-width: 992px) {
-    .benefits-section {
-      padding: 4rem 0;
-    }
-    
-    .benefits-header {
-      margin-bottom: 2rem;
-    }
-    
-    .benefits-title-main {
-      font-size: 2.2rem;
-    }
-    
-    .benefits-title-subtitle {
-      font-size: 1.1rem;
-    }
-    
-    .benefit-item {
-      display: flex;
+    .cta-buttons-ft {
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 20px 15px;
-      margin-bottom: 2rem;
-    }
-    
-    .benefit-icon {
-      width: 75px;
-      height: 75px;
-      margin-right: 0;
-      margin-bottom: 15px;
-    }
-    
-    .benefit-icon .benefit-image {
-      width: 75px;
-      height: 75px;
-    }
-    
-    .benefit-text {
-      text-align: center;
       width: 100%;
     }
-    
-    .benefit-item h4 {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-    }
-    
-    .benefit-item p {
-      font-size: 0.95rem;
-    }
-  }
 
-  /* Tablets pequeñas (768px y menores) - FORZAR LAYOUT VERTICAL */
-  @media (max-width: 768px) {
-    .benefits-section {
-      padding: 3rem 0 !important;
+    .btn-cta-primary,
+    .btn-cta-secondary {
+      width: 100%;
+      font-size: 0.85rem;
+      padding: 0.85rem 1.2rem;
     }
-    
-    .benefits-header {
-      margin-bottom: 1.5rem !important;
-    }
-    
-    .benefits-title-main {
-      font-size: 2rem !important;
-    }
-    
-    .benefits-title-subtitle {
-      font-size: 1rem !important;
-    }
-    
-    /* FORZAR COLUMNAS A 100% EN MÓVILES */
-    .col-lg-4.col-md-6.col-12 {
-      flex: 0 0 100% !important;
-      max-width: 100% !important;
-      width: 100% !important;
-      padding-left: 12px !important;
-      padding-right: 12px !important;
-      margin-bottom: 1.5rem !important;
-    }
-    
-    .benefit-item {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      text-align: center !important;
-      padding: 18px 12px !important;
-      margin-bottom: 0 !important;
-      width: 100% !important;
-    }
-    
-    .benefit-icon {
-      width: 70px !important;
-      height: 70px !important;
-      margin-right: 0 !important;
-      margin-bottom: 12px !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-    
-    .benefit-icon .benefit-image {
-      width: 70px !important;
-      height: 70px !important;
-      object-fit: contain !important;
-    }
-    
-    .benefit-text {
-      text-align: center !important;
-      width: 100% !important;
-    }
-    
-    .benefit-item h4 {
-      font-size: 1.1rem !important;
-      line-height: 1.3 !important;
-      margin-bottom: 0.3rem !important;
-      text-align: center !important;
-    }
-    
-    .benefit-item p {
-      font-size: 0.9rem !important;
-      line-height: 1.4 !important;
-      text-align: center !important;
-    }
-  }
 
-  /* Móviles (576px y menores) - MÁXIMA FUERZA VERTICAL */
-  @media (max-width: 576px) {
-    .benefits-section {
-      padding: 2.5rem 0 !important;
+    .distance-poster-card {
+      height: 420px;
     }
-    
-    .benefits-header {
-      margin-bottom: 1.2rem !important;
-    }
-    
-    .benefits-title-main {
-      font-size: 1.8rem !important;
-      line-height: 1.2 !important;
-    }
-    
-    .benefits-title-subtitle {
-      font-size: 0.95rem !important;
-    }
-    
-    /* FORZAR COLUMNAS A 100% EN MÓVILES PEQUEÑOS */
-    .col-lg-4.col-md-6.col-12 {
-      flex: 0 0 100% !important;
-      max-width: 100% !important;
-      width: 100% !important;
-      padding-left: 8px !important;
-      padding-right: 8px !important;
-      margin-bottom: 1.2rem !important;
-    }
-    
-    .benefit-item {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      justify-content: center !important;
-      text-align: center !important;
-      padding: 15px 8px !important;
-      margin-bottom: 0 !important;
-      width: 100% !important;
-    }
-    
-    .benefit-icon {
-      width: 60px !important;
-      height: 60px !important;
-      margin-right: 0 !important;
-      margin-bottom: 10px !important;
-      display: flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-    }
-    
-    .benefit-icon .benefit-image {
-      width: 60px !important;
-      height: 60px !important;
-      object-fit: contain !important;
-    }
-    
-    .benefit-text {
-      text-align: center !important;
-      width: 100% !important;
-    }
-    
-    .benefit-item h4 {
-      font-size: 1rem !important;
-      line-height: 1.2 !important;
-      margin-bottom: 0.2rem !important;
-      text-align: center !important;
-    }
-    
-    .benefit-item p {
-      font-size: 0.85rem !important;
-      line-height: 1.3 !important;
-      text-align: center !important;
-    }
-  }
 
-  /* Estilos adicionales para asegurar responsive */
-  @media (max-width: 480px) {
-    .col-lg-4.col-md-6.col-12 {
-      flex: 0 0 100% !important;
-      max-width: 100% !important;
+    .stage-card {
+      padding: 1.8rem 1.4rem;
     }
-    
-    .benefit-item {
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: center !important;
-      text-align: center !important;
+
+    .stage-price {
+      font-size: 2.4rem;
     }
   }
 </style>
 
-<!-- Benefits Section - With background image -->
-<section class="benefits-section py-3" id="benefits-section" style="background-image: url('assets/img/fondo_1.png'); background-size: cover; background-position: center; background-repeat: no-repeat; position: relative;">
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 1;"></div>
-  <div class="container" style="position: relative; z-index: 2; color: white;">
-    <div class="row justify-content-center">
-      <div class="col-lg-10 text-center">
-        <!-- Título de la sección de beneficios -->
-        <div class="benefits-header mb-5" data-aos="fade-up">
-          <h2 class="benefits-title">
-            <span class="benefits-title-main">Beneficios exclusivos</span>
-            <span class="benefits-title-subtitle">Para todos los participantes</span>
-          </h2>
-        </div>
-        
-        <div class="benefits-content" data-aos="fade-up">
-            <div class="row justify-content-center">
-              <!-- PRIMERA COLUMNA -->
-              <!-- Asistencia médica -->
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/camion-medico.png" alt="Asistencia médica" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Asistencia<br>médica</h4>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Fisioterapia -->
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/masaje-facial.png" alt="Fisioterapia" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Servicio de<br>Fisioterapia</h4>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Medalla oficial -->
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/medalla.png" alt="Medalla oficial" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Medalla<br>oficial</h4>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- SEGUNDA FILA -->
-              <!-- Zona de hidratación -->
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/bebida-deportiva.png" alt="Zona de hidratación" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Zona de<br>hidratación</h4>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Fotografía profesional -->
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/camara.png" alt="Fotografía profesional" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Fotografía<br>profesional</h4>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Número de dorsal -->
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/dorsal.png" alt="Número de dorsal" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Número de<br>dorsal</h4>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- TERCERA FILA -->
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/regalo.png" alt="Obsequio patrocinador" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Obsequios<br>patrocinadores</h4>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/estrella-del-trofeo.png" alt="Premiación" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Premiación</h4>
-                  </div>
-                </div>
-              </div>
-              
-              <!-- Tula -->
-              <div class="col-lg-4 col-md-6 col-12 mb-4 px-6">
-                <div class="benefit-item">
-                  <div class="benefit-icon">
-                    <img src="assets/img/maletin.png" alt="Tula" class="benefit-image">
-                  </div>
-                  <div class="benefit-text">
-                    <h4>Kit<br>Exclusivo</h4>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Premios Section -->
-<section class="premios-section py-3 position-relative overflow-hidden">
-  <div class="premios-bg-overlay"></div>
-  <div class="container py-2">
-    <!-- Título y descripción de la sección -->
-    <div class="row justify-content-center mb-3" data-aos="fade-up">
-      <div class="col-lg-8 text-center">
-        <div class="premios-header mb-2">
-          <div class="premios-icon mb-2">
-            <i class="fas fa-trophy"></i>
-          </div>
-          <h2 class="display-5 fw-bold text-white mb-3">PREMIACIÓN</h2>
-          <p class="lead text-white mb-0">Premios para los tres primeros puestos de cada categoría</p>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Contenido principal con imagen y premios -->
-    <div class="row align-items-center" data-aos="fade-up">
-      <!-- Imagen de Premios -->
-      <div class="col-lg-4 mb-3 mb-lg-0">
-        <div class="premios-image-container position-relative">
-          <img src="assets/img/premio.png" alt="Premios de la carrera" class="img-fluid rounded-3 shadow-lg premio-img-ft">
-          <div class="premios-image-overlay">
-            <div class="premios-badge">
-              <i class="fas fa-trophy me-2"></i>
-              ¡Increíbles Premios!
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <!-- Contenido de Premios -->
-      <div class="col-lg-8">
-        <div class="premios-content">
-          <div class="premios-highlight mb-3">
-            <h3 class="mb-1">Más de <span class="text-warning">5 millones</span> de premios en efectivo</h3>
-          </div>
-          
-          <div class="row g-3">
-            <!-- Medalla de ganador -->
-            <div class="col-md-6">
-              <div class="premio-card-modern">
-                <div class="premio-icon-modern medal-gold">
-                  <i class="fas fa-medal"></i>
-                </div>
-                <div class="premio-info-modern">
-                  <h5 class="fw-bold mb-2">Medallas de ganadores</h5>
-                  <p class="text-muted small mb-0">Para todas las categorías</p>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Premios en Efectivo -->
-            <div class="col-md-6">
-              <div class="premio-card-modern">
-                <div class="premio-icon-modern money-green">
-                  <i class="fas fa-money-bill-wave"></i>
-                </div>
-                <div class="premio-info-modern">
-                  <h5 class="fw-bold mb-2">Premios en Efectivo</h5>
-                  <p class="text-muted small mb-0">Para las categorías FEMTRIBE y MenTribe</p>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Premio Sorpresa -->
-            <div class="col-md-6">
-              <div class="premio-card-modern">
-                <div class="premio-icon-modern gift-orange">
-                  <i class="fas fa-gift"></i>
-                </div>
-                <div class="premio-info-modern">
-                  <h5 class="fw-bold mb-2">Premio sorpresa</h5>
-                  <p class="text-muted small mb-0">Para el 4° puesto de cada categoría</p>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Bonos Regalo -->
-            <div class="col-md-6">
-              <div class="premio-card-modern">
-                <div class="premio-icon-modern voucher-blue">
-                  <i class="fas fa-ticket-alt"></i>
-                </div>
-                <div class="premio-info-modern">
-                  <h5 class="fw-bold mb-2">Bonos y obsequios</h5>
-                  <p class="text-muted small mb-0">Para la categoría KidsTribe</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<style>
-/* Efectos de partículas animadas */
-.premio-particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: #ffd700;
-  border-radius: 50%;
-  animation: float 6s ease-in-out infinite;
-}
-
-.particle:nth-child(1) { left: 10%; animation-delay: 0s; }
-.particle:nth-child(2) { left: 30%; animation-delay: 1s; }
-.particle:nth-child(3) { left: 50%; animation-delay: 2s; }
-.particle:nth-child(4) { left: 70%; animation-delay: 3s; }
-.particle:nth-child(5) { left: 90%; animation-delay: 4s; }
-
-@keyframes float {
-  0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
-  10% { opacity: 1; transform: translateY(90vh) scale(1); }
-  90% { opacity: 1; transform: translateY(10vh) scale(1); }
-}
-
-/* Header espectacular */
-.premios-header-spectacular {
-  position: relative;
-  z-index: 2;
-}
-
-.premio-main-icon {
-  position: relative;
-  display: inline-block;
-}
-
-.icon-glow {
-  width: 120px;
-  height: 120px;
-  background: linear-gradient(45deg, #ffd700, #ffed4e, #ffd700);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto;
-  animation: pulse-glow 2s ease-in-out infinite;
-  box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
-}
-
-.icon-glow i {
-  font-size: 3.5rem;
-  color: #1a1a1a;
-  animation: bounce 2s ease-in-out infinite;
-}
-
-@keyframes pulse-glow {
-  0%, 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255, 215, 0, 0.6); }
-  50% { transform: scale(1.1); box-shadow: 0 0 50px rgba(255, 215, 0, 0.9); }
-}
-
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-.sparkles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.sparkle {
-  position: absolute;
-  font-size: 1.5rem;
-  animation: sparkle 3s ease-in-out infinite;
-}
-
-.sparkle-1 { top: 10%; left: 10%; animation-delay: 0s; }
-.sparkle-2 { top: 20%; right: 10%; animation-delay: 0.5s; }
-.sparkle-3 { bottom: 20%; left: 15%; animation-delay: 1s; }
-.sparkle-4 { bottom: 10%; right: 15%; animation-delay: 1.5s; }
-
-@keyframes sparkle {
-  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-  50% { opacity: 1; transform: scale(1) rotate(180deg); }
-}
-
-.premio-title-glow {
-  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6);
-  animation: title-glow 3s ease-in-out infinite;
-}
-
-@keyframes title-glow {
-  0%, 100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.6); }
-  50% { text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 215, 0, 0.8); }
-}
-
-.premio-subtitle-box {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 193, 7, 0.1));
-  border: 2px solid rgba(255, 215, 0, 0.5);
-  border-radius: 20px;
-  padding: 1.5rem;
-  backdrop-filter: blur(10px);
-  animation: subtitle-pulse 4s ease-in-out infinite;
-}
-
-@keyframes subtitle-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-/* Tarjetas espectaculares */
-.premio-spectacular-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 25px;
-  padding: 2rem;
-  backdrop-filter: blur(15px);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s ease;
-  animation: card-float 6s ease-in-out infinite;
-}
-
-@keyframes card-float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-.premio-spectacular-card:hover {
-  transform: translateY(-15px) scale(1.02);
-  box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-}
-
-.card-glow-effect {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #ffd700, #87CC3E, #ffd700, #87CC3E);
-  border-radius: 25px;
-  z-index: -1;
-  animation: border-glow 3s linear infinite;
-}
-
-@keyframes border-glow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.femtribe-card .card-glow-effect { background: linear-gradient(45deg, #e91e63, #ffd700, #e91e63, #ffd700); }
-.mentribe-card .card-glow-effect { background: linear-gradient(45deg, #2196f3, #ffd700, #2196f3, #ffd700); }
-.kidstribe-card .card-glow-effect { background: linear-gradient(45deg, #ff9800, #ffd700, #ff9800, #ffd700); }
-
-/* Header visual de categorías */
-.premio-header-visual {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-.category-badge {
-  background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
-  border-radius: 20px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  border: 1px solid rgba(255,255,255,0.3);
-}
-
-.badge-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 0.5rem;
-  font-size: 1.5rem;
-}
-
-.femtribe-badge .badge-icon { background: linear-gradient(135deg, #e91e63, #ad1457); color: white; }
-.mentribe-badge .badge-icon { background: linear-gradient(135deg, #2196f3, #1565c0); color: white; }
-.kidstribe-badge .badge-icon { background: linear-gradient(135deg, #ff9800, #e65100); color: white; }
-
-.trophy-visual {
-  margin: 1rem 0;
-}
-
-.trophy-container {
-  position: relative;
-  display: inline-block;
-}
-
-.trophy-main {
-  font-size: 3rem;
-  color: #ffd700;
-  animation: trophy-shine 2s ease-in-out infinite;
-}
-
-.trophy-container.kids .trophy-main {
-  color: #ff9800;
-}
-
-@keyframes trophy-shine {
-  0%, 100% { filter: brightness(1) drop-shadow(0 0 10px currentColor); }
-  50% { filter: brightness(1.3) drop-shadow(0 0 20px currentColor); }
-}
-
-/* Lista visual de premios */
-.premio-visual-list {
-  gap: 1rem;
-}
-
-.premio-visual-item {
-  display: flex;
-  align-items: center;
-  background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-  border-radius: 15px;
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-  border-left: 5px solid;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.premio-visual-item::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.premio-visual-item:hover::before {
-  left: 100%;
-}
-
-.premio-visual-item:hover {
-  transform: translateX(10px) scale(1.02);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-}
-
-.gold-prize { border-left-color: #ffd700; }
-.silver-prize { border-left-color: #c0c0c0; }
-.bronze-prize { border-left-color: #cd7f32; }
-.special-prize { border-left-color: #87CC3E; }
-.kids-prize { border-left-color: #ff9800; }
-
-/* Medallas y posiciones */
-.prize-medal {
-  margin-right: 1.5rem;
-}
-
-.medal-container {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  animation: medal-rotate 4s linear infinite;
-}
-
-@keyframes medal-rotate {
-  0% { transform: rotateY(0deg); }
-  100% { transform: rotateY(360deg); }
-}
-
-.medal-container { background: linear-gradient(135deg, #ffd700, #ffed4e); }
-.medal-container.silver { background: linear-gradient(135deg, #c0c0c0, #e8e8e8); }
-.medal-container.bronze { background: linear-gradient(135deg, #cd7f32, #daa520); }
-.medal-container.special { background: linear-gradient(135deg, #87CC3E, #6ba82f); }
-.medal-container.kids { background: linear-gradient(135deg, #ff9800, #ffa726); }
-
-.medal-container i {
-  font-size: 1.5rem;
-  color: #1a1a1a;
-}
-
-.position-number {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #1a1a1a;
-}
-
-/* Información de premios */
-.prize-info h5 {
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-}
-
-.money-display {
-  display: flex;
-  align-items: baseline;
-  margin-bottom: 0.5rem;
-}
-
-.currency {
-  font-size: 1.2rem;
-  color: #ffd700;
-  font-weight: bold;
-  margin-right: 0.2rem;
-}
-
-.amount {
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: #ffd700;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  animation: money-glow 2s ease-in-out infinite;
-}
-
-@keyframes money-glow {
-  0%, 100% { text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(255,215,0,0.5); }
-  50% { text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.8); }
-}
-
-.money-display.silver .currency,
-.money-display.silver .amount { color: #c0c0c0; }
-
-.money-display.bronze .currency,
-.money-display.bronze .amount { color: #cd7f32; }
-
-.surprise-display,
-.kids-display {
-  margin-bottom: 0.5rem;
-}
-
-.surprise-text,
-.kids-prize-text {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #87CC3E;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  animation: text-pulse 2s ease-in-out infinite;
-}
-
-.kids-prize-text {
-  color: #ff9800;
-}
-
-@keyframes text-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}
-
-.prize-extras {
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.8);
-  font-weight: bold;
-  text-align: center;
-  animation: extras-bounce 3s ease-in-out infinite;
-}
-
-@keyframes extras-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-</style>
-
-
-<!-- Call to Action - COMENTADO TEMPORALMENTE
-<section class="section py-5" style="background-image: url('assets/img/femtribe_verde.png'); background-size: cover; background-position: center; position: relative;">>
-  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8));"></div>
-  <div class="container py-5 position-relative" style="z-index: 2;">
-    <div class="row">
-      <div class="col-lg-8 mx-auto text-center text-white" data-aos="fade-up">
-        <h6 class="text-primary fw-bold mb-3">ÚNETE A NOSOTROS</h6>
-        <h2 class="display-4 fw-bold mb-4">¿Lista para correr con FEMTRIBE?</h2>
-        <p class="lead mb-5">No te pierdas la oportunidad de ser parte de esta increíble experiencia. ¡Inscríbete ahora y vive la carrera de tus sueños!</p>
-        <div class="d-flex justify-content-center gap-3">
-          <a href="/inscripcion" class="btn btn-primary btn-lg">INSCRÍBETE AHORA</a>
-                <a href="/contacto" class="btn btn-outline-light btn-lg">Contáctanos</a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-FIN COMENTARIO CALL TO ACTION -->
-
-<!-- FAQ Section - COMENTADO TEMPORALMENTE
-<section class="section py-5">
-  <div class="container py-4">
-    <div class="row justify-content-center mb-5" data-aos="fade-up">
-      <div class="col-lg-7 text-center">
-        <h6 class="text-primary fw-bold mb-3">PREGUNTAS FRECUENTES</h6>
-        <h2 class="display-5 fw-bold">Todo lo que necesitas saber</h2>
-      </div>
-    </div>
-    
-    <div class="row justify-content-center">
-      <div class="col-lg-10">
-        <div class="accordion" id="faqAccordion">
-          <div class="accordion-item border-0 mb-3 shadow-sm" data-aos="fade-up" data-aos-delay="100">
-            <h2 class="accordion-header" id="headingOne">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                ¿Cuándo es la carrera?</button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                La carrera Corre con FEMTRIBE se realizará el 5 de diciembre de 2025. La hora de inicio será a las 7:00 AM para todas las categorías.
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item border-0 mb-3 shadow-sm" data-aos="fade-up" data-aos-delay="200">
-            <h2 class="accordion-header" id="headingTwo">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                ¿Qué incluye la inscripción?</button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                La inscripción incluye: camiseta técnica oficial del evento, número de participante, chip de cronometraje, medalla de finalista, hidratación durante el recorrido, kit de recuperación y acceso a la zona de recuperación post-carrera.
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item border-0 mb-3 shadow-sm" data-aos="fade-up" data-aos-delay="300">
-            <h2 class="accordion-header" id="headingThree">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                ¿Hay límite de edad para participar?</button>
-            </h2>
-            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                Para la categoría 5K, la edad mínima es de 12 años. Para 10K, 15 años y para 21K, 18 años. Todos los menores de edad deben contar con autorización firmada por sus padres o tutores legales.
-              </div>
-            </div>
-          </div>
-          
-          <div class="accordion-item border-0 mb-3 shadow-sm" data-aos="fade-up" data-aos-delay="400">
-            <h2 class="accordion-header" id="headingFour">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                ¿Puedo transferir mi inscripción a otra persona?</button>
-            </h2>
-            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
-              <div class="accordion-body">
-                Sí, las inscripciones son transferibles hasta 30 días antes del evento. Deberás contactar a la organización a través del correo electrónico info@femtribe.com con los datos de la persona a quien deseas transferir tu inscripción.
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-FIN COMENTARIO FAQ -->
-
+<!-- =========================================================================
+     SCRIPTS DEL HOME (TEMPORIZADOR, VIDEO & ANIMACIONES)
+     ========================================================================= -->
 <script>
-// Cuenta regresiva FEMTRIBE 2.0
-// Fecha objetivo: 10 de agosto de 2026, 06:00:00 Hora Colombia (UTC-5)
-// Colombia no tiene horario de verano, siempre UTC-5
-function getColombiaTargetDate() {
-    const target = new Date(Date.UTC(2026, 7, 10, 11, 0, 0));
-    return target.getTime();
-}
+  // Fecha objetivo de la carrera
+  const targetDate = new Date("2026-11-29T07:00:00").getTime();
 
-const targetDate = getColombiaTargetDate();
-
-function updateCountdown() {
+  function updateCountdown() {
     const now = new Date().getTime();
     const diff = targetDate - now;
 
@@ -2802,260 +2545,103 @@ function updateCountdown() {
     const elSecs = document.getElementById("countdown-seconds");
 
     if (diff <= 0) {
-        if (elDays) elDays.textContent = "00";
-        if (elHours) elHours.textContent = "00";
-        if (elMins) elMins.textContent = "00";
-        if (elSecs) elSecs.textContent = "00";
-        return;
+      if (elDays) elDays.textContent = "00";
+      if (elHours) elHours.textContent = "00";
+      if (elMins) elMins.textContent = "00";
+      if (elSecs) elSecs.textContent = "00";
+      return;
     }
 
-    const days = Math.floor(diff / (1000*60*60*24));
-    const hours = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
-    const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
-    const secs = Math.floor((diff % (1000*60)) / 1000);
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-    if (elDays) {
-        const val = days.toString().padStart(2, '0');
-        if (elDays.textContent !== val) {
-            elDays.textContent = val;
-            elDays.classList.add('pulse');
-            setTimeout(() => elDays.classList.remove('pulse'), 600);
-        }
-    }
-    if (elHours) {
-        const val = hours.toString().padStart(2, '0');
-        if (elHours.textContent !== val) {
-            elHours.textContent = val;
-            elHours.classList.add('pulse');
-            setTimeout(() => elHours.classList.remove('pulse'), 600);
-        }
-    }
-    if (elMins) {
-        const val = mins.toString().padStart(2, '0');
-        if (elMins.textContent !== val) {
-            elMins.textContent = val;
-            elMins.classList.add('pulse');
-            setTimeout(() => elMins.classList.remove('pulse'), 600);
-        }
-    }
-    if (elSecs) {
-        const val = secs.toString().padStart(2, '0');
-        if (elSecs.textContent !== val) {
-            elSecs.textContent = val;
-            elSecs.classList.add('pulse');
-            setTimeout(() => elSecs.classList.remove('pulse'), 600);
-        }
-    }
-}
-
-updateCountdown();
-setInterval(updateCountdown, 1000);
-
-// Carousel autoplay - OPTIMIZADO
-document.addEventListener('DOMContentLoaded', function() {
-  const heroCarousel = new bootstrap.Carousel(document.getElementById('heroCarousel'), {
-    interval: 5000, // 5 segundos entre imágenes
-    ride: 'carousel',
-    wrap: true,
-    pause: 'hover' // Pausa al hacer hover para mejor UX
-  });
-});
-</script>
-
-<script>
-// Video Player Functionality
-function playVideo() {
-  const video = document.getElementById('femtribeVideo');
-  const overlay = document.getElementById('playButtonOverlay');
-  
-  if (video) {
-    video.play();
-    overlay.classList.add('hidden');
+    if (elDays) elDays.textContent = days.toString().padStart(2, '0');
+    if (elHours) elHours.textContent = hours.toString().padStart(2, '0');
+    if (elMins) elMins.textContent = mins.toString().padStart(2, '0');
+    if (elSecs) elSecs.textContent = secs.toString().padStart(2, '0');
   }
-}
 
-// Show overlay when video is paused or ended
-document.addEventListener('DOMContentLoaded', function() {
-  const video = document.getElementById('femtribeVideo');
-  const overlay = document.getElementById('playButtonOverlay');
-  
-  if (video && overlay) {
-    video.addEventListener('pause', function() {
-      overlay.classList.remove('hidden');
-    });
-    
-    video.addEventListener('ended', function() {
-      overlay.classList.remove('hidden');
-    });
-    
-    video.addEventListener('play', function() {
-      overlay.classList.add('hidden');
-    });
-    
-    // Hide overlay when video starts playing
-    video.addEventListener('loadeddata', function() {
-      if (!video.paused) {
-        overlay.classList.add('hidden');
-      }
-    });
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // Video Player
+  function playVideo() {
+    const video = document.getElementById('femtribeVideo');
+    const overlay = document.getElementById('playButtonOverlay');
+    if (video) {
+      video.play();
+      if (overlay) overlay.classList.add('hidden');
+    }
   }
-});
 
-// Animate stats when they come into view
-function animateStats() {
-  const stats = document.querySelectorAll('.stat-item h4');
-  
-  stats.forEach(stat => {
-    const finalValue = stat.textContent;
-    const numericValue = parseInt(finalValue.replace(/\D/g, ''));
-    
-    if (numericValue) {
-      let currentValue = 0;
-      const increment = numericValue / 50;
-      const timer = setInterval(() => {
-        currentValue += increment;
-        if (currentValue >= numericValue) {
-          stat.textContent = finalValue;
-          clearInterval(timer);
+  document.addEventListener('DOMContentLoaded', function () {
+    const heroCarouselEl = document.getElementById('heroCarousel');
+    let heroCarousel = null;
+    let heroAutoplayTimer = null;
+    const HERO_INTERVAL_MS = 3000;
+
+    function startHeroAutoplay() {
+      if (heroAutoplayTimer) clearInterval(heroAutoplayTimer);
+      heroAutoplayTimer = setInterval(function () {
+        if (heroCarousel) heroCarousel.next();
+      }, HERO_INTERVAL_MS);
+    }
+
+    if (heroCarouselEl && window.bootstrap && bootstrap.Carousel) {
+      // Inicialización ÚNICA de Bootstrap (sin ride, para no pelear con setInterval)
+      heroCarousel = new bootstrap.Carousel(heroCarouselEl, {
+        interval: false,
+        ride: false,
+        wrap: true,
+        pause: false,
+        touch: true,
+        keyboard: true
+      });
+
+      // Autoplay MANUAL (100% confiable, no se traba en foto 1, no se detiene al dar wrap)
+      startHeroAutoplay();
+
+      // Si el usuario hace click en un indicador o slide, reiniciar timer para no saltar de foto 2s despues
+      heroCarouselEl.addEventListener('slide.bs.carousel', function () {
+        startHeroAutoplay();
+      });
+
+      // Pausa al hacer hover (mejor UX) — reanudar al salir
+      heroCarouselEl.addEventListener('mouseenter', function () {
+        if (heroAutoplayTimer) clearInterval(heroAutoplayTimer);
+      });
+      heroCarouselEl.addEventListener('mouseleave', function () {
+        startHeroAutoplay();
+      });
+    }
+
+    const video = document.getElementById('femtribeVideo');
+    const overlay = document.getElementById('playButtonOverlay');
+    if (video && overlay) {
+      video.addEventListener('pause', () => overlay.classList.remove('hidden'));
+      video.addEventListener('ended', () => overlay.classList.remove('hidden'));
+      video.addEventListener('play', () => overlay.classList.add('hidden'));
+    }
+
+    // Dynamic login check for buttons
+    const inscribeteBtns = document.querySelectorAll('.inscribete-btn-link');
+    inscribeteBtns.forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        if (window.FEMTRIBE_CONFIG && !window.FEMTRIBE_CONFIG.registrationsEnabled) {
+          e.preventDefault();
+          window.showProximamenteModal('inscripciones');
+          return false;
+        }
+        if (window.isUserLoggedIn) {
+          btn.setAttribute('href', '/inscribirse');
         } else {
-          stat.textContent = Math.floor(currentValue) + (finalValue.includes('+') ? '+' : '');
+          btn.setAttribute('href', '/registro');
         }
-      }, 30);
-    }
-  });
-}
-
-// Intersection Observer for stats animation
-const statsObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      animateStats();
-      statsObserver.unobserve(entry.target);
-    }
-  });
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  const videoStats = document.querySelector('.video-stats');
-  if (videoStats) {
-    statsObserver.observe(videoStats);
-  }
-});
-
-// COMENTADO TEMPORALMENTE - Sponsors Carousel JavaScript
-/*
-document.addEventListener('DOMContentLoaded', function() {
-    const track = document.getElementById('sponsorsTrack');
-    const prevBtn = document.getElementById('sponsorsPrev');
-    const nextBtn = document.getElementById('sponsorsNext');
-    
-    if (!track || !prevBtn || !nextBtn) return;
-    
-    const items = track.querySelectorAll('.sponsor-item');
-    const itemWidth = 150; // Width of each sponsor item
-    const gap = 40; // Gap between items
-    const totalItemWidth = itemWidth + gap;
-    
-    let currentIndex = 0;
-    let itemsToShow = 4; // Default items to show
-    
-    // Calculate items to show based on container width
-    function calculateItemsToShow() {
-        const containerWidth = track.parentElement.offsetWidth;
-        itemsToShow = Math.floor(containerWidth / totalItemWidth);
-        if (itemsToShow < 1) itemsToShow = 1;
-        if (itemsToShow > items.length) itemsToShow = items.length;
-    }
-    
-    // Update carousel position
-    function updateCarousel() {
-        const translateX = -currentIndex * totalItemWidth;
-        track.style.transform = `translateX(${translateX}px)`;
-        
-        // Update button states
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex >= items.length - itemsToShow;
-    }
-    
-    // Navigate to previous items
-    function goToPrev() {
-        if (currentIndex > 0) {
-            currentIndex--;
-            updateCarousel();
-        }
-    }
-    
-    // Navigate to next items
-    function goToNext() {
-        if (currentIndex < items.length - itemsToShow) {
-            currentIndex++;
-            updateCarousel();
-        }
-    }
-    
-    // Event listeners
-    prevBtn.addEventListener('click', goToPrev);
-    nextBtn.addEventListener('click', goToNext);
-    
-    // Handle window resize
-    window.addEventListener('resize', function() {
-        calculateItemsToShow();
-        // Adjust current index if needed
-        if (currentIndex > items.length - itemsToShow) {
-            currentIndex = Math.max(0, items.length - itemsToShow);
-        }
-        updateCarousel();
-    });
-    
-    // Initialize carousel
-    calculateItemsToShow();
-    updateCarousel();
-    
-    // Auto-scroll functionality (optional)
-    let autoScrollInterval;
-    
-    function startAutoScroll() {
-        autoScrollInterval = setInterval(() => {
-            if (currentIndex < items.length - itemsToShow) {
-                goToNext();
-            } else {
-                currentIndex = 0;
-                updateCarousel();
-            }
-        }, 4000);
-    }
-    
-    function stopAutoScroll() {
-        clearInterval(autoScrollInterval);
-    }
-    
-    // Start auto-scroll
-    startAutoScroll();
-    
-    // Pause auto-scroll on hover
-    const carouselContainer = document.querySelector('.sponsors-carousel-container');
-    if (carouselContainer) {
-        carouselContainer.addEventListener('mouseenter', stopAutoScroll);
-        carouselContainer.addEventListener('mouseleave', startAutoScroll);
-    }
-});
-*/
-// FIN COMENTARIO JAVASCRIPT SPONSORS
-
-<script>
-// Validación dinámica en cliente para botones de inscripción
-document.addEventListener('DOMContentLoaded', function() {
-  const inscribeteBtns = document.querySelectorAll('.inscribete-btn-link');
-  inscribeteBtns.forEach(function(btn) {
-    btn.addEventListener('click', function(e) {
-      if (window.isUserLoggedIn) {
-        btn.setAttribute('href', '/inscribirse');
-      } else {
-        btn.setAttribute('href', '/registro');
-      }
+      });
     });
   });
-});
 </script>
 
 <?php include 'layouts/footer.php'; ?>

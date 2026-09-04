@@ -25,9 +25,16 @@ loadEnv(__DIR__ . '/../.env');
 if (!defined('APP_NAME')) define('APP_NAME', getenv('APP_NAME') ?: 'FEMTRIBE');
 if (!defined('APP_VERSION')) define('APP_VERSION', '1.0.0');
 
+// Control de módulos activos / Próximamente (true = activo, false = redirige a modal Próximamente)
+$envReg = getenv('ENABLE_REGISTRATIONS') !== false ? getenv('ENABLE_REGISTRATIONS') : (getenv('INSCRIPCIONES_ABIERTAS') !== false ? getenv('INSCRIPCIONES_ABIERTAS') : null);
+if (!defined('ENABLE_REGISTRATIONS')) define('ENABLE_REGISTRATIONS', $envReg !== null ? filter_var($envReg, FILTER_VALIDATE_BOOLEAN) : true);
+
+$envProd = getenv('ENABLE_PRODUCTS') !== false ? getenv('ENABLE_PRODUCTS') : (getenv('PRODUCTOS_HABILITADOS') !== false ? getenv('PRODUCTOS_HABILITADOS') : null);
+if (!defined('ENABLE_PRODUCTS')) define('ENABLE_PRODUCTS', $envProd !== null ? filter_var($envProd, FILTER_VALIDATE_BOOLEAN) : true);
+
 // Detectar entorno automáticamente
 $host = $_SERVER['HTTP_HOST'] ?? '';
-$isLocal = (bool)preg_match('/^(localhost|127\.0\.0\.1)(:\\d+)?$/', $host);
+$isLocal = (bool)preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?$/', $host);
 $envApp = getenv('APP_ENV') ?: ($isLocal ? 'development' : 'production');
 $isProduction = ($envApp === 'production');
 
