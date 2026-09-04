@@ -1,6 +1,6 @@
 <?php
 /**
- * SCRIPT DE DIAGNÓSTICO DE EMAIL - FemTribe
+ * SCRIPT DE DIAGNÓSTICO DE EMAIL - FEMTRIBE
  * Acceder en: http://localhost:8888/backend/debug_email.php
  * ELIMINAR después de resolver el problema.
  */
@@ -35,12 +35,12 @@ if (file_exists($envFile)) {
 }
 
 $configs = [
-    'Gmail_hardcoded' => [
+    'Gmail_app_password' => [
         'host'     => 'smtp.gmail.com',
         'port'     => 587,
         'secure'   => PHPMailer::ENCRYPTION_STARTTLS,
         'username' => 'femtribe25@gmail.com',
-        'password' => 'zsxc cuss qgvy yxba',
+        'password' => $env['MAIL_PASS'] ?? 'vmzl libi wrji cjsi',
     ],
     'Hostinger_env' => [
         'host'     => $env['MAIL_HOST'] ?? 'smtp.hostinger.com',
@@ -58,7 +58,7 @@ $configKey = $_GET['config'] ?? 'Gmail_hardcoded';
 ?><!DOCTYPE html>
 <html lang="es"><head>
 <meta charset="UTF-8">
-<title>Debug Email - FemTribe</title>
+<title>Debug Email - FEMTRIBE</title>
 <style>
 body{font-family:monospace;background:#0f0f1a;color:#e0e0e0;padding:20px;line-height:1.6}
 h1{color:#6da632;border-bottom:2px solid #6da632;padding-bottom:10px;margin-bottom:20px}
@@ -76,7 +76,7 @@ button{background:#6da632;color:#fff;border:none;padding:10px 24px;border-radius
 pre{background:#0a0a14;border:1px solid #333;padding:12px;border-radius:4px;overflow-x:auto;font-size:.8rem;white-space:pre-wrap}
 </style></head><body>
 
-<h1>Diagnóstico SMTP — FemTribe</h1>
+<h1>Diagnóstico SMTP — FEMTRIBE</h1>
 
 <h2>1. Configuración actual</h2>
 <div class="card">
@@ -86,9 +86,9 @@ pre{background:#0a0a14;border:1px solid #333;padding:12px;border-radius:4px;over
 <td><?= ($env['MAIL_HOST'] ?? '') !== 'smtp.gmail.com' ? '<span class="b-warn">⚠ Difieren</span>' : '<span class="b-ok">✓ Igual</span>' ?></td></tr>
 <tr><td>Puerto</td><td>587</td><td><?= htmlspecialchars($env['MAIL_PORT'] ?? 'N/A') ?></td>
 <td><?= ($env['MAIL_PORT'] ?? '') != 587 ? '<span class="b-warn">⚠ Difieren</span>' : '<span class="b-ok">✓ Igual</span>' ?></td></tr>
-<tr><td>Usuario</td><td>femtribe25@gmail.com</td><td><?= htmlspecialchars($env['MAIL_USER'] ?? 'N/A') ?></td>
+<tr><td>Usuario</td><td>FEMTRIBE25@gmail.com</td><td><?= htmlspecialchars($env['MAIL_USER'] ?? 'N/A') ?></td>
 <td><?= ($env['MAIL_USER'] ?? '') !== 'femtribe25@gmail.com' ? '<span class="b-warn">⚠ Difieren</span>' : '<span class="b-ok">✓ Igual</span>' ?></td></tr>
-<tr><td>Contraseña App</td><td>zsxc cuss qgvy yxba</td><td><?= htmlspecialchars(substr($env['MAIL_PASS'] ?? '', 0, 8)) ?>...</td><td>—</td></tr>
+<tr><td>Contraseña App</td><td><?= htmlspecialchars(substr($env['MAIL_PASS'] ?? 'vmzl...', 0, 8)) ?>...</td><td><?= htmlspecialchars(substr($env['MAIL_PASS'] ?? '', 0, 8)) ?>...</td><td>—</td></tr>
 </table>
 </div>
 
@@ -152,10 +152,10 @@ try {
     $mail->SMTPSecure = $cfg['secure'];
     $mail->Port       = $cfg['port'];
     $mail->CharSet    = 'UTF-8';
-    $mail->setFrom($cfg['username'], 'FemTribe Debug');
+    $mail->setFrom($cfg['username'], 'FEMTRIBE Debug');
     $mail->addAddress($testTo);
     $mail->isHTML(true);
-    $mail->Subject = 'Test SMTP FemTribe - ' . date('H:i:s');
+    $mail->Subject = 'Test SMTP FEMTRIBE - ' . date('H:i:s');
     $mail->Body    = '<h2 style="color:#6da632">Test SMTP exitoso</h2>
                       <p>Config: ' . htmlspecialchars($configKey) . '</p>
                       <p>Host: ' . htmlspecialchars($cfg['host']) . ':' . $cfg['port'] . '</p>

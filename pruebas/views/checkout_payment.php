@@ -1,5 +1,5 @@
 <?php
-$title = "Pagar Orden | FemTribe Runner";
+$title = "Pagar Orden | FEMTRIBE";
 require __DIR__ . '/layouts/header.php';
 
 $ord = $order ?? [];
@@ -10,7 +10,7 @@ $pay = $payload ?? [];
     <div class="row justify-content-center">
         <div class="col-md-8 col-lg-6">
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
-                <!-- Header del Card con gradiente de FemTribe (Verde/Oscuro) -->
+                <!-- Header del Card con gradiente de FEMTRIBE (Verde/Oscuro) -->
                 <div class="card-header border-0 py-4 text-center text-white" style="background: linear-gradient(135deg, #1a1a1a 0%, #2e2e2e 100%); border-bottom: 3px solid #87CC3E !important;">
                     <div class="d-inline-flex align-items-center justify-content-center bg-light bg-opacity-10 rounded-circle mb-2" style="width: 60px; height: 60px;">
                         <i class="fas fa-shield-alt fa-2x text-warning"></i>

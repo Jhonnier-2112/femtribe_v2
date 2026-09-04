@@ -1,5 +1,5 @@
 <?php
-$title = "Mi Perfil | FemTribe Runner";
+$title = "Mi Perfil | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 $u = $user ?? [];
 $myOrders = $orders ?? [];

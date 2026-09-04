@@ -1,5 +1,5 @@
 <?php
-$title = "Resultado de Transacción | FemTribe Runner";
+$title = "Resultado de Transacción | FEMTRIBE";
 require __DIR__ . '/layouts/header.php';
 
 $tx = $transaction ?? [];

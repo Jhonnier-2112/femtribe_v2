@@ -1,6 +1,6 @@
 <?php
 /**
- * Registro Central de Rutas de la Aplicación FemTribe Runner
+ * Registro Central de Rutas de la Aplicación FEMTRIBE
  * Las vistas están en: frontend/views/
  * Los controladores están en: backend/controllers/
  */

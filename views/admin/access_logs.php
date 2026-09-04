@@ -1,5 +1,5 @@
 <?php
-$title = "Bitácora de Accesos | FemTribe Runner";
+$title = "Bitácora de Accesos | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 

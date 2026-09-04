@@ -14,6 +14,9 @@ class Product {
     }
 
     public function paginate(int $page = 1, int $perPage = 12, array $filters = [], string $order = 'created_at DESC'): array {
+        if (!$this->conn) {
+            return ['items' => [], 'pagination' => ['page' => 1, 'per_page' => $perPage, 'total' => 0, 'pages' => 1]];
+        }
         $offset = max(0, ($page - 1) * $perPage);
 
         $where = ['is_active = 1'];
@@ -117,6 +120,7 @@ class Product {
     }
 
     public function findBySlug(string $slug): ?array {
+        if (!$this->conn) return null;
         try {
             $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, price, image, video, images, is_new, is_offer
                     FROM products WHERE slug = :slug AND is_active = 1 LIMIT 1";
@@ -131,6 +135,7 @@ class Product {
     }
 
     public function findById(int $id): ?array {
+        if (!$this->conn) return null;
         try {
             $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, price, image, video, images, is_new, is_offer
                     FROM products WHERE id = :id AND is_active = 1 LIMIT 1";
@@ -148,6 +153,7 @@ class Product {
      * Obtiene las categorías asociadas al producto
      */
     public function getCategories(int $productId): array {
+        if (!$this->conn) return [];
         try {
             $sql = "SELECT c.id, c.name, c.slug, c.description 
                     FROM categories c 

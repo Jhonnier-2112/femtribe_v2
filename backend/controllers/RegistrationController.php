@@ -18,8 +18,8 @@ class RegistrationController extends Controller {
         $availableSlots = $event['available_slots'] ?? 600;
 
         if (!RegistrationConfig::inscripcionesAbiertas() || $availableSlots <= 0) {
-            $this->view('registration_closed', ['event' => $event]);
-            return;
+            header('Location: /?proximamente=inscripciones');
+            exit;
         }
 
         $userModel = new \App\Models\User();
@@ -42,12 +42,13 @@ class RegistrationController extends Controller {
                 header('Content-Type: application/json');
                 echo json_encode([
                     'success' => false, 
-                    'message' => 'Las inscripciones están temporalmente cerradas o los cupos se han agotado.'
+                    'proximamente' => true,
+                    'message' => 'Las inscripciones estarán habilitadas muy pronto.'
                 ]);
                 exit;
             } else {
-                $this->view('registration_closed', ['event' => $event]);
-                return;
+                header('Location: /?proximamente=inscripciones');
+                exit;
             }
         }
         

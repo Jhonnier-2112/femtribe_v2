@@ -1,5 +1,5 @@
 <?php
-$title = "Registro de Usuario | FemTribe Runner";
+$title = "Registro de Usuario | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 $d = $data ?? [];
 ?>
@@ -13,7 +13,7 @@ $d = $data ?? [];
                         <span class="badge-runner">
                             <i class="fas fa-user-plus me-1"></i> NUEVA CUENTA
                         </span>
-                        <h3 class="fw-bold text-white mb-1">Únete a la Comunidad Runner</h3>
+                        <h3 class="fw-bold text-white mb-1">Únete a la Comunidad FEMTRIBE</h3>
                         <p class="text-white-50 small mb-0">Regístrate para inscribirte en carreras, gestionar tus pedidos y acceder a beneficios exclusivos</p>
                     </div>
 
@@ -168,12 +168,32 @@ $d = $data ?? [];
                                 </div>
                             </div>
 
-                            <div class="form-check mb-4 bg-light p-3 rounded-3 border shadow-sm">
-                                <input class="form-check-input ms-0 me-2" type="checkbox" id="terms" name="acepta_terminos" required checked style="width: 1.3em; height: 1.3em; cursor: pointer; float: left;">
-                                <label class="form-check-label small text-dark" for="terms" style="cursor: pointer; padding-left: 0.4rem;">
-                                    Acepto los <a href="/terminos" target="_blank" class="fw-bold text-decoration-none" style="color: #6da632;">Términos y Condiciones</a> de la comunidad <strong>FemTribe Runner</strong> y la <a href="/politica-privacidad" target="_blank" class="fw-bold text-decoration-none" style="color: #6da632;">Política de Tratamiento de Datos Personales (Habeas Data)</a>. *
-                                </label>
-                            </div>
+<div class="form-check mb-4 bg-light p-3 rounded-3 border shadow-sm d-flex align-items-start">
+    <input 
+        class="form-check-input mt-1 me-2 flex-shrink-0" 
+        type="checkbox" 
+        id="terms" 
+        name="acepta_terminos" 
+        required 
+        checked
+        style="width: 1.3em; height: 1.3em; cursor: pointer;"
+    >
+
+    <label 
+        class="form-check-label small text-dark" 
+        for="terms" 
+        style="cursor: pointer;"
+    >
+        Acepto los 
+        <a href="/terminos" target="_blank" class="fw-bold text-decoration-none" style="color: #6da632;">
+            Términos y condiciones
+        </a> 
+        de la comunidad <strong>FEMTRIBE</strong> y la 
+        <a href="/politica-privacidad" target="_blank" class="fw-bold text-decoration-none" style="color: #6da632;">
+            Política de Tratamiento de Datos Personales (Habeas Data)
+        </a>. *
+    </label>
+</div>
 
                             <button type="submit" class="btn w-100 py-3 rounded-3 fw-bold text-uppercase shadow-sm text-white" style="background-color: #6da632; border: none; font-size: 1rem;">
                                 <i class="fas fa-user-plus me-2"></i>Completar Registro

@@ -1,5 +1,5 @@
 <?php
-$title = "Administración de Usuarios | FemTribe Runner";
+$title = "Administración de Usuarios | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 $activeTab = 'users';
 

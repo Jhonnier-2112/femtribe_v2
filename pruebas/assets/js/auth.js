@@ -1,5 +1,5 @@
 /**
- * FemTribe Runner - Frontend Authentication Script (auth.js)
+ * FEMTRIBE - Frontend Authentication Script (auth.js)
  * Maneja Google Sign-In, validaciones client-side, toggling de contraseña y envíos AJAX.
  */
 

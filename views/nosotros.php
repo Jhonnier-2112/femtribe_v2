@@ -290,7 +290,7 @@
             <div class="mb-4" style="color: #87CC3E;">
               <i class="fas fa-users fa-3x"></i>
             </div>
-            <h4>Comunidad Femtribe</h4>
+            <h4>Comunidad FEMTRIBE</h4>
             <p>Forma parte de una comunidad que se apoyan mutuamente para alcanzar sus metas deportivas.</p>
           </div>
         </div>
@@ -331,7 +331,7 @@
               <i class="fas fa-star"></i>
               <i class="fas fa-star"></i>
             </div>
-            <p class="mb-4">"Femtribe cambió mi vida. Gracias a esta comunidad, he logrado completar mi primera Media Maratón y he conocido personas maravillosas que me inspiran cada día."</p>
+            <p class="mb-4">"FEMTRIBE cambió mi vida. Gracias a esta comunidad, he logrado completar mi primera Media Maratón y he conocido personas maravillosas que me inspiran cada día."</p>
             <div class="testimonial-author">
               <div class="testimonial-avatar">
                 <img src="assets/img/karen.png" alt="Karen Guarnizo">
@@ -379,7 +379,7 @@
               <i class="fas fa-star"></i>
               <i class="fas fa-star"></i>
             </div>
-            <p class="mb-4">"Como principiante, encontré en Femtribe el apoyo perfecto para comenzar a correr. Los entrenadores son increíbles y la comunidad te hace sentir como en casa."</p>
+            <p class="mb-4">"Como principiante, encontré en FEMTRIBE el apoyo perfecto para comenzar a correr. Los entrenadores son increíbles y la comunidad te hace sentir como en casa."</p>
             <div class="testimonial-author">
               <div class="testimonial-avatar">
                 <img src="assets/img/andrea.png" alt="Andrea Diaz">
@@ -453,7 +453,7 @@
     <div class="row">
       <div class="col-lg-8 mx-auto text-center text-white" data-aos="fade-up">
         <h6 class="fw-bold mb-3" style="color: #7fb069;">ÚNETE A NOSOTRAS</h6>
-        <h2 class="display-4 fw-bold mb-4">¿Lista para correr con Femtribe?</h2>
+        <h2 class="display-4 fw-bold mb-4">¿Lista para correr con FEMTRIBE?</h2>
         <p class="lead mb-5">No te pierdas la oportunidad de ser parte de esta increíble experiencia. ¡Inscríbete ahora y vive la carrera de tus sueños!</p>
         <div class="d-flex justify-content-center gap-3">
           <a href="/inscripcion" class="btn btn-primary btn-lg">INSCRÍBETE AHORA</a>

@@ -2,7 +2,7 @@
 
 <style>
 .registration-hero {
-  background: linear-gradient(135deg, rgba(30, 60, 114, 0.6) 0%, rgba(42, 82, 152, 0.6) 100%), url('assets/img/inscribete.png') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(30, 60, 114, 0.6) 0%, rgba(42, 82, 152, 0.6) 100%), url('assets/img/banner_camiseta_carrera.jpeg') center/cover no-repeat;
   padding: 250px 0 150px 0;
   margin-bottom: 40px;
   position: relative;
@@ -335,7 +335,7 @@
     <div class="col-12">
       <div class="description-card">
         <p class="description-text">
-          <strong style="color: #87CC3E;">Corre Con FemTribe</strong> es más que una carrera, es un movimiento global: un tour de carreras que recorre municipios y ciudades, llevando el deporte como herramienta de transformación. Reconstrúyete y fortalécete con nosotros. Únete a una experiencia única donde la pasión por el running se combina con valores de inclusión, bienestar y excelencia deportiva. <em style="color: #87CC3E;">¡Forma parte de nuestra tribu y descubre tu mejor versión!</em>
+          <strong style="color: #87CC3E;">Corre Con FEMTRIBE</strong> es más que una carrera, es un movimiento global: un tour de carreras que recorre municipios y ciudades, llevando el deporte como herramienta de transformación. Reconstrúyete y fortalécete con nosotros. Únete a una experiencia única donde la pasión por el running se combina con valores de inclusión, bienestar y excelencia deportiva. <em style="color: #87CC3E;">¡Forma parte de nuestra tribu y descubre tu mejor versión!</em>
         </p>
       </div>
     </div>
@@ -347,7 +347,7 @@
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
       <div class="flyer-container-center">
-        <img src="assets/img/flyer.png" alt="Flyer Carrera - Femtribe" class="flyer-image-center">
+        <img src="assets/img/flyer.jpeg" alt="Flyer Carrera - Femtribe" class="flyer-image-center">
       </div>
     </div>
   </div>
@@ -381,8 +381,11 @@
               <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center justify-content-between p-3" style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white;">
                 <div>
                   <h6 class="fw-bold mb-0"><i class="fas fa-fire me-2"></i>¡Tarifas de Preventa Activas!</h6>
-                  <small>Aprovecha los precios de preventa por tiempo limitado hasta el <?= !empty($event['presale_end_date']) ? date('d/m/Y g:i A', strtotime($event['presale_end_date'])) : '' ?></small>
-                </div>
+<small>
+    Aprovecha los precios de preventa por tiempo limitado hasta el
+    <?= !empty($event['presale_end_date']) ? date('d/m/Y g:i A', strtotime($event['presale_end_date'])) : '' ?>
+    o hasta agotar existencias de cupos.
+</small>                </div>
                 <span class="badge bg-white text-success fw-bold px-3 py-2 rounded-pill">PREVENTA</span>
               </div>
             <?php endif; ?>
@@ -419,7 +422,7 @@
               <label class="form-label-sport fw-bold mb-2">Etapas y Kilometrajes Disponibles *</label>
               <div class="row g-3" id="stagesContainer">
                 <?php 
-                $stagesList = $stages ?? [
+                $stagesList = !empty($stages) ? $stages : [
                   ['id' => 1, 'name' => '3K Perro y Adulto (Pet Run)', 'category_type' => 'mascota', 'price' => 55000, 'presale_price' => 45000, 'active_price' => 45000, 'distance' => '3K'],
                   ['id' => 2, 'name' => '3K Niño y Adulto (Infantil)', 'category_type' => 'nino', 'price' => 50000, 'presale_price' => 40000, 'active_price' => 40000, 'distance' => '3K'],
                   ['id' => 3, 'name' => '5K Adulto', 'category_type' => 'adulto', 'price' => 65000, 'presale_price' => 55000, 'active_price' => 55000, 'distance' => '5K'],
@@ -867,7 +870,7 @@
                   <span class="fs-5">Términos Legales y Autorizaciones de la Carrera</span>
                 </div>
                 <p class="text-muted small mb-3">
-                  Para participar en la <strong>Carrera Corre Con FemTribe</strong>, debes declarar tu estado de salud y autorizar los documentos legales obligatorios conforme a la normativa vigente en Colombia. Puedes consultar cada documento formal a continuación:
+                  Para participar en la <strong>Carrera Corre Con FEMTRIBE</strong>, debes declarar tu estado de salud y autorizar los documentos legales obligatorios conforme a la normativa vigente en Colombia. Puedes consultar cada documento formal a continuación:
                 </p>
 
                 <div class="d-flex flex-wrap gap-2 mb-4">
@@ -885,7 +888,7 @@
                 <div class="form-check bg-white p-3 rounded-3 border shadow-sm">
                   <input class="form-check-input ms-0 me-3" type="checkbox" name="acepta_autorizacion" id="acepta_autorizacion" value="si" required style="width: 1.4em; height: 1.4em; cursor: pointer; float: left;">
                   <label class="form-check-label fw-bold text-dark small" for="acepta_autorizacion" style="cursor: pointer; display: block; line-height: 1.6; padding-left: 0.5rem;">
-                    Declaro bajo juramento que me encuentro en aptas condiciones de salud física y mental, asumo los riesgos de la actividad y acepto la <a href="/autorizacion-datos" target="_blank" class="text-success text-decoration-none fw-bold">Exoneración de Responsabilidad</a>, los <a href="/terminos" target="_blank" class="text-success text-decoration-none fw-bold">Términos del Evento</a> y la <a href="/politica-privacidad" target="_blank" class="text-success text-decoration-none fw-bold">Política de Tratamiento de Datos (Habeas Data)</a>. *
+                    Declaro bajo juramento que me encuentro en aptas condiciones de salud física y mental, asumo los riesgos de la actividad y acepto la <a href="/autorizacion-datos" target="_blank" class="text-success text-decoration-none fw-bold">Exoneración de responsabilidad</a>, los <a href="/terminos" target="_blank" class="text-success text-decoration-none fw-bold">Términos del Evento</a> y la <a href="/politica-privacidad" target="_blank" class="text-success text-decoration-none fw-bold">Política de Tratamiento de Datos (Habeas Data)</a>. *
                   </label>
                   <div class="invalid-feedback mt-2">
                     Debes aceptar la autorización y términos legales para completar tu inscripción.

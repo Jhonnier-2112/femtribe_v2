@@ -1,12 +1,17 @@
 <?php
-// Asume que el número de WhatsApp está en config/config.php
-require_once __DIR__ . '/../../backend/config/config.php';
+// WHATSAPP_BUSINESS_NUMBER ya es cargado por index.php → config.php antes de llegar a esta vista.
+// Solo lo cargamos como fallback si no está disponible (acceso directo al archivo).
+if (!defined('WHATSAPP_BUSINESS_NUMBER')) {
+    $configPath = realpath(__DIR__ . '/../../backend/config/config.php')
+               ?: realpath(__DIR__ . '/../backend/config/config.php');
+    if ($configPath) require_once $configPath;
+}
 ?>
 <?php include __DIR__ . '/layouts/header.php'; ?>
 
-<main class="page-content">
-<section class="container" style="max-width: 980px; margin: 0 auto 40px;">
-  <h1 style="font-size: 28px; margin-bottom: 16px;">TU CARRITO</h1>
+<main class="page-content" style="padding-top: 150px !important; min-height: 75vh;">
+<section class="container" style="max-width: 980px; margin: 20px auto 60px; padding-top: 10px;">
+  <h1 style="font-size: 28px; margin-bottom: 16px; font-weight: 800;">TU CARRITO</h1>
   <p style="color:#666; margin-bottom: 24px;">Revisa tus productos y envía un único pedido por WhatsApp.</p>
 
   <div id="cart-empty" style="display:none; padding:24px; border:1px dashed #ddd; border-radius:10px; text-align:center;">
@@ -38,10 +43,10 @@ require_once __DIR__ . '/../../backend/config/config.php';
         <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
         Proceder al Pago / Checkout
       </button>
-      <a id="cart-wa-btn" href="#" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#ffffff; border-radius:10px; padding:10px 14px; text-decoration:none; font-weight:700; box-shadow:0 2px 8px rgba(37,211,102,0.25);">
+      <!--a id="cart-wa-btn" href="#" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#ffffff; border-radius:10px; padding:10px 14px; text-decoration:none; font-weight:700; box-shadow:0 2px 8px rgba(37,211,102,0.25);">
         <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
         Enviar pedido por WhatsApp
-      </a>
+      </a>-->
     </div>
     <div class="cart-notes" style="margin-top:10px; color:#6b7280; font-size:13px; text-align:right;">
       Impuesto incluido. Los gastos de envío se calculan de acuerdo a la ubicación.
@@ -257,7 +262,9 @@ require_once __DIR__ . '/../../backend/config/config.php';
         if (imgCell) imgCell.appendChild(buildImageForSlug(it.slug, it.name));
       });
       totalEl.textContent = `Total: ${fmtCurrency(total)}`;
-      waBtn.href = buildWhatsAppUrl(items, total, peekOrderCode());
+      if (waBtn) {
+        waBtn.href = buildWhatsAppUrl(items, total, peekOrderCode());
+      }
       writeCart(items);
     }
 
@@ -319,17 +326,19 @@ require_once __DIR__ . '/../../backend/config/config.php';
     });
 
     // Limpiar carrito tras enviar por WhatsApp usando código secuencial
-    waBtn.addEventListener('click', function(ev){
-      ev.preventDefault();
-      const items = readCart();
-      if (!items.length) return;
-      let total = 0; items.forEach(i => { total += Number(i.price||0) * Number(i.qty||1); });
-      const code = nextOrderCode();
-      const url = buildWhatsAppUrl(items, total, code);
-      try { window.open(url, '_blank'); } catch(_){ location.href = url; }
-      writeCart([]);
-      render();
-    });
+    if (waBtn) {
+      waBtn.addEventListener('click', function(ev){
+        ev.preventDefault();
+        const items = readCart();
+        if (!items.length) return;
+        let total = 0; items.forEach(i => { total += Number(i.price||0) * Number(i.qty||1); });
+        const code = nextOrderCode();
+        const url = buildWhatsAppUrl(items, total, code);
+        try { window.open(url, '_blank'); } catch(_){ location.href = url; }
+        writeCart([]);
+        render();
+      });
+    }
 
     const btnCheckoutPay = document.getElementById('btn-checkout-pay');
     if (btnCheckoutPay) {

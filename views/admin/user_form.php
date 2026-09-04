@@ -1,5 +1,5 @@
 <?php
-$title = "Editar Usuario | FemTribe Runner";
+$title = "Editar Usuario | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 
 // Valores por defecto del usuario

@@ -28,8 +28,8 @@ class EmailService {
         try {
             $host = getenv('MAIL_HOST') ?: \EmailConfig::SMTP_HOST;
             $port = (int)(getenv('MAIL_PORT') ?: \EmailConfig::SMTP_PORT);
-            $user = getenv('MAIL_USER') ?: \EmailConfig::SMTP_USERNAME;
-            $pass = getenv('MAIL_PASS') ?: \EmailConfig::SMTP_PASSWORD;
+            $user = \EmailConfig::getUsername();
+            $pass = \EmailConfig::getPassword();
             $enc  = strtolower(getenv('MAIL_ENCRYPTION') ?: \EmailConfig::SMTP_SECURE);
 
             $this->mailer->isSMTP();
@@ -46,7 +46,7 @@ class EmailService {
             $this->mailer->Port = $port;
             $this->mailer->CharSet = 'UTF-8';
 
-            $fromName = getenv('MAIL_FROM_NAME') ?: 'FemTribe';
+            $fromName = getenv('MAIL_FROM_NAME') ?: 'FEMTRIBE';
             $this->mailer->setFrom($user, $fromName);
 
         } catch (Exception $e) {
@@ -63,20 +63,31 @@ class EmailService {
             $this->mailer->clearCustomHeaders();
             
             // Configurar destinatario
-            $this->mailer->addAddress($participantData['email'], $participantData['nombres'] . ' ' . $participantData['apellidos']);
+            $nombreDestinatario = trim(($participantData['nombres'] ?? '') . ' ' . ($participantData['apellidos'] ?? ''));
+            $this->mailer->addAddress($participantData['email'], $nombreDestinatario ?: $participantData['email']);
             
-            // Configurar remitente
-            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FemTribe');
-            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FemTribe');
+            // Configurar remitente oficial
+            $this->mailer->setFrom(\EmailConfig::getUsername(), \EmailConfig::getFromName());
+            $this->mailer->addReplyTo('femtribe25@gmail.com', 'FEMTRIBE Soporte');
             
-            // Configurar el correo
+            // Configurar el correo con asunto dinámico
+            $orderNum = !empty($participantData['order_number']) ? ' #' . $participantData['order_number'] : '';
             $this->mailer->isHTML(true);
-            $this->mailer->Subject = '🎉 ¡Gracias por inscribirte a Corre con FemTribe! 🎉 - Confirmación de Inscripción';
+            $this->mailer->Subject = '🎉 ¡Inscripción y Pago Confirmados!' . $orderNum . ' - Corre con FEMTRIBE';
             
             // Embeber la imagen del logo
-            $logoPath = __DIR__ . '/../../img/logocorreo.png';
-            if (file_exists($logoPath)) {
-                $this->mailer->addEmbeddedImage($logoPath, 'femtribe_logo', 'logocorreo.png', 'base64', 'image/png');
+            $logoPaths = [
+                __DIR__ . '/../../img/logocorreo.png',
+                __DIR__ . '/../../assets/img/logocorreo.png',
+                __DIR__ . '/../../pruebas/img/logocorreo.png',
+                __DIR__ . '/../../assets/img/logocarrera.png',
+                __DIR__ . '/../../assets/img/logoverde.png',
+            ];
+            foreach ($logoPaths as $lPath) {
+                if (file_exists($lPath)) {
+                    $this->mailer->addEmbeddedImage($lPath, 'femtribe_logo', 'logocorreo.png', 'base64', 'image/png');
+                    break;
+                }
             }
             
             // Generar el cuerpo del correo
@@ -101,11 +112,11 @@ class EmailService {
             $nombre = trim(($user['nombres'] ?? '') . ' ' . ($user['apellidos'] ?? ''));
             $this->mailer->addAddress($user['email'], $nombre ?: $user['email']);
 
-            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FemTribe');
-            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FemTribe');
+            $this->mailer->setFrom(\EmailConfig::getUsername(), \EmailConfig::getFromName());
+            $this->mailer->addReplyTo(\EmailConfig::getUsername(), \EmailConfig::getFromName());
 
             $this->mailer->isHTML(true);
-            $this->mailer->Subject = '🔒 Restauración de Contraseña - FemTribe Runner';
+            $this->mailer->Subject = '🔒 Restauración de Contraseña - FEMTRIBE';
 
             $logoPath = __DIR__ . '/../../img/logocorreo.png';
             if (file_exists($logoPath)) {
@@ -146,11 +157,11 @@ class EmailService {
     <div class="container">
         <div class="header">
             <h2 style="margin:0; font-size: 22px;">🔑 Restauración de Contraseña</h2>
-            <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px;">Comunidad FemTribe Runner</p>
+            <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px;">Comunidad FEMTRIBE</p>
         </div>
         <div class="content">
             <p>Hola <strong>' . ($nombre ?: 'Corredor') . '</strong>,</p>
-            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en <strong>FemTribe Runner</strong>.</p>
+            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en <strong>FEMTRIBE</strong>.</p>
             <p>Haz clic en el siguiente botón para crear tu nueva contraseña. Este enlace es válido únicamente durante <strong>1 hora</strong> por razones de seguridad:</p>
             <div style="text-align: center;">
                 <a href="' . $resetUrlEsc . '" class="btn-reset">Restablecer mi Contraseña</a>
@@ -161,7 +172,7 @@ class EmailService {
             <p style="font-size: 12px; color: #888;">Si no solicitaste este cambio, puedes ignorar este correo de forma segura. Tu contraseña actual seguirá siendo la misma.</p>
         </div>
         <div class="footer">
-            <p style="margin:0;">&copy; ' . date('Y') . ' FemTribe. Todos los derechos reservados.</p>
+            <p style="margin:0;">&copy; ' . date('Y') . ' FEMTRIBE. Todos los derechos reservados.</p>
         </div>
     </div>
 </body>
@@ -169,148 +180,187 @@ class EmailService {
     }
 
     private function generateWelcomeEmailTemplate($participantData) {
-        $nombre = htmlspecialchars($participantData['nombres'] . ' ' . $participantData['apellidos']);
-        $documento = htmlspecialchars($participantData['numero_documento']);
-        $tipoDocumento = $this->getTipoDocumentoText($participantData['tipo_documento']);
+        $nombre = htmlspecialchars(trim(($participantData['nombres'] ?? $participantData['first_name'] ?? '') . ' ' . ($participantData['apellidos'] ?? $participantData['last_name'] ?? '')));
+        $documento = htmlspecialchars($participantData['numero_documento'] ?? $participantData['document_number'] ?? '');
+        $tipoDoc = $this->getTipoDocumentoText($participantData['tipo_documento'] ?? $participantData['document_type'] ?? '');
+        $email = htmlspecialchars($participantData['email'] ?? '');
+        $telefono = htmlspecialchars($participantData['telefono'] ?? $participantData['phone'] ?? '');
+        $orderNumber = htmlspecialchars($participantData['order_number'] ?? 'N/A');
         
+        $monto = (float)($participantData['payment_amount'] ?? 0);
+        $montoFormatted = '$' . number_format($monto, 0, ',', '.') . ' COP';
+        
+        // Categoría y Talla
+        $categoria = htmlspecialchars(ucfirst($participantData['categoria_participante'] ?? $participantData['category'] ?? 'Adulto'));
+        $talla = htmlspecialchars(!empty($participantData['talla_camiseta_adulto']) ? $participantData['talla_camiseta_adulto'] : (!empty($participantData['talla_camiseta_nino']) ? $participantData['talla_camiseta_nino'] : ($participantData['t_shirt_size'] ?? 'Por confirmar')));
+        
+        // Ciudad / Municipio
+        $ubicacion = htmlspecialchars(trim(($participantData['municipio'] ?? $participantData['city'] ?? '') . (!empty($participantData['departamento'] ?? $participantData['department']) ? ', ' . ($participantData['departamento'] ?? $participantData['department']) : '')));
+        
+        // Datos médicos
+        $eps = htmlspecialchars($participantData['eps'] ?? 'N/A');
+        $sangre = htmlspecialchars(trim(($participantData['grupo_sanguineo'] ?? $participantData['blood_group'] ?? '') . ' ' . ($participantData['rh'] ?? '')));
+        
+        // Contacto de emergencia
+        $emergenciaNombre = htmlspecialchars($participantData['nombre_emergencia'] ?? $participantData['emergency_contact_name'] ?? 'N/A');
+        $emergenciaTel = htmlspecialchars($participantData['celular_emergencia'] ?? $participantData['emergency_contact_phone'] ?? 'N/A');
+        $emergenciaParentesco = htmlspecialchars($participantData['parentesco_emergencia'] ?? $participantData['emergency_contact_relationship'] ?? '');
+        
+        // Resolver nombres de etapas seleccionadas
+        $stageNames = [];
+        if (!empty($participantData['etapas_seleccionadas'])) {
+            $sel = $participantData['etapas_seleccionadas'];
+            $stageIds = is_array($sel) ? $sel : (json_decode($sel, true) ?: [$sel]);
+            if (class_exists('App\Models\Event')) {
+                try {
+                    $allStages = \App\Models\Event::getStages(1);
+                    $stageMap = [];
+                    foreach ($allStages as $s) {
+                        $stageMap[(int)$s['id']] = $s['name'] . ' (' . $s['distance'] . ')';
+                    }
+                    foreach ($stageIds as $sid) {
+                        if (isset($stageMap[(int)$sid])) {
+                            $stageNames[] = $stageMap[(int)$sid];
+                        }
+                    }
+                } catch (\Exception $e) {}
+            }
+        }
+        if (empty($stageNames)) {
+            $stageNames[] = 'Carrera Corre con FEMTRIBE';
+        }
+
+        $stagesHtml = '';
+        foreach ($stageNames as $stgName) {
+            $stagesHtml .= '<li style="margin-bottom: 5px; color: #1a1a1a; font-weight: 600;">🏃 ' . htmlspecialchars($stgName) . '</li>';
+        }
+
+        // Datos opcionales: Mascota / Acudiente
+        $extraInfoHtml = '';
+        if (!empty($participantData['nombre_mascota'])) {
+            $extraInfoHtml .= '<tr><td style="padding: 6px 0; color: #666; font-size: 13px;">🐾 Mascota:</td><td style="padding: 6px 0; font-weight: 600; color: #111; font-size: 13px;">' . htmlspecialchars($participantData['nombre_mascota']) . ' (' . htmlspecialchars($participantData['raza_mascota'] ?? 'Criollo') . ')</td></tr>';
+        }
+        if (!empty($participantData['acudiente_nombre'])) {
+            $extraInfoHtml .= '<tr><td style="padding: 6px 0; color: #666; font-size: 13px;">👤 Acudiente:</td><td style="padding: 6px 0; font-weight: 600; color: #111; font-size: 13px;">' . htmlspecialchars($participantData['acudiente_nombre']) . ' (Doc: ' . htmlspecialchars($participantData['acudiente_documento'] ?? '') . ')</td></tr>';
+        }
+
+        $fechaRegistro = !empty($participantData['created_at']) ? date('d/m/Y h:i A', strtotime($participantData['created_at'])) : date('d/m/Y h:i A');
+
         return '<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bienvenido a FemTribe</title>
+    <title>Inscripción y Pago Confirmados - FEMTRIBE</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #f8f9fa;
-        }
-        .container {
-            background-color: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin: 20px;
-        }
-        .header {
-            background: linear-gradient(135deg, #87CC3E 0%, #87CC3E 100%);
-            padding: 30px 20px;
-            text-align: center;
-            color: white;
-        }
-        .logo-container {
-            margin-bottom: 15px;
-        }
-        .logo {
-            max-width: 120px;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        .header-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 15px 0 5px 0;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .header-subtitle {
-            font-size: 16px;
-            opacity: 0.9;
-            margin: 0;
-        }
-        .signature {
-            text-align: center;
-            padding: 20px;
-            border-top: 1px solid #e0e0e0;
-            margin-top: 20px;
-        }
-        .logo-text {
-            font-size: 28px;
-            font-weight: bold;
-            color: #87CC3E;
-            letter-spacing: 1px;
-            margin: 0;
-            text-transform: uppercase;
-            display: none;
-        }
-        .logo-subtitle {
-            font-size: 12px;
-            color: #666;
-            margin: 5px 0 0 0;
-            text-transform: lowercase;
-            letter-spacing: 2px;
-            display: none;
-        }
-        .subtitle {
-            font-size: 1.1em;
-            margin: 0;
-        }
-        .content {
-            padding: 30px;
-        }
-        .welcome-text {
-            font-size: 1.1em;
-            margin-bottom: 20px;
-        }
-        .info-card {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 4px solid #87CC3E;
-        }
-        .info-card h3 {
-            margin-top: 0;
-            color: #7CB342;
-        }
-        .footer {
-            color: #333;
-            text-align: center;
-            padding: 20px;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #222; max-width: 620px; margin: 0 auto; background-color: #f4f6f8; }
+        .wrapper { background-color: #ffffff; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin: 20px 10px; }
+        .header { background-color: #1a1a1a; padding: 28px 20px; text-align: center; color: white; border-bottom: 4px solid #6da632; }
+        .header-logo { max-width: 130px; height: auto; margin-bottom: 10px; }
+        .header h1 { font-size: 22px; margin: 8px 0 4px 0; color: #ffffff; font-weight: 800; letter-spacing: 0.5px; }
+        .header p { font-size: 14px; margin: 0; color: #b2d81f; font-weight: 600; }
+        .content { padding: 26px 22px; }
+        .status-badge { display: inline-block; background-color: #eaf7e3; color: #2e7d32; border: 1px solid #a3d98c; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px; }
+        .card { background-color: #fbfbfb; border: 1px solid #eaeaea; border-radius: 10px; padding: 16px 18px; margin-bottom: 18px; }
+        .card-title { font-size: 14px; font-weight: 800; color: #1a1a1a; text-transform: uppercase; letter-spacing: 0.8px; margin: 0 0 12px 0; padding-bottom: 6px; border-bottom: 2px solid #6da632; }
+        .table-info { width: 100%; border-collapse: collapse; }
+        .table-info td { padding: 5px 0; font-size: 13px; vertical-align: top; }
+        .td-label { color: #666666; width: 42%; }
+        .td-val { color: #111111; font-weight: 600; width: 58%; }
+        .support-box { background: linear-gradient(135deg, #f3f9ec 0%, #eaf5e1 100%); border: 1.5px solid #a8dc80; border-radius: 10px; padding: 18px 20px; text-align: center; margin-top: 24px; }
+        .support-box h4 { margin: 0 0 6px 0; color: #2e7d32; font-size: 15px; font-weight: 800; }
+        .support-box p { margin: 0 0 12px 0; font-size: 13px; color: #333333; }
+        .btn-support { display: inline-block; background-color: #6da632; color: #ffffff !important; text-decoration: none; padding: 10px 22px; font-weight: 700; border-radius: 25px; font-size: 13px; box-shadow: 0 2px 6px rgba(109,166,50,0.3); }
+        .footer { background-color: #1a1a1a; color: #888888; text-align: center; padding: 18px 20px; font-size: 11px; }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="wrapper">
+        <!-- Encabezado con logo -->
         <div class="header">
-            <div class="logo-container">
-                <img src="cid:femtribe_logo" alt="FemTribe Logo" class="logo">
-            </div>
-            <h1 class="header-title">¡Bienvenido a FemTribe!</h1>
-            <p class="header-subtitle">Cuerpo fuerte, mente libre, alma en tribu</p>
+            <img src="cid:femtribe_logo" alt="FEMTRIBE" class="header-logo" onerror="this.style.display=\'none\';">
+            <h1>¡Inscripción y Pago Confirmados!</h1>
+            <p>¡Bienvenida(o) a la tribu! Tu lugar en la carrera está asegurado.</p>
         </div>
-        
+
         <div class="content">
-            <div class="welcome-text">
-                <p>¡Hola <strong>' . $nombre . '</strong>!</p>
-                <p><strong>Identificado con:</strong> ' . $tipoDocumento . ' - ' . $documento . '</p>
-                <p>¡Gracias por unirte a <strong>Corre con FemTribe</strong>! 🙌 Estamos muy felices de que hagas parte de esta experiencia única.</p>
+            <div style="text-align: center;">
+                <span class="status-badge">✓ PAGO APROBADO &bull; INSCRIPCIÓN ACTIVA</span>
             </div>
-            
-            <div class="info-card">
-                <h3>🏃‍♀️ Información de la Carrera</h3>
-                <p><strong>📅 Fecha de la carrera:</strong> Domingo, 23 de noviembre de 2025</p>
-                <p><strong>⏰ Hora:</strong> 6:30 a.m.</p>
-                <p><strong>📍 Lugar:</strong> Parque Biosaludable de Ricaurte</p>
-                <p><strong>✅️ Código de vestimenta:</strong> Negro o Verde</p>
+
+            <p style="font-size: 15px; margin-bottom: 20px;">
+                Hola <strong>' . $nombre . '</strong>, tu pago ha sido procesado exitosamente a través de la pasarela segura. Ya estás oficialmente inscrita(o) en <strong>Corre con FEMTRIBE</strong>. A continuación encuentras el comprobante completo de tu orden:
+            </p>
+
+            <!-- Resumen de Pago -->
+            <div class="card" style="border-left: 4px solid #6da632;">
+                <h3 class="card-title">💳 Resumen de la Transacción</h3>
+                <table class="table-info">
+                    <tr><td class="td-label">Número de Orden:</td><td class="td-val" style="color: #6da632; font-size: 14px;">#' . $orderNumber . '</td></tr>
+                    <tr><td class="td-label">Monto Total Pagado:</td><td class="td-val" style="font-size: 15px; color: #2e7d32;">' . $montoFormatted . '</td></tr>
+                    <tr><td class="td-label">Estado del Pago:</td><td class="td-val"><span style="color: #2e7d32; font-weight: 700;">Aprobado / Pagado</span></td></tr>
+                    <tr><td class="td-label">Método:</td><td class="td-val">Bancolombia / Wompi</td></tr>
+                    <tr><td class="td-label">Fecha y Hora:</td><td class="td-val">' . $fechaRegistro . '</td></tr>
+                </table>
             </div>
-            
-            <div class="info-card">
-                <h3>🛍️ Reclamo de kit y dorsal</h3>
-                <p><strong>📅 Fechas:</strong> Sábado, 22 de noviembre de 2025</p>
-                <p><strong>📍 Lugar:</strong> Parque Biosaludable de Ricaurte</p>
-                <p><strong>⏰ Horario:</strong> 8:00 AM a 7:00 PM</p>
+
+            <!-- Detalle de la Carrera -->
+            <div class="card">
+                <h3 class="card-title">🏃‍♀️ Etapas y Modalidad</h3>
+                <ul style="margin: 0 0 12px 18px; padding: 0;">
+                    ' . $stagesHtml . '
+                </ul>
+                <table class="table-info">
+                    <tr><td class="td-label">Categoría:</td><td class="td-val">' . $categoria . '</td></tr>
+                    <tr><td class="td-label">Talla de Camiseta:</td><td class="td-val">' . $talla . '</td></tr>
+                    ' . $extraInfoHtml . '
+                </table>
             </div>
-            
-            <p>🖤 Recuerda llegar a tiempo el día de la carrera y vivir la energía de la tribu desde la salida hasta la meta 💚</p>
-            <p><strong>¡Nos vemos muy pronto para correr juntos! </strong></p>
+
+            <!-- Datos del Participante -->
+            <div class="card">
+                <h3 class="card-title">📋 Datos del Participante</h3>
+                <table class="table-info">
+                    <tr><td class="td-label">Nombre Completo:</td><td class="td-val">' . $nombre . '</td></tr>
+                    <tr><td class="td-label">Documento:</td><td class="td-val">' . $tipoDoc . ': ' . $documento . '</td></tr>
+                    <tr><td class="td-label">Correo Electrónico:</td><td class="td-val">' . $email . '</td></tr>
+                    <tr><td class="td-label">Teléfono / Celular:</td><td class="td-val">' . $telefono . '</td></tr>
+                    ' . (!empty($ubicacion) ? '<tr><td class="td-label">Ciudad / Dpto:</td><td class="td-val">' . $ubicacion . '</td></tr>' : '') . '
+                    <tr><td class="td-label">EPS:</td><td class="td-val">' . $eps . '</td></tr>
+                    <tr><td class="td-label">Grupo Sanguíneo:</td><td class="td-val">' . ($sangre ?: 'N/A') . '</td></tr>
+                    ' . (!empty($emergenciaNombre) && $emergenciaNombre !== 'N/A' ? '<tr><td class="td-label">Contacto Emergencia:</td><td class="td-val">' . $emergenciaNombre . ' (' . $emergenciaTel . ') ' . ($emergenciaParentesco ? '- ' . $emergenciaParentesco : '') . '</td></tr>' : '') . '
+                </table>
+            </div>
+
+            <!-- Información Importante -->
+            <div class="card" style="background-color: #f5f5f5;">
+                <h3 class="card-title" style="border-bottom-color: #333;">📦 Entrega de Kits</h3>
+                <p style="font-size: 13px; color: #444; margin: 0 0 8px 0;">
+                    Para reclamar tu kit oficial y dorsal de carrera, deberás presentar tu <strong>documento de identidad original</strong> o este comprobante con el número de orden <strong>#' . $orderNumber . '</strong>.
+                </p>
+                <p style="font-size: 12px; color: #666; margin: 0;">
+                    Las fechas exactas, lugar y horarios de entrega de kits serán publicados en nuestra plataforma web y redes oficiales.
+                </p>
+            </div>
+
+            <!-- Bloque de Soporte y Dudas (femtribe25@gmail.com) -->
+            <div class="support-box">
+                <h4>💬 ¿Tienes alguna duda o inquietud?</h4>
+                <p>
+                    Si necesitas actualizar algún dato o requieres soporte con tu inscripción, comunícate directamente con nuestro equipo al correo oficial:
+                </p>
+                <p style="font-size: 15px; font-weight: 800; color: #1a1a1a; margin-bottom: 12px;">
+                    ✉️ <a href="mailto:femtribe25@gmail.com?subject=Inquietud%20Inscripcion%20FEMTRIBE%20Orden%20' . urlencode($orderNumber) . '" style="color: #2e7d32; text-decoration: underline;">femtribe25@gmail.com</a>
+                </p>
+                <a href="mailto:femtribe25@gmail.com?subject=Inquietud%20Inscripcion%20FEMTRIBE%20Orden%20' . urlencode($orderNumber) . '" class="btn-support">
+                    Contactar a Soporte
+                </a>
+            </div>
         </div>
-        
-        <div class="signature">
-            <p>Con cariño,<br><strong>Equipo FemTribe</strong></p>
+
+        <div class="footer">
+            <p style="margin: 0 0 4px 0;">&copy; ' . date('Y') . ' FEMTRIBE. Todos los derechos reservados.</p>
+            <p style="margin: 0; opacity: 0.7;">Cuerpo fuerte, mente libre, alma en tribu.</p>
         </div>
     </div>
 </body>
@@ -318,15 +368,24 @@ class EmailService {
     }
     
     private function getTipoDocumentoText($tipo) {
-        switch($tipo) {
+        $t = strtolower(trim((string)$tipo));
+        switch($t) {
+            case 'cc':
             case 'cedula_ciudadania':
                 return 'Cédula de ciudadanía';
+            case 'ti':
             case 'tarjeta_identidad':
                 return 'Tarjeta de identidad';
+            case 'ce':
+            case 'cedula_extranjeria':
+                return 'Cédula de extranjería';
             case 'pasaporte':
                 return 'Pasaporte';
+            case 'rc':
+            case 'registro_civil':
+                return 'Registro civil';
             default:
-                return 'Documento';
+                return !empty($tipo) ? ucfirst($tipo) : 'Documento';
         }
     }
 }

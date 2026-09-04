@@ -8,7 +8,7 @@ include 'layouts/header.php';
 
 <style>
 .registration-closed-hero {
-    background: linear-gradient(135deg, rgba(30, 60, 114, 0.8) 0%, rgba(42, 82, 152, 0.8) 100%), url('assets/img/inscribete.png') center/cover no-repeat;
+    background: linear-gradient(135deg, rgba(30, 60, 114, 0.8) 0%, rgba(42, 82, 152, 0.8) 100%), url('assets/img/banner_camiseta_carrera.jpeg') center/cover no-repeat;
     min-height: calc(100vh - 80px);
     display: flex;
     align-items: center;

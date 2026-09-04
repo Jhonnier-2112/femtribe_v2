@@ -1,5 +1,5 @@
 <?php
-$title = "Exoneración de Responsabilidad y Autorización de Salud | FemTribe Runner";
+$title = "Exoneración de responsabilidad y Autorización de Salud | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -9,15 +9,15 @@ require __DIR__ . '/../layouts/header.php';
             <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5">
                 <div class="border-bottom pb-4 mb-4">
                     <span class="badge bg-warning bg-opacity-20 text-dark fw-bold px-3 py-2 rounded-pill mb-2">Declaración Juramentada y Exoneración</span>
-                    <h1 class="fw-bold text-dark display-6 mb-2">Autorización de Salud y Exoneración de Responsabilidad</h1>
-                    <p class="text-muted small mb-0">Carrera Corre Con FemTribe | Reglamento Oficial de Seguridad</p>
+                    <h1 class="fw-bold text-dark display-6 mb-2">Autorización de Salud y Exoneración de responsabilidad</h1>
+                    <p class="text-muted small mb-0">Carrera Corre Con FEMTRIBE | Reglamento Oficial de Seguridad</p>
                 </div>
 
                 <div class="legal-content lh-lg text-secondary" style="font-size: 0.98rem;">
                     <div class="alert alert-light border border-secondary border-opacity-25 rounded-4 p-4 mb-4">
                         <h5 class="fw-bold text-dark mb-2"><i class="fas fa-shield-alt text-success me-2"></i>Declaración de Salud y Aptitud Física</h5>
                         <p class="mb-0">
-                            Manifiesto bajo juramento que me encuentro en aptas condiciones de salud física y mental para participar en la Carrera Corre Con FemTribe. Declaro que no padezco enfermedades cardiovasculares, respiratorias, metabólicas, neurológicas o musculares no controladas que puedan poner en riesgo mi vida o integridad física durante el desarrollo de la prueba.
+                            Manifiesto bajo juramento que me encuentro en aptas condiciones de salud física y mental para participar en la Carrera Corre Con FEMTRIBE. Declaro que no padezco enfermedades cardiovasculares, respiratorias, metabólicas, neurológicas o musculares no controladas que puedan poner en riesgo mi vida o integridad física durante el desarrollo de la prueba.
                         </p>
                     </div>
 
@@ -26,9 +26,9 @@ require __DIR__ . '/../layouts/header.php';
                         Reconozco que la participación en carreras de atletismo de calle involucra esfuerzo físico intenso y riesgos inherentes (caídas, deshidratación, fatiga extrema o imprevistos climáticos). Declaro que asumo de manera libre, consciente y voluntaria todos los riesgos derivados de mi participación en el evento.
                     </p>
 
-                    <h4 class="fw-bold text-dark mt-4 mb-3">2. Exoneración de Responsabilidad</h4>
+                    <h4 class="fw-bold text-dark mt-4 mb-3">2. Exoneración de responsabilidad</h4>
                     <p>
-                        Exonero expresamente a la organización <strong>FemTribe Runner</strong>, directivos, juzgamiento, patrocinadores, entidades gubernamentales y aliados logísticos de cualquier reclamación, demanda o responsabilidad civil, penal o administrativa resultante de accidentes, lesiones físicas o imprevistos personales surgidos durante el desarrollo de la carrera.
+                        Exonero expresamente a la organización <strong>FEMTRIBE</strong>, directivos, juzgamiento, patrocinadores, entidades gubernamentales y aliados logísticos de cualquier reclamación, demanda o responsabilidad civil, penal o administrativa resultante de accidentes, lesiones físicas o imprevistos personales surgidos durante el desarrollo de la carrera.
                     </p>
 
                     <h4 class="fw-bold text-dark mt-4 mb-3">3. Compromisos del Participante</h4>

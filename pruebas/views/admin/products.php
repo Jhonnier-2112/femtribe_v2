@@ -1,5 +1,5 @@
 <?php
-$title = "Administración de Productos | FemTribe Runner";
+$title = "Administración de Productos | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 

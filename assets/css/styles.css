@@ -48,7 +48,7 @@ body {
     padding: 6px 12px !important;
     background-color: var(--primary-color) !important;
     transition: all 0.3s ease !important;
-    display: inline-flex !important;
+    display: none !important;
     align-items: center !important;
     justify-content: center !important;
 }
@@ -71,6 +71,13 @@ body {
 
 .navbar-toggler:focus {
     box-shadow: 0 0 0 0.25rem rgba(135, 204, 62, 0.35) !important;
+}
+
+/* Mostrar menú hamburguesa SOLO en pantallas pequeñas (<= 991px) */
+@media (max-width: 991.98px) {
+    .navbar-toggler {
+        display: inline-flex !important;
+    }
 }
 
 /* Menú colapsable mejorado */

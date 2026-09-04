@@ -1,5 +1,5 @@
 <?php
-$title = "Política de Tratamiento de Datos (Habeas Data) | FemTribe Runner";
+$title = "Política de Tratamiento de Datos (Habeas Data) | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -16,7 +16,7 @@ require __DIR__ . '/../layouts/header.php';
                 <div class="legal-content lh-lg text-secondary" style="font-size: 0.98rem;">
                     <h4 class="fw-bold text-dark mt-4 mb-3">1. Identificación del Responsable del Tratamiento</h4>
                     <p>
-                        <strong>FemTribe Runner</strong>, con domicilio en Cali, Colombia, es responsable del tratamiento de los datos personales recolectados a través de su plataforma web, formularios de registro e inscripciones de eventos deportivos.
+                        <strong>FEMTRIBE</strong>, con domicilio en Cali, Colombia, es responsable del tratamiento de los datos personales recolectados a través de su plataforma web, formularios de registro e inscripciones de eventos deportivos.
                     </p>
 
                     <h4 class="fw-bold text-dark mt-4 mb-3">2. Finalidad de la Recolección de Datos</h4>
@@ -25,13 +25,13 @@ require __DIR__ . '/../layouts/header.php';
                         <li>Gestionar la inscripción, asignación de dorsales, juzgamiento y entrega de kits deportivos.</li>
                         <li>Garantizar atención médica y logística oportuna en caso de emergencias durante las competencias.</li>
                         <li>Enviar confirmaciones de compra, comprobantes de pago e información operativa del evento.</li>
-                        <li>Enviar boletines informativos, novedades y futuras convocatorias de la comunidad FemTribe (con posibilidad de cancelación de suscripción).</li>
+                        <li>Enviar boletines informativos, novedades y futuras convocatorias de la comunidad FEMTRIBE (con posibilidad de cancelación de suscripción).</li>
                     </ul>
 
                     <h4 class="fw-bold text-dark mt-4 mb-3">3. Derechos de los Titulares (Habeas Data)</h4>
                     <p>Conforme al Artículo 8 de la Ley 1581 de 2012, el titular de los datos personales tiene derecho a:</p>
                     <ul class="ps-3">
-                        <li><strong>Conocer, actualizar y rectificar</strong> sus datos personales frente a FemTribe Runner.</li>
+                        <li><strong>Conocer, actualizar y rectificar</strong> sus datos personales frente a FEMTRIBE.</li>
                         <li><strong>Solicitar prueba de la autorización</strong> otorgada para el tratamiento de sus datos.</li>
                         <li><strong>Ser informado</strong> previa solicitud sobre el uso dado a sus datos personales.</li>
                         <li><strong>Revocar la autorización o solicitar la supresión</strong> del dato cuando no se respeten los principios, derechos y garantías constitucionales.</li>
@@ -39,7 +39,7 @@ require __DIR__ . '/../layouts/header.php';
 
                     <h4 class="fw-bold text-dark mt-4 mb-3">4. Autorización para Uso de Imagen y Material Audiovisual</h4>
                     <p>
-                        Al participar en la carrera, el usuario autoriza de manera explícita a FemTribe Runner para tomar fotografías, grabaciones de video y material audiovisual durante el evento. Dichas imágenes podrán ser publicadas en redes sociales, sitio web y piezas promocionales del evento con fines deportivos y comunitarios.
+                        Al participar en la carrera, el usuario autoriza de manera explícita a FEMTRIBE para tomar fotografías, grabaciones de video y material audiovisual durante el evento. Dichas imágenes podrán ser publicadas en redes sociales, sitio web y piezas promocionales del evento con fines deportivos y comunitarios.
                     </p>
 
                     <h4 class="fw-bold text-dark mt-4 mb-3">5. Canales para Ejercicio de Derechos</h4>

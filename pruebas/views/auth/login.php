@@ -1,5 +1,5 @@
 <?php
-$title = "Iniciar Sesión | FemTribe Runner";
+$title = "Iniciar Sesión | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -10,7 +10,7 @@ require __DIR__ . '/../layouts/header.php';
                 <div class="auth-card shadow-lg border-0">
                     <div class="auth-header-banner">
                         <span class="badge-runner">
-                            <i class="fas fa-running me-1"></i> COMUNIDAD RUNNER
+                            <i class="fas fa-running me-1"></i> COMUNIDAD FEMTRIBE
                         </span>
                         <h3 class="fw-bold text-white mb-1">¡Hola de nuevo!</h3>
                         <p class="text-white-50 small mb-0">Accede a tu cuenta para inscribirte en eventos y comprar productos</p>
