@@ -318,43 +318,43 @@
 <!-- =========================================================================
      SECCIÓN: PATROCINADORES Y ALIADOS OFICIALES (FONDO VERDE OFICIAL #B2D81F)
      ========================================================================= -->
-<section class="section-sponsors-green py-5" id="patrocinadores">
-  <div class="container py-4">
+<section class="section-sponsors-green" id="patrocinadores">
+  <div class="container">
     
-    <!-- PATROCINADOR OFICIAL -->
-    <div class="row justify-content-center text-center mb-5" data-aos="fade-up">
-      <div class="col-12">
-        <h2 class="sponsor-green-title mb-4">PATROCINADOR OFICIAL</h2>
-        <div class="d-flex justify-content-center align-items-center">
-          <img src="assets/img/femtribe_verde.png" alt="FEMTRIBE Running" class="sponsor-logo-main">
-        </div>
-      </div>
-    </div>
-
-    <!-- ALIADOS -->
-    <div class="row justify-content-center text-center pt-3" data-aos="fade-up" data-aos-delay="150">
-      <div class="col-12 mb-4">
-        <h2 class="sponsor-green-title mb-4">ALIADOS:</h2>
+    <!-- ALIADOS PRINCIPALES -->
+    <div class="row justify-content-center text-center" data-aos="fade-up" data-aos-delay="150">
+      <div class="col-12 mb-2">
+        <h2 class="sponsor-green-title mb-3 mb-md-4">ALIADOS PRINCIPALES</h2>
       </div>
 
       <div class="col-12">
-        <div class="row g-4 align-items-center justify-content-center">
+        <div class="aliados-row d-flex flex-wrap align-items-center justify-content-center gap-2 gap-md-3 gap-lg-4">
 
-          <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="200">
+          <div class="aliado-item" data-logo="ricaurte" data-aos="zoom-in" data-aos-delay="200">
             <div class="aliado-logo-box">
               <img src="assets/img/CorreconFemtribe2.0/aliado_ricaurte.png" alt="Alcaldía de Ricaurte" class="aliado-logo-img img-fluid">
             </div>
           </div>
 
-          <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="300">
+          <div class="aliado-item" data-logo="cundeportes" data-aos="zoom-in" data-aos-delay="300">
+            <img src="assets/img/CorreconFemtribe2.0/aliado_cundeportes.png" alt="Cundeportes" class="aliado-logo-img img-fluid">
+          </div>
+
+          <div class="aliado-item" data-logo="electrolit" data-aos="zoom-in" data-aos-delay="400">
             <div class="aliado-logo-box">
-              <img src="assets/img/CorreconFemtribe2.0/aliado_cundeportes.png" alt="Cundeportes" class="aliado-logo-img img-fluid">
+              <img src="assets/img/CorreconFemtribe2.0/aliado_electrolit.png" alt="Electrolit" class="aliado-logo-img img-fluid">
             </div>
           </div>
 
-          <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="400">
+          <div class="aliado-item" data-logo="adrian" data-aos="zoom-in" data-aos-delay="500">
             <div class="aliado-logo-box">
-              <img src="assets/img/CorreconFemtribe2.0/aliado_electrolit.png" alt="Electrolit" class="aliado-logo-img img-fluid">
+              <img src="assets/img/CorreconFemtribe2.0/aliado_adrian.png" alt="Aliado Adrián" class="aliado-logo-img img-fluid">
+            </div>
+          </div>
+
+          <div class="aliado-item" data-logo="ap" data-aos="zoom-in" data-aos-delay="600">
+            <div class="aliado-logo-box">
+              <img src="assets/img/CorreconFemtribe2.0/aliado_AP.png" alt="Aliado AP Andrés Peña" class="aliado-logo-img img-fluid">
             </div>
           </div>
 
@@ -362,6 +362,48 @@
       </div>
     </div>
 
+  </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN: ¿ESTÁS LISTO? — LEAD / CONTACTO (FONDO AZUL CLARO OFICIAL)
+     ========================================================================= -->
+<section class="section-femtribe-lead" id="lead-femtribe">
+  <div class="container">
+    <div class="row align-items-center justify-content-between g-4 g-lg-5">
+
+      <!-- COLUMNA IZQUIERDA: banner.png centrado + FECHA en blanco -->
+      <div class="col-12 col-lg-5 text-center" data-aos="fade-right">
+        <div class="ft-lead-banner-wrapper">
+          <img src="assets/img/CorreconFemtribe2.0/banner.png" alt="Banner FEMTRIBE 2.0" class="ft-lead-banner img-fluid">
+        </div>
+        <p class="ft-lead-date">FECHA: 15 de Noviembre</p>
+      </div>
+
+      <!-- COLUMNA DERECHA: título + subtítulo + formulario -->
+      <div class="col-12 col-lg-7" data-aos="fade-left">
+        <h2 class="ft-lead-title">¿ESTÁS LISTO?</h2>
+        <p class="ft-lead-subtitle">Déjanos tus datos para brindarte toda la información.</p>
+        <form class="ft-lead-form" action="/contacto" method="POST" id="leadFormHome">
+          <div class="mb-3 mb-md-4">
+            <label for="leadNombre" class="ft-lead-label">Nombre</label>
+            <input type="text" class="ft-lead-input form-control" id="leadNombre" name="nombre" required placeholder="Tu nombre completo">
+          </div>
+          <div class="mb-3 mb-md-4">
+            <label for="leadEmail" class="ft-lead-label">Correo Electrónico</label>
+            <input type="email" class="ft-lead-input form-control" id="leadEmail" name="email" required placeholder="tu@correo.com">
+          </div>
+          <div class="mb-3 mb-md-4">
+            <label for="leadMensaje" class="ft-lead-label">Mensaje</label>
+            <textarea class="ft-lead-input ft-lead-textarea form-control" id="leadMensaje" name="mensaje" rows="4" required placeholder="¿En qué podemos ayudarte?"></textarea>
+          </div>
+          <div class="d-flex justify-content-end">
+            <button type="submit" class="ft-lead-btn">Enviar</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -1320,9 +1362,6 @@
     min-height: 390px;
     overflow: visible;
   }
-
-  /* Foto: MÁS GRANDE (saliente más asimétrica derecha), SIN blend de opacidad
-   → la ves NÍTIDA, tal cual es, con su transparencia */
   .consulta-inscripcion__photo {
     max-width: 150%;
     /* 35% MÁS GRANDE que antes (antes 112%) */
@@ -1498,32 +1537,40 @@
     font-weight: 400;
   }
 
+  .ricaurte-info-text strong { color: #B2D81F; }
+
   /* --- SECCIÓN PATROCINADORES Y ALIADOS (FONDO VERDE OFICIAL #B2D81F) --- */
   .section-sponsors-green {
     position: relative;
     width: 100%;
-    background-color: #B2D81F;   /* VERDE OFICIAL */
-    padding: 5rem 0;
+    background-color: #B2D81F;   /* VERDE OFICIAL - restaurado */
+    padding: 2rem 0;
+  }
+
+  .section-sponsors-green > .container {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
   }
 
   .sponsor-green-title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 900;
-    font-style: italic;
-    font-size: clamp(1.6rem, 3.2vw, 2.4rem);  /* TITULARES DESTACADOS Y ESTILIZADOS */
-    letter-spacing: 1.2px;
-    color: #002D62;                             /* AZUL OSCURO OFICIAL 002D62 */
+    font-family: 'Impact', 'Anton', 'League Spartan', 'Oswald', 'Montserrat', sans-serif;
+    font-weight: 1000;
+    font-style: normal;
+    font-size: clamp(1.45rem, 2.35vw, 2.2rem);
+    letter-spacing: 0.9px;
+    color: #003A77;
     text-transform: uppercase;
     margin: 0;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Logo principal (femtribe_verde.png) en blanco puro */
+  /* Logo principal FemTribe en BLANCO sobre verde */
   .sponsor-logo-main {
-    max-height: 95px;
+    max-height: 115px;
     width: auto;
     object-fit: contain;
     filter: brightness(0) invert(1);
-    opacity: 0.95;
+    opacity: 1;
     transition: all 0.3s ease;
   }
 
@@ -1532,24 +1579,108 @@
     opacity: 1;
   }
 
-  .aliado-logo-box {
-    display: flex;
+  .aliado-item {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    min-height: 100px;
+    padding: 0.1rem;
+    flex: 0 0 auto;
   }
 
-  /* Logos aliados en blanco puro sin recuadros ni cajas de fondo */
-  .aliado-logo-img {
-    max-height: 85px;
-    max-width: 200px;
-    width: auto;
-    object-fit: contain;
-    filter: invert(1) grayscale(100%) contrast(300%);
+  .aliado-logo-box {
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 150px;
+    max-width: 350px;
+  }
+
+  /* CUNDEPORTES:
+     SIN caja .aliado-logo-box, SIN overflow, SIN height/width forzados.
+     Tamaño natural del PNG + filtro. NUNCA se corta nada = 3 aros completos +
+     círculo exterior cerrado + letras "CUNDEPORTES RICAURTE" completas. */
+  .aliado-item[data-logo="cundeportes"] {
+    min-width: 0;
+  }
+  .aliado-item[data-logo="cundeportes"] .aliado-logo-img {
+    filter: saturate(0%) invert(1) contrast(600%);
     mix-blend-mode: screen;
-    opacity: 0.95;
+    margin: 0;
+    padding: 0;
+    max-height: none;
+    max-width: min(42vw, 360px);
+    width: auto;
+    height: auto;
+  }
+
+  /* ELECTROLIT: caja + grande */
+  .aliado-item[data-logo="electrolit"] .aliado-logo-box {
+    max-height: 180px;
+    max-width: 460px;
+  }
+
+  .aliado-logo-img {
+    max-height: 190px;
+    max-width: 440px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    margin: -22% -22%;
+    filter: brightness(0) invert(1);
+    mix-blend-mode: normal;
+    opacity: 1;
     transition: all 0.3s ease;
+  }
+  .aliado-item[data-logo="ricaurte"] .aliado-logo-img {
+    filter: invert(1) grayscale(100%) contrast(400%);
+    mix-blend-mode: screen;
+    max-height: 160px;
+    max-width: 360px;
+    margin: 0;
+  }
+  /* CUNDEPORTES: ahora el PNG ya es LOGO BLANCO (tú lo cambiaste).
+     NINGÚN FILTRO. Modo normal. Se ve blanco directo sobre verde. */
+  .aliado-item[data-logo="cundeportes"] .aliado-logo-img {
+    filter: none;
+    mix-blend-mode: normal;
+    opacity: 1;
+    max-height: 160px;
+    max-width: 380px;
+    width: auto;
+    height: auto;
+    margin: 0;
+  }
+
+  /* ELECTROLIT: tamaño SIMÉTRICO a Ricaurte y Cundeportes */
+  .aliado-item[data-logo="electrolit"] .aliado-logo-img {
+    filter: brightness(0) invert(1);
+    mix-blend-mode: normal;
+    max-height: 160px;
+    max-width: 380px;
+    margin: 0;
+  }
+
+  /* ADRIÁN: tamaño SIMÉTRICO a los otros 3 aliados */
+  .aliado-item[data-logo="adrian"] .aliado-logo-img {
+    filter: brightness(0) invert(1);
+    mix-blend-mode: normal;
+    max-height: 160px;
+    max-width: 380px;
+    margin: 0;
+  }
+
+  /* AP (Andrés Peña): PNG ya es BLANCO con transparencia.
+     Ningún filtro (igual que Cundeportes). Tamaño simétrico a los otros. */
+  .aliado-item[data-logo="ap"] .aliado-logo-img {
+    filter: none;
+    mix-blend-mode: normal;
+    opacity: 1;
+    max-height: 145px;
+    max-width: 320px;
+    width: auto;
+    height: auto;
+    margin: 0;
   }
 
   .aliado-logo-img:hover {
@@ -1559,17 +1690,32 @@
 
   @media (max-width: 768px) {
     .section-sponsors-green {
-      padding: 3.5rem 0;
+      padding: 2rem 0;
     }
     .sponsor-green-title {
-      font-size: 1.4rem;
+      font-size: 1rem;
     }
     .sponsor-logo-main {
-      max-height: 75px;
+      max-height: 85px;
+    }
+    .aliado-logo-box {
+      max-height: 110px;
+      max-width: 260px;
+    }
+    .aliado-item[data-logo="electrolit"] .aliado-logo-box {
+      max-height: 115px;
+      max-width: 290px;
     }
     .aliado-logo-img {
-      max-height: 65px;
-      max-width: 150px;
+      max-height: 140px;
+      max-width: 320px;
+    }
+    .aliado-item[data-logo="electrolit"] .aliado-logo-img {
+      max-height: 115px;
+      max-width: 290px;
+    }
+    .aliados-row {
+      gap: 0.25rem !important;
     }
   }
 
@@ -2563,6 +2709,218 @@
 
     .stage-price {
       font-size: 2.4rem;
+    }
+  }
+
+  /* =============================================================
+     SECCIÓN LEAD FEMTRIBE 2.0 (AZUL CLARO OFICIAL)
+     ============================================================= */
+  .section-femtribe-lead {
+    width: 100%;
+    background-color: #41CEB3;
+    padding: 9rem 0 3.8rem 0;
+  }
+
+  /* COLUMNA IZQUIERDA: banner.png */
+  .ft-lead-banner-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .ft-lead-banner {
+    display: block;
+    max-width: 100%;
+    max-height: 260px;
+    width: auto;
+    height: auto;
+    background-color: transparent;
+    object-fit: contain;
+    mix-blend-mode: multiply;   /* elimina fondo blanco si el PNG lo trae embebido */
+    filter: drop-shadow(0 6px 16px rgba(0, 58, 119, 0.1));
+  }
+
+  /* Subtítulo FECHA: misma tipografía y color que el título "¿ESTÁS LISTO?",
+     PERO se mantiene el tamaño de letra actual (font-size no se toca). */
+  .ft-lead-date {
+    font-family: 'Impact', 'Anton', 'League Spartan', 'Oswald', 'Montserrat', sans-serif;
+    font-weight: 1000;
+    font-style: normal;
+    font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+    letter-spacing: 0.9px;
+    color: #003A77;
+    text-transform: uppercase;
+    margin: 0;
+    text-align: center;
+    line-height: 1.2;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Título principal — ¿ESTÁS LISTO? AZUL OSCURO OFICIAL.
+     POSICIONAMIENTO: centrado ABSOLUTO respecto a TODA la sección
+     (no a la columna del form). Por eso usamos position:absolute +
+     transform(-50%) tomando como referencia .section-femtribe-lead. */
+  .section-femtribe-lead { position: relative; }
+  .ft-lead-title {
+    position: absolute;
+    top: 2.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    max-width: 92%;
+    font-family: 'Impact', 'Anton', 'League Spartan', 'Oswald', 'Montserrat', sans-serif;
+    font-weight: 1000;
+    font-style: normal;
+    font-size: clamp(1.45rem, 2.35vw, 2.2rem);
+    letter-spacing: 0.9px;
+    color: #003A77;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1.05;
+    text-align: center;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Subtítulo — BLANCO. Centrado horizontal respecto a TODA la sección
+     (mismo sistema que el título: absolute + left:50% + translateX).
+     Separación del borde superior para que quede bajo el título flotante
+     y con respiro respecto al bloque aliados. */
+  .ft-lead-subtitle {
+    position: absolute;
+    top: 4.8rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: fit-content;
+    max-width: 92%;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    color: #FFFFFF;
+    margin: 0;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  /* Formulario wrapper */
+  .ft-lead-form {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Labels (AZUL OSCURO OFICIAL) */
+  .ft-lead-label {
+    display: inline-block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: clamp(0.9rem, 1.05vw, 1rem);
+    color: #003A77;
+    letter-spacing: 0.2px;
+    margin-bottom: 0.45rem;
+    padding-left: 2px;
+  }
+
+  /* Inputs: BLANCOS con BORDE VERDE OFICIAL */
+  .ft-lead-input {
+    width: 100%;
+    background-color: #FFFFFF !important;
+    border: 2.5px solid #B2D81F !important;
+    border-radius: 8px;
+    color: #003A77;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 0.7rem 1rem;
+    transition: all 0.25s ease;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+
+  .ft-lead-input::placeholder {
+    color: rgba(0, 58, 119, 0.4);
+    font-weight: 400;
+  }
+
+  .ft-lead-input:focus {
+    border-color: #003A77 !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 0 0 3px rgba(0, 58, 119, 0.08) !important;
+  }
+
+  .ft-lead-textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  /* Botón enviar: verde lima */
+  .ft-lead-btn {
+    background-color: #B2D81F;
+    color: #003A77;
+    border: 2px solid #B2D81F;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    padding: 0.65rem 2rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 5px 14px rgba(178, 216, 31, 0.28);
+  }
+
+  .ft-lead-btn:hover {
+    background-color: #003A77;
+    color: #FFFFFF;
+    border-color: #003A77;
+    transform: translateY(-2px);
+    box-shadow: 0 9px 20px rgba(0, 58, 119, 0.25);
+  }
+
+  @media (max-width: 991.98px) {
+    .section-femtribe-lead {
+      padding: 7.4rem 0 3rem 0;
+    }
+    .ft-lead-title {
+      font-size: clamp(1.35rem, 3vw, 2rem);
+      top: 2rem;
+    }
+    .ft-lead-subtitle {
+      top: 4.5rem;
+      font-size: 0.98rem;
+    }
+    .ft-lead-banner {
+      max-height: 210px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .section-femtribe-lead {
+      padding: 7rem 0 2.6rem 0;
+    }
+    .ft-lead-title {
+      font-size: clamp(1.25rem, 5.8vw, 1.8rem);
+      top: 1.7rem;
+    }
+    .ft-lead-subtitle {
+      top: 4.2rem;
+      font-size: 0.92rem;
+      padding: 0 0.5rem;
+    }
+    .ft-lead-banner {
+      max-height: 170px;
+    }
+    .ft-lead-input {
+      padding: 0.7rem 0.95rem;
+      border-width: 2px;
+    }
+    .ft-lead-btn {
+      width: 100%;
+      padding: 0.75rem 0;
+    }
+    .ft-lead-textarea {
+      min-height: 110px;
     }
   }
 </style>
