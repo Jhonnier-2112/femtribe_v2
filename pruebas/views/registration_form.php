@@ -2,7 +2,7 @@
 
 <style>
 .registration-hero {
-  background: linear-gradient(135deg, rgba(30, 60, 114, 0.6) 0%, rgba(42, 82, 152, 0.6) 100%), url('assets/img/inscribete.png') center/cover no-repeat;
+  background: linear-gradient(135deg, rgba(30, 60, 114, 0.6) 0%, rgba(42, 82, 152, 0.6) 100%), url('assets/img/banner_camiseta_carrera.jpeg') center/cover no-repeat;
   padding: 250px 0 150px 0;
   margin-bottom: 40px;
   position: relative;
@@ -347,7 +347,7 @@
   <div class="row justify-content-center">
     <div class="col-lg-6 col-md-8">
       <div class="flyer-container-center">
-        <img src="assets/img/flyer.png" alt="Flyer Carrera - Femtribe" class="flyer-image-center">
+        <img src="assets/img/flyer.jpeg" alt="Flyer Carrera - Femtribe" class="flyer-image-center">
       </div>
     </div>
   </div>
@@ -885,7 +885,7 @@
                 <div class="form-check bg-white p-3 rounded-3 border shadow-sm">
                   <input class="form-check-input ms-0 me-3" type="checkbox" name="acepta_autorizacion" id="acepta_autorizacion" value="si" required style="width: 1.4em; height: 1.4em; cursor: pointer; float: left;">
                   <label class="form-check-label fw-bold text-dark small" for="acepta_autorizacion" style="cursor: pointer; display: block; line-height: 1.6; padding-left: 0.5rem;">
-                    Declaro bajo juramento que me encuentro en aptas condiciones de salud física y mental, asumo los riesgos de la actividad y acepto la <a href="/autorizacion-datos" target="_blank" class="text-success text-decoration-none fw-bold">Exoneración de Responsabilidad</a>, los <a href="/terminos" target="_blank" class="text-success text-decoration-none fw-bold">Términos del Evento</a> y la <a href="/politica-privacidad" target="_blank" class="text-success text-decoration-none fw-bold">Política de Tratamiento de Datos (Habeas Data)</a>. *
+                    Declaro bajo juramento que me encuentro en aptas condiciones de salud física y mental, asumo los riesgos de la actividad y acepto la <a href="/autorizacion-datos" target="_blank" class="text-success text-decoration-none fw-bold">Exoneración de responsabilidad</a>, los <a href="/terminos" target="_blank" class="text-success text-decoration-none fw-bold">Términos del Evento</a> y la <a href="/politica-privacidad" target="_blank" class="text-success text-decoration-none fw-bold">Política de Tratamiento de Datos (Habeas Data)</a>. *
                   </label>
                   <div class="invalid-feedback mt-2">
                     Debes aceptar la autorización y términos legales para completar tu inscripción.

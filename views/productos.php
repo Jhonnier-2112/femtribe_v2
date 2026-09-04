@@ -26,11 +26,11 @@
         ?>
 
         <!-- Banner superior: imagen fija con enlace al detalle de producto -->
-        <div class="mb-3">
-            <a href="/producto?slug=camiseta_oficial_carrera" class="d-block" aria-label="Ver detalles de la camiseta de carrera">
-                <img src="/assets/img/banner_camiseta_carrera.png" alt="Banner camiseta oficial de carrera" class="catalog-banner-img" />
+       <!--  <div class="mb-3">
+            <a href="" class="d-block" aria-label="Ver detalles de la camiseta de carrera">
+                <img src="/assets/img/banner_camiseta_carrera.jpeg" alt="Banner camiseta oficial de carrera" class="catalog-banner-img" />
             </a>
-        </div>
+        </div>-->
 
         <!-- Layout con filtros a la izquierda y contenido a la derecha -->
         <div class="catalog-layout">

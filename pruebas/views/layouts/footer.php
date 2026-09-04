@@ -54,11 +54,11 @@
       <div class="row align-items-center">
         <div class="col-md-12 text-center">
           <div class="d-flex flex-wrap justify-content-center gap-3 mb-2 small text-light text-opacity-75">
-            <a href="/terminos" class="text-light text-decoration-none hover-underline">Términos y Condiciones</a>
+            <a href="/terminos" class="text-light text-decoration-none hover-underline">Términos y condiciones</a>
             <span class="d-none d-sm-inline">•</span>
-            <a href="/politica-privacidad" class="text-light text-decoration-none hover-underline">Política de Datos (Habeas Data)</a>
+            <a href="/politica-privacidad" class="text-light text-decoration-none hover-underline">Política de datos</a>
             <span class="d-none d-sm-inline">•</span>
-            <a href="/autorizacion-datos" class="text-light text-decoration-none hover-underline">Exoneración de Responsabilidad</a>
+            <a href="/autorizacion-datos" class="text-light text-decoration-none hover-underline">Exoneración de responsabilidad</a>
           </div>
           <p class="copyright-text mb-0">
             &copy; <?php echo date('Y'); ?> Femtribe. Todos los derechos reservados.
@@ -261,7 +261,7 @@
 
 /* Footer Bottom */
 .footer-bottom {
-  background: #1a1a1a;
+  background: #2c2c2c;
   padding: 10px 0;
   border-top: 1px solid #404040;
 }

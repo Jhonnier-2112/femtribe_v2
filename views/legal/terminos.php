@@ -1,5 +1,5 @@
 <?php
-$title = "Términos y Condiciones | FEMTRIBE";
+$title = "Términos y condiciones | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -9,14 +9,14 @@ require __DIR__ . '/../layouts/header.php';
             <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5">
                 <div class="border-bottom pb-4 mb-4">
                     <span class="badge bg-success bg-opacity-10 text-success fw-bold px-3 py-2 rounded-pill mb-2" style="color: #87CC3E !important; background-color: rgba(135, 204, 62, 0.15) !important;">Marco Legal y Reglamentario</span>
-                    <h1 class="fw-bold text-dark display-6 mb-2">Términos y Condiciones de Uso y Participación</h1>
+                    <h1 class="fw-bold text-dark display-6 mb-2">Términos y condiciones de Uso y Participación</h1>
                     <p class="text-muted small mb-0">Última actualización: <?= date('d/m/Y') ?> | Comunidad Deportiva FEMTRIBE</p>
                 </div>
 
                 <div class="legal-content lh-lg text-secondary" style="font-size: 0.98rem;">
                     <h4 class="fw-bold text-dark mt-4 mb-3">1. Aceptación de Términos</h4>
                     <p>
-                        Al registrarse, inscribirse en eventos o hacer uso del portal web y servicios de <strong>FEMTRIBE</strong>, el usuario declara haber leído, comprendido y aceptado la totalidad de los presentes Términos y Condiciones. Si no está de acuerdo con alguna disposición, deberá abstenerse de utilizar la plataforma e inscribirse en nuestras actividades deportivas.
+                        Al registrarse, inscribirse en eventos o hacer uso del portal web y servicios de <strong>FEMTRIBE</strong>, el usuario declara haber leído, comprendido y aceptado la totalidad de los presentes Términos y condiciones. Si no está de acuerdo con alguna disposición, deberá abstenerse de utilizar la plataforma e inscribirse en nuestras actividades deportivas.
                     </p>
 
                     <h4 class="fw-bold text-dark mt-4 mb-3">2. Objeto del Sitio y Eventos Deportivo</h4>

@@ -43,10 +43,10 @@ if (!defined('WHATSAPP_BUSINESS_NUMBER')) {
         <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
         Proceder al Pago / Checkout
       </button>
-      <a id="cart-wa-btn" href="#" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#ffffff; border-radius:10px; padding:10px 14px; text-decoration:none; font-weight:700; box-shadow:0 2px 8px rgba(37,211,102,0.25);">
+      <!--a id="cart-wa-btn" href="#" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:8px; background:#25D366; color:#ffffff; border-radius:10px; padding:10px 14px; text-decoration:none; font-weight:700; box-shadow:0 2px 8px rgba(37,211,102,0.25);">
         <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
         Enviar pedido por WhatsApp
-      </a>
+      </a>-->
     </div>
     <div class="cart-notes" style="margin-top:10px; color:#6b7280; font-size:13px; text-align:right;">
       Impuesto incluido. Los gastos de envío se calculan de acuerdo a la ubicación.
