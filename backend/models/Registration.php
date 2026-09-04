@@ -27,7 +27,7 @@ class Registration {
         try {
             $database = new Database();
             $db = $database->getConnection();
-            $stmt = $db->query("SELECT id, name, slug, category_type, distance, presale_price, price, description, is_active FROM race_stages WHERE is_active = 1 ORDER BY category_type ASC, id ASC");
+            $stmt = $db->query("SELECT id, name, slug, category_type, distance, COALESCE(presale_price, price) AS presale_price, price, description, is_active FROM race_stages WHERE is_active = 1 ORDER BY category_type ASC, id ASC");
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
         } catch (PDOException $e) {
             return [];

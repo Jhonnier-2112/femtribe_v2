@@ -269,99 +269,203 @@
   </div>
 </section>
 
-<!-- =========================================================================
-     SECCIÓN: RICAURTE (LA FOTO DE LA IGLESIA ES LA PROTAGONISTA)
-     ========================================================================= -->
-<!-- =========================================================================
-     SECCIÓN: INFORMACIÓN DE RICAURTE (FONDO AZUL OSCURO OFICIAL)
-     ========================================================================= -->
-<section class="section-ricaurte-info py-5">
-  <div class="container py-3">
-    <div class="row justify-content-center text-center">
-      <div class="col-12 col-lg-10 col-xl-9" data-aos="fade-up" data-aos-duration="800">
-        
-        <p class="ricaurte-info-text mb-4">
-          <strong>Ricaurte, Cundinamarca</strong>, el escenario perfecto para vivir la experiencia. Te recibe con su clima cálido, la fuerza del <strong>río Magdalena</strong> y la hospitalidad de una comunidad que sabe hacerte sentir en casa.
-        </p>
 
-        <p class="ricaurte-info-text mb-4">
-          Sus paisajes, sus lugares emblemáticos y la energía de su gente serán el escenario de <strong>CORRE CON FEMTRIBE 2.0</strong>, una experiencia donde cada kilómetro te permitirá descubrir un destino que <strong>se vive, se disfruta y se queda en la memoria.</strong>
-        </p>
+<!-- =========================================================================
+     SECCIÓN: PATROCINADORES Y ALIADOS OFICIALES
+     ========================================================================= -->
+<section class="section-sponsors py-5" id="patrocinadores">
+  <div class="container py-4">
 
-        <div class="mt-4 pt-2">
-          <a href="https://www.instagram.com/alcaldiadericaurtecundinamarca?igsi=azRvd3FyNjF1bXZv" target="_blank" rel="noopener noreferrer" class="btn-ricaurte-ig">
-            CONOCE MÁS DE RICAURTE AQUÍ
-          </a>
+    <div class="section-header text-center mb-5" data-aos="fade-up">
+      <span class="section-tagline">NUESTROS ALIADOS</span>
+      <h2 class="section-title">PATROCINADORES OFICIALES</h2>
+      <p class="section-subtitle">Marcas e instituciones que hacen posible la gran fiesta de Corre Con FEMTRIBE 2.0</p>
+      <div class="section-divider"></div>
+    </div>
+
+    <!-- Grilla de Logos de Patrocinadores -->
+    <div class="row g-4 align-items-center justify-content-center text-center">
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="100">
+        <div class="sponsor-logo-box">
+          <img src="assets/img/ricaurte.png" alt="Alcaldía de Ricaurte" class="img-fluid sponsor-logo"
+            onerror="this.style.display='none'">
+          <span class="sponsor-name-fallback">RICAURTE</span>
         </div>
+      </div>
 
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="200">
+        <div class="sponsor-logo-box">
+          <img src="assets/img/femtribe_verde.png" alt="FEMTRIBE Running" class="img-fluid sponsor-logo">
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="300">
+        <div class="sponsor-logo-box">
+          <i class="fas fa-bolt text-accent fa-2x mb-2"></i>
+          <span class="d-block fw-bold text-white small">GATORADE</span>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="400">
+        <div class="sponsor-logo-box">
+          <i class="fas fa-heartbeat text-accent fa-2x mb-2"></i>
+          <span class="d-block fw-bold text-white small">CLÍNICA SALUD</span>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="500">
+        <div class="sponsor-logo-box">
+          <i class="fas fa-shoe-prints text-accent fa-2x mb-2"></i>
+          <span class="d-block fw-bold text-white small">RUNNER STORE</span>
+        </div>
+      </div>
+
+      <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="600">
+        <div class="sponsor-logo-box">
+          <i class="fas fa-tint text-accent fa-2x mb-2"></i>
+          <span class="d-block fw-bold text-white small">AGUA PURA</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =========================================================================
+     SECCIÓN: PREGUNTAS FRECUENTES (FAQ ACORDEÓN)
+     ========================================================================= -->
+<section class="section-faq py-5" id="faq">
+  <div class="container py-4">
+
+    <div class="section-header text-center mb-5" data-aos="fade-up">
+      <span class="section-tagline">RESOLVEMOS TUS DUDAS</span>
+      <h2 class="section-title">PREGUNTAS FRECUENTES</h2>
+      <p class="section-subtitle">Todo lo que necesitas saber antes del gran día de la carrera</p>
+      <div class="section-divider"></div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8" data-aos="fade-up">
+        <div class="accordion custom-dark-accordion" id="faqAccordion">
+
+          <!-- Pregunta 1 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                aria-expanded="true" aria-controls="collapseOne">
+                <i class="fas fa-box-open me-3 text-accent"></i> ¿Dónde y cuándo se realiza la entrega de kits?
+              </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                La entrega de kits se llevará a cabo los días previos a la carrera en la Expo FemTribe. Debes
+                presentar tu cédula de ciudadanía original o el comprobante de inscripción que puedes descargar desde
+                esta misma plataforma.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 2 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                <i class="fas fa-paw me-3 text-accent"></i> ¿Puedo participar con mi mascota o con niños pequeños?
+              </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                ¡Sí! La distancia <strong>3K Recreativa</strong> es 100% familiar y Pet Friendly. Los niños menores de
+                12 años deben estar acompañados por un adulto responsable debidamente inscrito.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 3 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                <i class="fas fa-check-circle me-3 text-accent"></i> ¿Cómo confirmo que mi pago e inscripción fueron
+                exitosos?
+              </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Una vez completado el pago a través de Wompi (PSE, Tarjeta de Crédito, Nequi, etc.), recibirás un correo
+                electrónico de confirmación. Además, puedes verificar en cualquier momento tu estado en la sección <a
+                  href="/consultar" class="text-accent fw-bold">Consulta Tu Inscripción</a> ingresando tu número de
+                documento.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 4 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFour">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                <i class="fas fa-exchange-alt me-3 text-accent"></i> ¿Puedo transferir mi inscripción a otra persona?
+              </button>
+            </h2>
+            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                Los cambios o cesiones de cupo se permiten hasta 15 días calendario antes del evento, contactando al
+                equipo organizador a través de nuestros canales oficiales o soporte de WhatsApp.
+              </div>
+            </div>
+          </div>
+
+          <!-- Pregunta 5 -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingFive">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                <i class="fas fa-tshirt me-3 text-accent"></i> ¿Qué talla de camiseta debo elegir?
+              </button>
+            </h2>
+            <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive"
+              data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                En el formulario de inscripción dispondrás de la tabla de medidas exacta en centímetros para silueta
+                dama, caballero y niños. Te recomendamos verificarla para asegurar tu talla ideal.
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- =========================================================================
-     SECCIÓN: FOTO DE LA IGLESIA (SOLO LA IMAGEN A TAMAÑO COMPLETO SIN TEXTO)
+     BANNER FINAL CTA: ÚNETE A LA TRIBU
      ========================================================================= -->
-<section class="section-iglesia-full p-0 overflow-hidden" data-aos="fade-up">
-  <img src="assets/img/CorreconFemtribe2.0/iglesia.png" alt="Iglesia de Ricaurte - Corre Con FEMTRIBE 2.0" class="img-fluid w-100 d-block img-iglesia-standalone">
-</section>
-
-
-
-
-
-
-
-
-
-
-<!-- =========================================================================
-     SECCIÓN: PATROCINADORES Y ALIADOS OFICIALES (FONDO VERDE OFICIAL #B2D81F)
-     ========================================================================= -->
-<section class="section-sponsors-green py-5" id="patrocinadores">
-  <div class="container py-4">
-    
-    <!-- PATROCINADOR OFICIAL -->
-    <div class="row justify-content-center text-center mb-5" data-aos="fade-up">
-      <div class="col-12">
-        <h2 class="sponsor-green-title mb-4">PATROCINADOR OFICIAL</h2>
-        <div class="d-flex justify-content-center align-items-center">
-          <img src="assets/img/femtribe_verde.png" alt="FEMTRIBE Running" class="sponsor-logo-main">
-        </div>
+<section class="section-final-cta py-5 position-relative text-center overflow-hidden">
+  <div class="final-cta-overlay"></div>
+  <div class="container py-5 position-relative" style="z-index: 2;" data-aos="zoom-in">
+    <div class="col-lg-8 mx-auto">
+      <span class="badge-ft-pill mb-3"><i class="fas fa-fire text-accent me-2"></i>CUPOS LIMITADOS</span>
+      <h2 class="display-5 fw-black text-white mb-3">¿ESTÁS LISTO PARA VIVIR LA EXPERIENCIA?</h2>
+      <p class="lead text-light text-opacity-90 mb-4">
+        No dejes pasar la oportunidad de correr, disfrutar y celebrar en comunidad. ¡Inscríbete hoy y asegura tu kit
+        oficial con precio de preventa!
+      </p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="<?= $inscribeteUrl ?>" class="btn-cta-primary btn-lg px-5 py-3 inscribete-btn-link">
+          <i class="fas fa-running me-2"></i>¡INSCRIBIRME AHORA!
+        </a>
+        <a href="/consultar" class="btn-cta-secondary btn-lg px-5 py-3">
+          <i class="fas fa-search me-2"></i>Validar Mi Inscripción
+        </a>
       </div>
     </div>
-
-    <!-- ALIADOS -->
-    <div class="row justify-content-center text-center pt-3" data-aos="fade-up" data-aos-delay="150">
-      <div class="col-12 mb-4">
-        <h2 class="sponsor-green-title mb-4">ALIADOS:</h2>
-      </div>
-
-      <div class="col-12">
-        <div class="row g-4 align-items-center justify-content-center">
-
-          <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="200">
-            <div class="aliado-logo-box">
-              <img src="assets/img/CorreconFemtribe2.0/aliado_ricaurte.png" alt="Alcaldía de Ricaurte" class="aliado-logo-img img-fluid">
-            </div>
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="300">
-            <div class="aliado-logo-box">
-              <img src="assets/img/CorreconFemtribe2.0/aliado_cundeportes.png" alt="Cundeportes" class="aliado-logo-img img-fluid">
-            </div>
-          </div>
-
-          <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="400">
-            <div class="aliado-logo-box">
-              <img src="assets/img/CorreconFemtribe2.0/aliado_electrolit.png" alt="Electrolit" class="aliado-logo-img img-fluid">
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-
   </div>
 </section>
 
@@ -1480,149 +1584,6 @@
     margin: 0;
     text-align: center;
     line-height: 1.3;
-  }
-
-  /* --- SECCIÓN RICAURTE INFO (FONDO AZUL OSCURO OFICIAL) --- */
-  .section-ricaurte-info {
-    position: relative;
-    width: 100%;
-    background-color: #002D62;   /* AZUL OSCURO OFICIAL */
-    padding: 4.5rem 0;
-  }
-
-  .ricaurte-info-text {
-    font-family: 'Inter', 'Montserrat', sans-serif;
-    font-size: clamp(0.92rem, 1.25vw, 1.08rem);
-    line-height: 1.75;
-    color: #FFFFFF;              /* TEXTO BASE BLANCO */
-    font-weight: 400;
-  }
-
-  /* --- SECCIÓN PATROCINADORES Y ALIADOS (FONDO VERDE OFICIAL #B2D81F) --- */
-  .section-sponsors-green {
-    position: relative;
-    width: 100%;
-    background-color: #B2D81F;   /* VERDE OFICIAL */
-    padding: 5rem 0;
-  }
-
-  .sponsor-green-title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 900;
-    font-style: italic;
-    font-size: clamp(1.6rem, 3.2vw, 2.4rem);  /* TITULARES DESTACADOS Y ESTILIZADOS */
-    letter-spacing: 1.2px;
-    color: #002D62;                             /* AZUL OSCURO OFICIAL 002D62 */
-    text-transform: uppercase;
-    margin: 0;
-  }
-
-  /* Logo principal (femtribe_verde.png) en blanco puro */
-  .sponsor-logo-main {
-    max-height: 95px;
-    width: auto;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
-    opacity: 0.95;
-    transition: all 0.3s ease;
-  }
-
-  .sponsor-logo-main:hover {
-    transform: scale(1.06);
-    opacity: 1;
-  }
-
-  .aliado-logo-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    min-height: 100px;
-  }
-
-  /* Logos aliados en blanco puro sin recuadros ni cajas de fondo */
-  .aliado-logo-img {
-    max-height: 85px;
-    max-width: 200px;
-    width: auto;
-    object-fit: contain;
-    filter: invert(1) grayscale(100%) contrast(300%);
-    mix-blend-mode: screen;
-    opacity: 0.95;
-    transition: all 0.3s ease;
-  }
-
-  .aliado-logo-img:hover {
-    transform: scale(1.06);
-    opacity: 1;
-  }
-
-  @media (max-width: 768px) {
-    .section-sponsors-green {
-      padding: 3.5rem 0;
-    }
-    .sponsor-green-title {
-      font-size: 1.4rem;
-    }
-    .sponsor-logo-main {
-      max-height: 75px;
-    }
-    .aliado-logo-img {
-      max-height: 65px;
-      max-width: 150px;
-    }
-  }
-
-  .btn-ricaurte-ig {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.85rem 2.2rem;
-    background: #B2D81F;         /* VERDE OFICIAL B2D81F */
-    color: #000000;              /* LETRA NEGRA */
-    border: 2px solid #B2D81F;
-    border-radius: 999px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 800;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: all 0.28s ease;
-    box-shadow: 0 8px 22px rgba(178, 216, 31, 0.35);
-  }
-
-  .btn-ricaurte-ig:hover {
-    background: #41CEB3;         /* AZUL CLARO EN HOVER */
-    color: #000000;
-    border-color: #41CEB3;
-    transform: translateY(-2px);
-    box-shadow: 0 12px 26px rgba(65, 206, 179, 0.4);
-    text-decoration: none;
-  }
-
-  /* --- FOTO DE LA IGLESIA TAL CUAL SIN TEXTO --- */
-  .section-iglesia-full {
-    width: 100%;
-    background-color: #00122e;
-  }
-
-  .img-iglesia-standalone {
-    width: 100%;
-    height: auto;
-    max-height: 650px;
-    object-fit: cover;
-    object-position: center;
-  }
-
-  @media (max-width: 768px) {
-    .section-ricaurte-info {
-      padding: 3.2rem 0;
-    }
-    .btn-ricaurte-ig {
-      padding: 0.8rem 1.6rem;
-      font-size: 0.82rem;
-    }
   }
 
   /* --- SECCIONES COMUNES --- */
