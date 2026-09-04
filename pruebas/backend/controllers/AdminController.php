@@ -847,7 +847,7 @@ class AdminController extends Controller {
         $eventModel = new Event();
         $event = Event::getPrimaryEvent() ?: [
             'id' => 1,
-            'title' => 'Carrera Corre Con FemTribe',
+            'title' => 'Carrera Corre Con FEMTRIBE',
             'location' => 'Cali, Valle del Cauca',
             'total_slots' => 600,
             'registered_count' => 0,
@@ -901,7 +901,7 @@ class AdminController extends Controller {
         }
 
         $eventData = [
-            'title'               => trim($_POST['event_title'] ?? 'Carrera Corre Con FemTribe'),
+            'title'               => trim($_POST['event_title'] ?? 'Carrera Corre Con FEMTRIBE'),
             'location'            => trim($_POST['event_location'] ?? 'Cali, Valle del Cauca'),
             'total_slots'         => max(1, $calculatedTotalSlots),
             // Fechas son OPCIONALES: null si viene vacío

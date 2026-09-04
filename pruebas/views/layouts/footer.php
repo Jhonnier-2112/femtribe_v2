@@ -373,7 +373,7 @@
 <!-- <script src="assets/js/app.js"></script> -->
 
 <!-- ════════════════════════════════════════════════════════════
-     🤖 CHATBOT WIDGET — FemTribe Assistant
+     🤖 CHATBOT WIDGET — FEMTRIBE Assistant
      ════════════════════════════════════════════════════════════ -->
 <style>
 /* ── Botón flotante ────────────────────────────────────────── */
@@ -548,7 +548,7 @@
 </style>
 
 <!-- HTML del Widget -->
-<div id="ft-chat-btn" aria-label="Abrir asistente FemTribe" role="button" tabindex="0">
+<div id="ft-chat-btn" aria-label="Abrir asistente FEMTRIBE" role="button" tabindex="0">
   <span id="ft-chat-badge">1</span>
   <!-- Ícono chat -->
   <svg class="ft-icon-chat" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -560,12 +560,12 @@
   </svg>
 </div>
 
-<div id="ft-chat-window" role="dialog" aria-label="Asistente FemTribe" aria-modal="true">
+<div id="ft-chat-window" role="dialog" aria-label="Asistente FEMTRIBE" aria-modal="true">
   <!-- Header -->
   <div id="ft-chat-header">
     <div class="ft-avatar">🏃‍♀️</div>
     <div class="ft-header-info">
-      <h4>Asistente FemTribe</h4>
+      <h4>Asistente FEMTRIBE</h4>
       <p><span class="ft-status-dot"></span> En línea · Respuesta inmediata</p>
     </div>
     <button class="ft-close-btn" id="ft-chat-close" aria-label="Cerrar chat">✕</button>
@@ -631,7 +631,7 @@
       '¿Cuánto cuesta?', '¿Cuándo es la carrera?', '¿Cómo me inscribo?', '¿Cuántos cupos quedan?'
     ];
     addBotMessage(
-      '👋 ¡Hola! Soy el asistente de **FemTribe**.\n¿En qué te puedo ayudar hoy? Tengo información sobre precios, fechas, inscripciones y más. 🏃‍♀️',
+      '👋 ¡Hola! Soy el asistente de **FEMTRIBE**.\n¿En qué te puedo ayudar hoy? Tengo información sobre precios, fechas, inscripciones y más. 🏃‍♀️',
       greetings
     );
   }

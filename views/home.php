@@ -87,7 +87,7 @@
       
       <!-- Logo Oficial de la Carrera -->
       <div class="logo-wrapper mb-4">
-        <img src="assets/img/CorreconFemtribe2.0/logocarrera2.0.png" alt="Corre Con FemTribe 2.0" class="logo-carrera img-fluid" onerror="this.src='assets/img/logocarrera.png'; this.onerror=null;">
+        <img src="assets/img/CorreconFemtribe2.0/logocarrera2.0.png" alt="Corre Con FEMTRIBE 2.0" class="logo-carrera img-fluid" onerror="this.src='assets/img/logocarrera.png'; this.onerror=null;">
       </div>
 
       <!-- [TMP COMENTADO] Botón CTA del carrusel (comentado temporalmente para visualización sin botón)
@@ -134,7 +134,7 @@
           <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
             <img
               src="assets/img/CorreconFemtribe2.0/tarjeta3k.png"
-              alt="3K Niños y Mascotas Corre Con FemTribe 2.0"
+              alt="3K Niños y Mascotas Corre Con FEMTRIBE 2.0"
               class="distance-image-card__img"
               loading="lazy"
               onerror="this.onerror=null;this.src='assets/img/CorreconFemtribe2.0/fondo1.png';">
@@ -163,7 +163,7 @@
           <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
             <img
               src="assets/img/CorreconFemtribe2.0/tarjeta5k.png"
-              alt="5K Para Todos Corre Con FemTribe 2.0"
+              alt="5K Para Todos Corre Con FEMTRIBE 2.0"
               class="distance-image-card__img"
               loading="lazy"
               onerror="this.onerror=null;this.src='assets/img/CorreconFemtribe2.0/fondo2.png';">
@@ -192,7 +192,7 @@
           <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
             <img
               src="assets/img/CorreconFemtribe2.0/tarjeta10k.png"
-              alt="10K Superación Corre Con FemTribe 2.0"
+              alt="10K Superación Corre Con FEMTRIBE 2.0"
               class="distance-image-card__img"
               loading="lazy"
               onerror="this.onerror=null;this.src='assets/img/CorreconFemtribe2.0/fondo3.png';">
@@ -245,7 +245,7 @@
       <div class="col-12 col-lg-6 consulta-inscripcion__photo-col">
         <img
           src="assets/img/CorreconFemtribe2.0/difuminada.png"
-          alt="Atleta Corre Con FemTribe 2.0"
+          alt="Atleta Corre Con FEMTRIBE 2.0"
           class="consulta-inscripcion__photo"
           loading="lazy"
           onerror="this.onerror=null;this.src='assets/img/CorreconFemtribe2.0/fondo5.png';">
@@ -281,7 +281,7 @@
     <div class="section-header text-center mb-5" data-aos="fade-up">
       <span class="section-tagline">NUESTROS ALIADOS</span>
       <h2 class="section-title">PATROCINADORES OFICIALES</h2>
-      <p class="section-subtitle">Marcas e instituciones que hacen posible la gran fiesta de Corre Con FemTribe 2.0</p>
+      <p class="section-subtitle">Marcas e instituciones que hacen posible la gran fiesta de Corre Con FEMTRIBE 2.0</p>
       <div class="section-divider"></div>
     </div>
 
@@ -297,7 +297,7 @@
 
       <div class="col-6 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="200">
         <div class="sponsor-logo-box">
-          <img src="assets/img/femtribe_verde.png" alt="FemTribe Running" class="img-fluid sponsor-logo">
+          <img src="assets/img/femtribe_verde.png" alt="FEMTRIBE Running" class="img-fluid sponsor-logo">
         </div>
       </div>
 
@@ -359,7 +359,7 @@
             </h2>
             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
               <div class="accordion-body">
-                La entrega de kits se llevará a cabo los días previos a la carrera en la Expo Runner FemTribe. Debes presentar tu cédula de ciudadanía original o el comprobante de inscripción que puedes descargar desde esta misma plataforma.
+                La entrega de kits se llevará a cabo los días previos a la carrera en la Expo Runner FEMTRIBE. Debes presentar tu cédula de ciudadanía original o el comprobante de inscripción que puedes descargar desde esta misma plataforma.
               </div>
             </div>
           </div>
@@ -2099,7 +2099,7 @@ body {
 
 /* --- BANNER FINAL CTA --- */
 .section-final-cta {
-  background-image: url('assets/img/CorreconFemtribe2.0/fondo1.png');
+  background-image: url('assets/img/CorreconFEMTRIBE2.0/fondo1.png');
   background-size: cover;
   background-position: center;
 }

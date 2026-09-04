@@ -1,5 +1,5 @@
 <?php
-$title = "Registro de Usuario | FemTribe Runner";
+$title = "Registro de Usuario | FEMTRIBE Runner";
 require __DIR__ . '/../layouts/header.php';
 $d = $data ?? [];
 ?>
@@ -171,7 +171,7 @@ $d = $data ?? [];
                             <div class="form-check mb-4 bg-light p-3 rounded-3 border shadow-sm">
                                 <input class="form-check-input ms-0 me-2" type="checkbox" id="terms" name="acepta_terminos" required checked style="width: 1.3em; height: 1.3em; cursor: pointer; float: left;">
                                 <label class="form-check-label small text-dark" for="terms" style="cursor: pointer; padding-left: 0.4rem;">
-                                    Acepto los <a href="/terminos" target="_blank" class="fw-bold text-decoration-none" style="color: #6da632;">Términos y Condiciones</a> de la comunidad <strong>FemTribe Runner</strong> y la <a href="/politica-privacidad" target="_blank" class="fw-bold text-decoration-none" style="color: #6da632;">Política de Tratamiento de Datos Personales (Habeas Data)</a>. *
+                                    Acepto los <a href="/terminos" target="_blank" class="fw-bold text-decoration-none" style="color: #6da632;">Términos y Condiciones</a> de la comunidad <strong>FEMTRIBE Runner</strong> y la <a href="/politica-privacidad" target="_blank" class="fw-bold text-decoration-none" style="color: #6da632;">Política de Tratamiento de Datos Personales (Habeas Data)</a>. *
                                 </label>
                             </div>
 

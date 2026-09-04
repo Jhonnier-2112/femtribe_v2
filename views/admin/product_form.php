@@ -1,6 +1,6 @@
 <?php
 $isEdit = ($mode === 'edit');
-$title  = ($isEdit ? "Editar Producto" : "Nuevo Producto") . " | FemTribe Runner";
+$title  = ($isEdit ? "Editar Producto" : "Nuevo Producto") . " | FEMTRIBE Runner";
 require __DIR__ . '/../layouts/header.php';
 
 // Valores por defecto
@@ -219,7 +219,7 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
                 <div class="col-12 col-md-8">
                   <label class="form-label fw-bold small text-muted text-uppercase">Nombre del Producto</label>
                   <input type="text" name="name" class="form-control bg-light py-2"
-                         placeholder="ej. Camiseta Oficial FemTribe Blanca"
+                         placeholder="ej. Camiseta Oficial FEMTRIBE Blanca"
                          value="<?= htmlspecialchars($pName) ?>" required>
                 </div>
 

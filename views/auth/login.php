@@ -1,5 +1,5 @@
 <?php
-$title = "Iniciar Sesión | FemTribe Runner";
+$title = "Iniciar Sesión | FEMTRIBE Runner";
 require __DIR__ . '/../layouts/header.php';
 ?>
 

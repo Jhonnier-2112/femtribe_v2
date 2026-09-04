@@ -127,7 +127,7 @@
                 </div>
                 <div class="sorting-toolbar">
                     <div class="sorting-left">
-                        <h1 class="content-title">Productos FemTribe</h1>
+                        <h1 class="content-title">Productos FEMTRIBE</h1>
                         <p class="content-meta"><?php echo $total . ' producto' . ($total === 1 ? '' : 's'); ?></p>
                     </div>
                     <form method="get" class="sorting-controls">
