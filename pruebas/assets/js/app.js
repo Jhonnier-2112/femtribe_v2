@@ -1,4 +1,4 @@
-// Femtribe Runner App JavaScript
+// FEMTRIBE App JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Femtribe App loaded successfully');
     

@@ -1,6 +1,6 @@
 <?php
 $isEdit = ($mode === 'edit');
-$title  = ($isEdit ? "Editar Producto" : "Nuevo Producto") . " | FEMTRIBE Runner";
+$title  = ($isEdit ? "Editar Producto" : "Nuevo Producto") . " | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 
 // Valores por defecto

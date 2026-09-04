@@ -1,5 +1,10 @@
 <?php include 'layouts/header.php'; ?>
 <?php $inscribeteUrl = !empty($_SESSION['user_id']) ? '/inscribirse' : '/registro'; ?>
+<script>
+  // Al estar en el home, limpiamos cualquier redirect_after_auth residual de sesiones anteriores
+  // para evitar que al hacer login rediriga a /carrito o /checkout inesperadamente
+  sessionStorage.removeItem('redirect_after_auth');
+</script>
 
 <!-- =========================================================================
      FRANJA SUPERIOR: RELOJ CUENTA REGRESIVA INDEPENDIENTE

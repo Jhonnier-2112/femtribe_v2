@@ -28,8 +28,8 @@ class EmailService {
         try {
             $host = getenv('MAIL_HOST') ?: \EmailConfig::SMTP_HOST;
             $port = (int)(getenv('MAIL_PORT') ?: \EmailConfig::SMTP_PORT);
-            $user = getenv('MAIL_USER') ?: \EmailConfig::SMTP_USERNAME;
-            $pass = getenv('MAIL_PASS') ?: \EmailConfig::SMTP_PASSWORD;
+            $user = \EmailConfig::getUsername();
+            $pass = \EmailConfig::getPassword();
             $enc  = strtolower(getenv('MAIL_ENCRYPTION') ?: \EmailConfig::SMTP_SECURE);
 
             $this->mailer->isSMTP();
@@ -66,8 +66,8 @@ class EmailService {
             $this->mailer->addAddress($participantData['email'], $participantData['nombres'] . ' ' . $participantData['apellidos']);
             
             // Configurar remitente
-            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
-            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
+            $this->mailer->setFrom(\EmailConfig::getUsername(), \EmailConfig::getFromName());
+            $this->mailer->addReplyTo(\EmailConfig::getUsername(), \EmailConfig::getFromName());
             
             // Configurar el correo
             $this->mailer->isHTML(true);
@@ -101,11 +101,11 @@ class EmailService {
             $nombre = trim(($user['nombres'] ?? '') . ' ' . ($user['apellidos'] ?? ''));
             $this->mailer->addAddress($user['email'], $nombre ?: $user['email']);
 
-            $this->mailer->setFrom(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
-            $this->mailer->addReplyTo(\EmailConfig::SMTP_USERNAME, 'FEMTRIBE');
+            $this->mailer->setFrom(\EmailConfig::getUsername(), \EmailConfig::getFromName());
+            $this->mailer->addReplyTo(\EmailConfig::getUsername(), \EmailConfig::getFromName());
 
             $this->mailer->isHTML(true);
-            $this->mailer->Subject = '🔒 Restauración de Contraseña - FEMTRIBE Runner';
+            $this->mailer->Subject = '🔒 Restauración de Contraseña - FEMTRIBE';
 
             $logoPath = __DIR__ . '/../../img/logocorreo.png';
             if (file_exists($logoPath)) {
@@ -146,11 +146,11 @@ class EmailService {
     <div class="container">
         <div class="header">
             <h2 style="margin:0; font-size: 22px;">🔑 Restauración de Contraseña</h2>
-            <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px;">Comunidad FEMTRIBE Runner</p>
+            <p style="margin: 5px 0 0 0; opacity: 0.8; font-size: 14px;">Comunidad FEMTRIBE</p>
         </div>
         <div class="content">
             <p>Hola <strong>' . ($nombre ?: 'Corredor') . '</strong>,</p>
-            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en <strong>FEMTRIBE Runner</strong>.</p>
+            <p>Hemos recibido una solicitud para restablecer la contraseña de tu cuenta en <strong>FEMTRIBE</strong>.</p>
             <p>Haz clic en el siguiente botón para crear tu nueva contraseña. Este enlace es válido únicamente durante <strong>1 hora</strong> por razones de seguridad:</p>
             <div style="text-align: center;">
                 <a href="' . $resetUrlEsc . '" class="btn-reset">Restablecer mi Contraseña</a>

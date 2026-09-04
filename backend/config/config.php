@@ -22,12 +22,12 @@ function loadEnv($path) {
 loadEnv(__DIR__ . '/../.env');
 
 // Configuración general del proyecto
-if (!defined('APP_NAME')) define('APP_NAME', getenv('APP_NAME') ?: 'FEMTRIBE Runner');
+if (!defined('APP_NAME')) define('APP_NAME', getenv('APP_NAME') ?: 'FEMTRIBE');
 if (!defined('APP_VERSION')) define('APP_VERSION', '1.0.0');
 
 // Detectar entorno automáticamente
 $host = $_SERVER['HTTP_HOST'] ?? '';
-$isLocal = (bool)preg_match('/^(localhost|127\.0\.0\.1)(:\\d+)?$/', $host);
+$isLocal = (bool)preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?$/', $host);
 $envApp = getenv('APP_ENV') ?: ($isLocal ? 'development' : 'production');
 $isProduction = ($envApp === 'production');
 

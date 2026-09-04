@@ -68,10 +68,12 @@ class AuthController extends Controller {
             unset($_SESSION['redirect_after_login']);
 
             if ($isAjax) {
+                // En AJAX (modal) no enviamos redirect del servidor — el front usa su propio sessionStorage
+                // para evitar redireccionamientos a rutas protegidas visitadas anteriormente (ej. /carrito)
                 $this->json([
                     'success' => true, 
                     'message' => '¡Bienvenido de nuevo!', 
-                    'redirect' => $redirectTo,
+                    'redirect' => null,
                     'tokens' => $tokenData
                 ]);
             }
@@ -177,10 +179,11 @@ class AuthController extends Controller {
             unset($_SESSION['redirect_after_login']);
 
             if ($isAjax) {
+                // En AJAX (modal) no enviamos redirect del servidor — el front usa su propio sessionStorage
                 $this->json([
                     'success' => true, 
-                    'message' => '¡Registro exitoso! Bienvenido a FEMTRIBE Runner.', 
-                    'redirect' => $redirectTo,
+                    'message' => '¡Registro exitoso! Bienvenido a FEMTRIBE.', 
+                    'redirect' => null,
                     'tokens' => $tokenData
                 ]);
             }
@@ -497,7 +500,6 @@ class AuthController extends Controller {
         $key = $_GET['key'] ?? '';
         // Permitir localhost o parámetro de seguridad ?key=femtribe_debug
         if (!in_array($ip, ['127.0.0.1', '::1']) && $key !== 'femtribe_debug' && $key !== '123456') {
-            // Si no coincide, dar instrucciones de acceso
             http_response_code(403);
             die('Acceso restringido. Para acceder desde el servidor remoto, agrega &key=femtribe_debug a la URL.');
         }
@@ -525,12 +527,12 @@ class AuthController extends Controller {
 
         $configs = [
             'gmail' => [
-                'label'    => 'Gmail — EmailConfig.php (hardcoded)',
+                'label'    => 'Gmail — EmailConfig / .env (' . \EmailConfig::getUsername() . ')',
                 'host'     => 'smtp.gmail.com',
                 'port'     => 587,
                 'encrypt'  => 'tls',
-                'username' => 'femtribe25@gmail.com',
-                'password' => 'zsxc cuss qgvy yxba',
+                'username' => \EmailConfig::getUsername(),
+                'password' => \EmailConfig::getPassword(),
             ],
             'hostinger' => [
                 'label'    => 'Hostinger — desde .env',
@@ -618,15 +620,15 @@ pre{background:#0a0a14;border:1px solid #2a2a40;padding:12px;border-radius:4px;f
 <h2>1. Comparación EmailConfig.php vs .env</h2>
 <div class="card warn">
 <table>
-<tr><th>Parámetro</th><th>EmailConfig.php (USADO en código)</th><th>.env (IGNORADO)</th><th>¿Problema?</th></tr>
+<tr><th>Parámetro</th><th>EmailConfig.php</th><th>.env</th><th>Estado</th></tr>
 <tr><td>Host</td><td class="val">smtp.gmail.com</td><td class="wt"><?= htmlspecialchars($env['MAIL_HOST'] ?? 'N/A') ?></td>
-<td><?= _b(($env['MAIL_HOST'] ?? '') === 'smtp.gmail.com', '✓ Igual', '⚠ Difieren') ?></td></tr>
+<td><?= _b(($env['MAIL_HOST'] ?? '') === 'smtp.gmail.com', '✓ Coincide', '⚠ Difieren') ?></td></tr>
 <tr><td>Puerto</td><td class="val">587 (STARTTLS)</td><td class="wt"><?= htmlspecialchars($env['MAIL_PORT'] ?? 'N/A') ?></td>
-<td><?= _b(($env['MAIL_PORT'] ?? '') == 587, '✓ Igual', '⚠ Difieren') ?></td></tr>
-<tr><td>Usuario</td><td class="val">FEMTRIBE25@gmail.com</td><td class="wt"><?= htmlspecialchars($env['MAIL_USER'] ?? 'N/A') ?></td>
-<td><?= _b(($env['MAIL_USER'] ?? '') === 'femtribe25@gmail.com', '✓ Igual', '⚠ Difieren') ?></td></tr>
-<tr><td>Contraseña App</td><td class="val">zsxc cuss qgvy yxba</td><td class="wt"><?= htmlspecialchars($env['MAIL_PASS'] ?? 'N/A') ?></td>
-<td><?= _b(($env['MAIL_PASS'] ?? '') === 'zsxc cuss qgvy yxba', '✓ Igual', '⚠ DIFERENTE — causa probable') ?></td></tr>
+<td><?= _b(($env['MAIL_PORT'] ?? '') == 587, '✓ Coincide', '⚠ Difieren') ?></td></tr>
+<tr><td>Usuario</td><td class="val"><?= htmlspecialchars(\EmailConfig::getUsername()) ?></td><td class="wt"><?= htmlspecialchars($env['MAIL_USER'] ?? 'N/A') ?></td>
+<td><?= _b(!empty($env['MAIL_USER']), '✓ Configurado', '⚠ Vacío') ?></td></tr>
+<tr><td>Contraseña App</td><td class="val"><?= htmlspecialchars(substr(\EmailConfig::getPassword(), 0, 4) . ' ****') ?></td><td class="wt"><?= htmlspecialchars(substr($env['MAIL_PASS'] ?? '', 0, 4) . ' ****') ?></td>
+<td><?= _b(!empty($env['MAIL_PASS']), '✓ Configurada', '⚠ Vacía') ?></td></tr>
 </table>
 </div>
 
@@ -657,7 +659,7 @@ pre{background:#0a0a14;border:1px solid #2a2a40;padding:12px;border-radius:4px;f
 <input type="email" name="email" value="<?= htmlspecialchars($testTo) ?>" placeholder="tucorreo@gmail.com" required>
 <label>Configuración a probar:</label>
 <select name="config">
-<option value="gmail" <?= $configKey==='gmail'?'selected':'' ?>>Gmail hardcoded (zsxc cuss qgvy yxba)</option>
+<option value="gmail" <?= $configKey==='gmail'?'selected':'' ?>>Gmail (.env / EmailConfig: <?= htmlspecialchars(substr(\EmailConfig::getPassword(), 0, 4)) ?>****)</option>
 <option value="hostinger" <?= $configKey==='hostinger'?'selected':'' ?>>Hostinger .env (<?= htmlspecialchars($env['MAIL_USER'] ?? '') ?>)</option>
 </select>
 <input type="hidden" name="run" value="1">

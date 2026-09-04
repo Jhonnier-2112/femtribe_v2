@@ -1,6 +1,11 @@
 <?php
-// Asume que el número de WhatsApp está en config/config.php
-require_once __DIR__ . '/../../backend/config/config.php';
+// WHATSAPP_BUSINESS_NUMBER ya es cargado por index.php → config.php antes de llegar a esta vista.
+// Solo lo cargamos como fallback si no está disponible (acceso directo al archivo).
+if (!defined('WHATSAPP_BUSINESS_NUMBER')) {
+    $configPath = realpath(__DIR__ . '/../../backend/config/config.php')
+               ?: realpath(__DIR__ . '/../backend/config/config.php');
+    if ($configPath) require_once $configPath;
+}
 ?>
 <?php include __DIR__ . '/layouts/header.php'; ?>
 
