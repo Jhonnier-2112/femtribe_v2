@@ -1184,7 +1184,7 @@ body {
 
 .consulta-inscripcion__text-wrap {
   max-width: 560px;
-  margin: 0 auto 0 0;           /* pegado a la IZQUIERDA del ancho máximo (no centrado global) */
+  margin: 0 0 0 auto;           /* desplazado a la DERECHA para estar más cerca de la atleta */
   padding: 1rem 1.8rem 1rem 1.2rem;   /* padding vertical equilibrado para centrado vertical */
   text-align: left;
 }
