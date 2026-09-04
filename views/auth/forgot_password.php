@@ -1,5 +1,5 @@
 <?php
-$title = "Recuperar Contraseña | FEMTRIBE Runner";
+$title = "Recuperar Contraseña | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 

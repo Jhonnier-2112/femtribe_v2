@@ -92,7 +92,7 @@
                         <div class="d-inline-flex align-items-center justify-content-center bg-dark text-warning rounded-circle mb-3 shadow-sm" style="width: 55px; height: 55px; border: 2px solid #87CC3E;">
                             <i class="fas fa-running fa-2x" style="color: #87CC3E;"></i>
                         </div>
-                        <h4 class="fw-bold text-dark mb-1" id="authModalTitle">Acceso FEMTRIBE Runner</h4>
+                        <h4 class="fw-bold text-dark mb-1" id="authModalTitle">Acceso FEMTRIBE</h4>
                         <p class="text-muted small mb-0">Inicia sesión o regístrate para comprar y participar en carreras</p>
                     </div>
 

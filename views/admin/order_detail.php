@@ -1,5 +1,5 @@
 <?php
-$title = "Detalle de Orden " . htmlspecialchars($order['order_number']) . " | FEMTRIBE Runner";
+$title = "Detalle de Orden " . htmlspecialchars($order['order_number']) . " | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 

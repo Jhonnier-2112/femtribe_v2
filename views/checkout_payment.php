@@ -1,5 +1,5 @@
 <?php
-$title = "Pagar Orden | FEMTRIBE Runner";
+$title = "Pagar Orden | FEMTRIBE";
 require __DIR__ . '/layouts/header.php';
 
 $ord = $order ?? [];

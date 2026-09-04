@@ -182,7 +182,7 @@ class AuthController extends Controller {
                 // En AJAX (modal) no enviamos redirect del servidor — el front usa su propio sessionStorage
                 $this->json([
                     'success' => true, 
-                    'message' => '¡Registro exitoso! Bienvenido a FEMTRIBE Runner.', 
+                    'message' => '¡Registro exitoso! Bienvenido a FEMTRIBE.', 
                     'redirect' => null,
                     'tokens' => $tokenData
                 ]);

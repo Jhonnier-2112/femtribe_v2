@@ -1,5 +1,5 @@
 <?php
-$title = "Exoneración de Responsabilidad y Autorización de Salud | FEMTRIBE Runner";
+$title = "Exoneración de Responsabilidad y Autorización de Salud | FEMTRIBE";
 require __DIR__ . '/../layouts/header.php';
 ?>
 
@@ -28,7 +28,7 @@ require __DIR__ . '/../layouts/header.php';
 
                     <h4 class="fw-bold text-dark mt-4 mb-3">2. Exoneración de Responsabilidad</h4>
                     <p>
-                        Exonero expresamente a la organización <strong>FEMTRIBE Runner</strong>, directivos, juzgamiento, patrocinadores, entidades gubernamentales y aliados logísticos de cualquier reclamación, demanda o responsabilidad civil, penal o administrativa resultante de accidentes, lesiones físicas o imprevistos personales surgidos durante el desarrollo de la carrera.
+                        Exonero expresamente a la organización <strong>FEMTRIBE</strong>, directivos, juzgamiento, patrocinadores, entidades gubernamentales y aliados logísticos de cualquier reclamación, demanda o responsabilidad civil, penal o administrativa resultante de accidentes, lesiones físicas o imprevistos personales surgidos durante el desarrollo de la carrera.
                     </p>
 
                     <h4 class="fw-bold text-dark mt-4 mb-3">3. Compromisos del Participante</h4>

@@ -22,7 +22,7 @@ function loadEnv($path) {
 loadEnv(__DIR__ . '/../.env');
 
 // Configuración general del proyecto
-if (!defined('APP_NAME')) define('APP_NAME', getenv('APP_NAME') ?: 'FEMTRIBE Runner');
+if (!defined('APP_NAME')) define('APP_NAME', getenv('APP_NAME') ?: 'FEMTRIBE');
 if (!defined('APP_VERSION')) define('APP_VERSION', '1.0.0');
 
 // Detectar entorno automáticamente
