@@ -6,16 +6,15 @@
     RewriteEngine On
     RewriteBase /
 
-    # Excluir la carpeta de pruebas para que sus peticiones las maneje pruebas/.htaccess
-    RewriteCond %{REQUEST_URI} ^/pruebas [NC]
-    RewriteRule ^ - [L]
+    # Redirigir peticiones residuales de /pruebas a la raíz
+    RewriteRule ^pruebas/?(.*)$ /$1 [R=301,L,QSA]
 
     # Permitir servir archivos o directorios físicamente existentes (imágenes, CSS, JS, etc.)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
 
     # Redirigir todas las demás URLs al Front Controller index.php
-    RewriteRule ^ index.php [L,QSA]
+    RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
 
 # Desactivar la navegación de directorios por seguridad

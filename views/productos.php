@@ -524,8 +524,15 @@
                                     <?php 
                                         $slugRaw = isset($p['slug']) ? (string)$p['slug'] : '';
                                         $slugNorm = str_replace('-', '_', strtolower($slugRaw));
+                                        $pStock = isset($p['stock']) ? (int)$p['stock'] : 0;
                                     ?>
-                                    <?php if ($slugNorm === 'camiseta_oficial_carrera') : ?>
+                                    <?php if ($pStock <= 0) : ?>
+                                        <span class="badge bg-secondary shadow-sm" style="border-radius:999px; padding:6px 10px;">Agotado</span>
+                                    <?php elseif ($pStock < 10) : ?>
+                                        <span class="badge bg-warning text-dark shadow-sm fw-bold border border-warning" style="border-radius:999px; padding:6px 12px; background-color: #ffc107 !important;">
+                                            <i class="fas fa-fire text-danger me-1"></i>¡Últimos productos! (<?= $pStock ?>)
+                                        </span>
+                                    <?php elseif ($slugNorm === 'camiseta_oficial_carrera') : ?>
                                         <span class="badge" style="background:#FFE08A; color:#3A3A3A; font-weight:700; border-radius:999px; padding:6px 10px;">Edición especial limitada</span>
                                     <?php elseif (!empty($p['is_offer'])) : ?>
                                         <span class="badge bg-danger">Oferta</span>
@@ -536,7 +543,7 @@
                                 <h5 class="card-title mb-2 text-center" style="min-height: 44px;">
                                     <?php echo htmlspecialchars($p['name']); ?>
                                 </h5>
-                                <div class="mb-3 text-center">
+                                <div class="mb-2 text-center">
                                     <?php 
                                         $slugRaw = isset($p['slug']) ? (string)$p['slug'] : '';
                                         $slugNorm = str_replace('-', '_', strtolower($slugRaw));
@@ -545,6 +552,34 @@
                                         <span class="h6 fw-bold">$<?php echo number_format(65000, 0, ',', '.'); ?></span>
                                     <?php else : ?>
                                         <span class="h6 fw-bold">$<?php echo number_format((float)$p['price'], 0, ',', '.'); ?></span>
+                                    <?php endif; ?>
+                                </div>
+                                <?php 
+                                    $pIsFree = !isset($p['is_free_shipping']) || (int)$p['is_free_shipping'] === 1;
+                                    $pShipCost = isset($p['shipping_cost']) ? (float)$p['shipping_cost'] : 0.00;
+                                ?>
+                                <div class="mb-2 text-center">
+                                    <?php if ($pIsFree || $pShipCost <= 0): ?>
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 0.72rem;">
+                                            <i class="fas fa-truck me-1"></i> Envío Gratis
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="badge bg-light text-dark border rounded-pill px-2 py-0.5" style="font-size: 0.72rem;">
+                                            <i class="fas fa-truck text-muted me-1"></i> Envío $<?= number_format($pShipCost, 0, ',', '.') ?>
+                                        </span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="text-center mt-auto pt-1">
+                                    <?php if ($pStock <= 0): ?>
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small">Agotado</span>
+                                    <?php elseif ($pStock < 10): ?>
+                                        <span class="badge bg-warning-subtle text-dark border border-warning rounded-pill px-2.5 py-1 fw-bold small" style="font-size: 0.75rem;">
+                                            <i class="fas fa-fire text-danger me-1"></i>¡Últimos productos! (<?= $pStock ?> disp.)
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-muted small" style="font-size: 0.78rem;">
+                                            <i class="fas fa-check text-success me-1"></i><?= $pStock ?> disponibles
+                                        </span>
                                     <?php endif; ?>
                                 </div>
                             </div>

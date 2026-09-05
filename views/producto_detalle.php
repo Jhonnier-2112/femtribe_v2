@@ -33,6 +33,8 @@
       $category = isset($p['category']) ? strtolower(trim((string)$p['category'])) : '';
       $type = isset($p['type']) ? strtolower(trim((string)$p['type'])) : '';
       $slugNorm = strtolower(trim((string)$slug));
+      $isFreeShipping = !isset($p['is_free_shipping']) || (int)$p['is_free_shipping'] === 1;
+      $shippingCost   = isset($p['shipping_cost']) ? (float)$p['shipping_cost'] : 0.00;
       // Detectar accesorio temprano para usar en construcción de slides
       $isAccessory = ($category === 'accesorios')
         || str_contains($slugNorm, 'termo')
@@ -141,7 +143,18 @@
         <?php if (strtolower((string)$slug) === 'camiseta_oficial_carrera'): ?>
           <div class="mb-2"><span class="badge" style="background:#FFE08A; color:#3A3A3A; font-weight:700; border-radius:999px; padding:6px 10px;">Edición especial limitada</span></div>
         <?php endif; ?>
-        <div class="mb-3"><span class="h5 fw-bold">$<?php echo number_format($price, 0, ',', '.'); ?></span></div>
+        <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
+          <span class="h4 fw-bold text-dark mb-0">$<?php echo number_format($price, 0, ',', '.'); ?></span>
+          <?php if ($isFreeShipping || $shippingCost <= 0): ?>
+            <span class="badge d-inline-flex align-items-center gap-1 px-3 py-1.5 rounded-pill shadow-sm" style="background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; font-size: 0.82rem;">
+              <i class="fas fa-truck text-success"></i> Envío Gratis
+            </span>
+          <?php else: ?>
+            <span class="badge bg-light text-dark border rounded-pill px-3 py-1.5 shadow-sm" style="font-size: 0.82rem;">
+              <i class="fas fa-truck text-muted me-1"></i> Envío: $<?php echo number_format($shippingCost, 0, ',', '.'); ?> COP
+            </span>
+          <?php endif; ?>
+        </div>
         <?php
           // Detectar accesorio para cambiar formato de descripción y opciones
           $slugNorm = strtolower(trim((string)$slug));
@@ -241,34 +254,98 @@
           $defaultGender = ($genderRaw === 'mujer') ? 'mujer' : 'hombre';
         ?>
         <?php
-          // Color fijo por producto
-          $fixedColorName = 'Negro';
-          $fixedColorHex = '#000000';
-          // Mantener blancos/verde en casos específicos
-          if ($slugNorm === 'camiseta_oficial_carrera' || str_contains($slugNorm, 'carrera')) {
-            $fixedColorName = 'Blanco';
-            $fixedColorHex = '#FFFFFF';
-          } elseif ($slugNorm === 'esqueleto_limite_run_2025_femtribe' || str_contains($slugNorm, 'esqueleto')) {
-            $fixedColorName = 'Verde';
-            $fixedColorHex = '#87CC3E';
+          // Procesar colores configurados en el producto (desde BD)
+          $colorHexMap = [
+              'negro' => '#1e293b',
+              'blanco' => '#ffffff',
+              'verde' => '#87CC3E',
+              'rosa' => '#ec4899',
+              'rosado' => '#ec4899',
+              'azul' => '#3b82f6',
+              'rojo' => '#ef4444',
+              'gris' => '#64748b',
+              'amarillo' => '#eab308',
+              'morado' => '#a855f7',
+              'verde fluor' => '#ccff00',
+              'verde neón' => '#39ff14',
+              'verde neon' => '#39ff14',
+              'naranja' => '#f97316',
+              'fucsia' => '#d946ef',
+              'cyan' => '#06b6d4',
+              'turquesa' => '#14b8a6',
+              'beige' => '#f5f5dc',
+              'marron' => '#78350f',
+              'marrón' => '#78350f',
+              'cafe' => '#78350f',
+              'café' => '#78350f'
+          ];
+
+          $productColorsRaw = isset($p['colors']) ? trim((string)$p['colors']) : '';
+          $availableColors = [];
+          if ($productColorsRaw !== '') {
+              $availableColors = array_values(array_filter(array_map('trim', explode(',', $productColorsRaw))));
           }
+
+          if (empty($availableColors)) {
+              if ($slugNorm === 'camiseta_oficial_carrera' || str_contains($slugNorm, 'carrera')) {
+                  $availableColors = ['Blanco'];
+              } elseif ($slugNorm === 'esqueleto_limite_run_2025_femtribe' || str_contains($slugNorm, 'esqueleto')) {
+                  $availableColors = ['Verde'];
+              } else {
+                  $availableColors = ['Negro'];
+              }
+          }
+
+          $initialColor = $availableColors[0];
+          $productStock = isset($p['stock']) ? (int)$p['stock'] : 0;
+          $isOutOfStock = ($productStock <= 0);
+          $isLowStock = (!$isOutOfStock && $productStock < 10);
         ?>
         <div class="product-options card card-body" style="border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
-          <h2 class="h6 mb-3">Selecciona tus opciones</h2>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h6 mb-0">Selecciona tus opciones</h2>
+            <?php if ($isOutOfStock): ?>
+              <span class="badge bg-danger rounded-pill px-3 py-1">Agotado</span>
+            <?php elseif ($isLowStock): ?>
+              <span class="badge bg-warning text-dark border border-warning rounded-pill px-3 py-1 fw-bold shadow-sm" style="font-size: 0.8rem; background-color: #ffc107 !important;">
+                <i class="fas fa-fire me-1 text-danger"></i>¡Últimos productos! (<?= $productStock ?> disponibles)
+              </span>
+            <?php else: ?>
+              <span class="badge bg-success-subtle text-success-emphasis border border-success-subtle rounded-pill px-3 py-1" style="font-size: 0.78rem;">
+                <i class="fas fa-check-circle me-1"></i><?= $productStock ?> disponibles
+              </span>
+            <?php endif; ?>
+          </div>
+
+          <!-- Selección de Color -->
           <div class="mb-3">
-            <label class="form-label">Color</label>
-            <div class="d-flex align-items-center gap-2 flex-wrap" id="fixedColor">
-              <span class="color-swatch fixed" title="<?php echo htmlspecialchars($fixedColorName); ?>" style="background: <?php echo htmlspecialchars($fixedColorHex); ?>;<?php echo $fixedColorName==='Blanco'? ' border:1px solid #ddd;' : '' ?>"></span>
-              <span class="small">Color: <strong><?php echo htmlspecialchars($fixedColorName); ?></strong></span>
+            <label class="form-label d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-semibold">Color: <strong id="selectedColorLabel" class="text-dark"><?= htmlspecialchars($initialColor) ?></strong></span>
+            </label>
+            <div class="d-flex align-items-center gap-2 flex-wrap" id="colorPickerGroup">
+              <?php foreach ($availableColors as $idx => $cName): 
+                $cLower = strtolower(trim($cName));
+                $cHex = $colorHexMap[$cLower] ?? '#475569';
+                $isLight = in_array($cLower, ['blanco', 'white', '#fff', '#ffffff', 'beige']);
+                $isActive = ($idx === 0);
+              ?>
+                <button type="button" 
+                        class="btn btn-sm <?= $isActive ? 'btn-dark' : 'btn-outline-secondary' ?> rounded-pill px-3 py-1.5 d-inline-flex align-items-center gap-2 color-choice-chip <?= $isActive ? 'active' : '' ?>"
+                        data-color="<?= htmlspecialchars($cName) ?>"
+                        style="transition: all .15s ease; <?= $isActive ? 'box-shadow:0 2px 6px rgba(0,0,0,.2);' : '' ?>">
+                  <span class="color-swatch-circle" style="width:13px;height:13px;border-radius:50%;background:<?= htmlspecialchars($cHex) ?>;border:1px solid <?= $isLight ? '#cbd5e1' : 'rgba(0,0,0,.25)' ?>;display:inline-block;"></span>
+                  <span class="color-text fw-semibold" style="font-size:0.85rem;"><?= htmlspecialchars($cName) ?></span>
+                </button>
+              <?php endforeach; ?>
             </div>
           </div>
 
           <div class="mb-3">
             <label for="qty" class="form-label">Cantidad</label>
             <div class="qty-control">
-              <button type="button" class="qty-btn minus" aria-label="Menos">−</button>
-              <input id="qty" type="number" class="form-control qty-input" value="1" min="1" max="20">
-              <button type="button" class="qty-btn plus" aria-label="Más">+</button>
+              <button type="button" class="qty-btn minus" aria-label="Menos" <?= $isOutOfStock ? 'disabled' : '' ?>>−</button>
+              <input id="qty" type="number" class="form-control qty-input" value="1" min="1" max="<?= max(1, min(20, $productStock)) ?>" <?= $isOutOfStock ? 'disabled' : '' ?>>
+              <button type="button" class="qty-btn plus" aria-label="Más" <?= $isOutOfStock ? 'disabled' : '' ?>>+</button>
             </div>
           </div>
 
@@ -314,11 +391,38 @@
 
           <div class="small text-muted" id="selectionSummary"></div>
           <div class="small text-danger mt-1 d-none" id="selectionError"></div>
+          <?php if ($isOutOfStock): ?>
+            <div class="alert alert-danger py-2 px-3 small mt-3 mb-0 rounded-3">
+              <i class="fas fa-exclamation-triangle me-1"></i> Este producto se encuentra actualmente agotado.
+            </div>
+          <?php elseif ($isLowStock): ?>
+            <div class="alert alert-warning py-2.5 px-3 small mt-3 mb-0 rounded-3 border border-warning shadow-sm d-flex align-items-center gap-2" style="background-color: #fff9e6; color: #856404;">
+              <i class="fas fa-fire text-danger fs-5"></i>
+              <div>
+                <strong>¡Últimos productos disponibles!</strong> Solo quedan <strong><?= $productStock ?></strong> unidades en stock. ¡Asegura el tuyo antes de que se agote!
+              </div>
+            </div>
+          <?php endif; ?>
+
+          <!-- Beneficio de Envío -->
+          <div class="p-2.5 px-3 rounded-3 mt-3 d-flex align-items-center gap-2 border" style="<?= ($isFreeShipping || $shippingCost <= 0) ? 'background-color: #f0fdf4; border-color: #bbf7d0 !important;' : 'background-color: #f8fafc; border-color: #e2e8f0 !important;' ?>">
+            <i class="fas <?= ($isFreeShipping || $shippingCost <= 0) ? 'fa-shipping-fast text-success' : 'fa-box text-muted' ?> fs-5"></i>
+            <div class="small">
+              <?php if ($isFreeShipping || $shippingCost <= 0): ?>
+                <strong class="text-success d-block">¡Este producto cuenta con Envío Gratis!</strong>
+                <span class="text-muted" style="font-size: 0.8rem;">Despacho asegurado a nivel nacional sin costo adicional.</span>
+              <?php else: ?>
+                <strong class="text-dark d-block">Costo de envío: $<?= number_format($shippingCost, 0, ',', '.') ?> COP</strong>
+                <span class="text-muted" style="font-size: 0.8rem;">Entrega rápida y rastreo garantizado a nivel nacional.</span>
+              <?php endif; ?>
+            </div>
+          </div>
+
           <div class="mt-4 d-flex flex-wrap gap-2 align-items-center">
-            <button type="button" id="addToCart" aria-label="Agregar al carrito" class="btn fw-bold px-4 py-2.5 rounded-3 shadow-sm" style="background:#87CC3E; color:#000; border:none;">
+            <button type="button" id="addToCart" aria-label="Agregar al carrito" class="btn fw-bold px-4 py-2.5 rounded-3 shadow-sm" style="background:#87CC3E; color:#000; border:none;" <?= $isOutOfStock ? 'disabled' : '' ?>>
               <i class="fas fa-shopping-cart me-2"></i>Agregar al carrito
             </button>
-            <button type="button" id="buyNow" aria-label="Pagar ahora" class="btn text-white fw-bold px-4 py-2.5 rounded-3 shadow-sm" style="background:#6da632; border:none;">
+            <button type="button" id="buyNow" aria-label="Pagar ahora" class="btn text-white fw-bold px-4 py-2.5 rounded-3 shadow-sm" style="background:#6da632; border:none;" <?= $isOutOfStock ? 'disabled' : '' ?>>
               <i class="fas fa-credit-card me-2"></i>Pagar Ahora
             </button>
           </div>
@@ -500,29 +604,56 @@
     }
 
     // --- Opciones: color, cantidad, género y tallas ---
-    const fixedColor = <?php echo json_encode($fixedColorName); ?>;
-    const colorPicker = document.getElementById('fixedColor');
+    const availableColors = <?php echo json_encode($availableColors, JSON_UNESCAPED_UNICODE); ?>;
+    let selectedColor = availableColors.length > 0 ? availableColors[0] : 'Negro';
+    const colorChips = document.querySelectorAll('.color-choice-chip');
+    const selectedColorLabel = document.getElementById('selectedColorLabel');
     const genderGroup = document.getElementById('genderGroup');
     const sizesKids = document.getElementById('sizesKids');
     const sizesMen = document.getElementById('sizesMen');
     const sizesWomen = document.getElementById('sizesWomen');
     const summary = document.getElementById('selectionSummary');
     const errorBox = document.getElementById('selectionError');
+    const isOutOfStock = <?php echo json_encode($isOutOfStock); ?>;
+    const productId = <?php echo (int)($p['id'] ?? 0); ?>;
+    const currentStock = <?php echo (int)$productStock; ?>;
+
+    // Manejar selección interactiva de color
+    colorChips.forEach(chip => {
+      chip.addEventListener('click', function(){
+        colorChips.forEach(c => {
+          c.classList.remove('active', 'btn-dark');
+          c.classList.add('btn-outline-secondary');
+          c.style.boxShadow = '';
+        });
+        this.classList.add('active', 'btn-dark');
+        this.classList.remove('btn-outline-secondary');
+        this.style.boxShadow = '0 2px 6px rgba(0,0,0,.2)';
+        selectedColor = this.dataset.color || '';
+        if (selectedColorLabel) {
+          selectedColorLabel.textContent = selectedColor;
+        }
+        renderSummary();
+      });
+    });
+
     function updateButtonState(){
       try {
         const btn = document.getElementById('addToCart');
-        if (btn) btn.disabled = !isValidSelection();
+        const buyBtn = document.getElementById('buyNow');
+        const valid = isValidSelection();
+        if (btn) btn.disabled = !valid || isOutOfStock;
+        if (buyBtn) buyBtn.disabled = !valid || isOutOfStock;
       } catch(_){}
     }
-    let selectedColor = fixedColor || 'Negro';
     const isAccessory = <?php echo json_encode((bool)$isAccessory); ?>;
     let selectedGender = isAccessory ? '' : (document.querySelector('input[name="gender"]:checked')?.value || '');
     let selectedSize = '';
 
     function updateSizesVisibility(){
-      sizesKids.classList.toggle('d-none', selectedGender !== 'kids');
-      sizesMen.classList.toggle('d-none', selectedGender !== 'hombre');
-      sizesWomen.classList.toggle('d-none', selectedGender !== 'mujer');
+      sizesKids?.classList.toggle('d-none', selectedGender !== 'kids');
+      sizesMen?.classList.toggle('d-none', selectedGender !== 'hombre');
+      sizesWomen?.classList.toggle('d-none', selectedGender !== 'mujer');
       // reset selection when switching group
       document.querySelectorAll('.size-chip.selected').forEach(b => b.classList.remove('selected'));
       selectedSize = '';
@@ -538,6 +669,8 @@
     }
 
     function isValidSelection(){
+      if (isOutOfStock) return false;
+      if (!selectedColor && availableColors.length > 0) return false;
       if (isAccessory) return true;
       const hasGender = !!selectedGender;
       const hasSize = !!selectedSize;
@@ -548,7 +681,9 @@
       const ok = isValidSelection();
       if (!ok) {
         let msg = '';
-        if (!selectedGender && !selectedSize) {
+        if (isOutOfStock) {
+          msg = 'Este producto está agotado actualmente.';
+        } else if (!selectedGender && !selectedSize) {
           msg = 'Selecciona el género y la talla antes de agregar.';
         } else if (!selectedGender) {
           msg = 'Selecciona el género antes de agregar.';
@@ -561,7 +696,7 @@
       }
       updateButtonState();
     }
-    // Color fijo: no hay interacción
+
     if (!isAccessory) {
       genderGroup?.addEventListener('change', (e) => {
         const r = e.target.closest('input[name="gender"]');
@@ -583,18 +718,18 @@
       // inicialización
       updateSizesVisibility();
     }
-    // Color fijo: marcado visual
-    colorPicker?.querySelector('.color-swatch')?.classList.add('selected');
+
     renderSummary();
     renderValidation();
     updateButtonState();
+
     // Controles de cantidad +/-
     const qtyInput = document.getElementById('qty');
     const minusBtn = document.querySelector('.qty-btn.minus');
     const plusBtn = document.querySelector('.qty-btn.plus');
     function clampQty(val){
-      const min = parseInt(qtyInput.min || '1', 10);
-      const max = parseInt(qtyInput.max || '20', 10);
+      const min = parseInt(qtyInput?.min || '1', 10);
+      const max = Math.min(parseInt(qtyInput?.max || '20', 10), currentStock > 0 ? currentStock : 1);
       return Math.max(min, Math.min(max, val));
     }
     minusBtn?.addEventListener('click', () => {
@@ -628,7 +763,19 @@
       const size = isAccessory ? '' : (selectedSize || '');
       const gender = isAccessory ? '' : (selectedGender || '');
       const color = selectedColor || '';
-      const item = { slug: productSlug, name: productName, price: Number(productPrice||0), qty, color, gender, size };
+      const item = {
+        id: productId,
+        product_id: productId,
+        slug: productSlug,
+        name: productName,
+        price: Number(productPrice||0),
+        qty,
+        color,
+        gender,
+        size,
+        is_free_shipping: <?php echo $isFreeShipping ? 'true' : 'false'; ?>,
+        shipping_cost: <?php echo (float)$shippingCost; ?>
+      };
       const items = readCart();
       const idx = items.findIndex(i => i.slug === item.slug && (i.color||'') === item.color && (i.gender||'') === item.gender && (i.size||'') === item.size);
       if (idx >= 0) {

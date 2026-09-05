@@ -17,7 +17,7 @@
           <a href="/" class="btn btn-outline-primary btn-lg">
           <i class="fas fa-home me-2"></i>Volver al Inicio
         </a>
-        <a href="/inscripcion" class="btn btn-primary btn-lg">
+        <a href="/inscribirse" class="btn btn-primary btn-lg">
             <i class="fas fa-plus me-2"></i>Nuevo Registro
           </a>
         </div>

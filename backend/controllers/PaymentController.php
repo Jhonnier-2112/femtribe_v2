@@ -87,12 +87,39 @@ class PaymentController extends Controller {
 
         // Calcular totales
         $subtotal = 0;
+        $shippingFee = 0.00;
+        $hasPaidShipping = false;
+        $maxShipping = 0.00;
+
+        $db = (new \App\Config\Database())->getConnection();
+
         foreach ($items as $item) {
             $qty = intval($item['quantity'] ?? $item['qty'] ?? $item['cantidad'] ?? 1);
             $price = floatval($item['price'] ?? 0);
             $subtotal += $price * $qty;
+
+            // Verificar envío de cada producto
+            $pId = $item['product_id'] ?? $item['id'] ?? null;
+            if ($pId && $db) {
+                try {
+                    $stmt = $db->prepare("SELECT is_free_shipping, shipping_cost FROM products WHERE id = :pid LIMIT 1");
+                    $stmt->execute([':pid' => $pId]);
+                    $pRow = $stmt->fetch(\PDO::FETCH_ASSOC);
+                    if ($pRow) {
+                        if ((int)$pRow['is_free_shipping'] === 0) {
+                            $hasPaidShipping = true;
+                            $sc = (float)$pRow['shipping_cost'];
+                            if ($sc > $maxShipping) $maxShipping = $sc;
+                        }
+                    }
+                } catch (\Exception $e) {}
+            } elseif (isset($item['is_free_shipping']) && (!$item['is_free_shipping'] || $item['is_free_shipping'] === '0')) {
+                $hasPaidShipping = true;
+                $sc = floatval($item['shipping_cost'] ?? 0);
+                if ($sc > $maxShipping) $maxShipping = $sc;
+            }
         }
-        $shippingFee = $subtotal > 150000 ? 0 : 12000;
+        $shippingFee = $hasPaidShipping ? ($maxShipping > 0 ? $maxShipping : 12000) : 0.00;
         $total = $subtotal + $shippingFee;
 
         $currentUser = $this->currentUser();
@@ -178,9 +205,11 @@ class PaymentController extends Controller {
             $transactionData = $bancolombiaService->getTransactionStatus($transactionId);
         }
 
+        $ref = $reference ?? ($_GET['ref'] ?? null);
+
         if ($transactionData) {
             $status = strtoupper($transactionData['status'] ?? 'PENDING');
-            $ref = $transactionData['reference'] ?? $reference;
+            $ref = $transactionData['reference'] ?? $ref;
 
             if ($ref) {
                 $order = $orderModel->findByOrderNumber($ref);
@@ -189,6 +218,11 @@ class PaymentController extends Controller {
                     $orderStatus = $isApproved ? 'paid' : (($status === 'DECLINED' || $status === 'VOIDED' || $status === 'ERROR') ? 'failed' : 'pending');
                     $orderModel->updateStatus($order['id'], $orderStatus, $ref);
                     $orderModel->updatePaymentStatus($ref, $status, $transactionId, $transactionData);
+
+                    // Garantizar reducción de stock para compras aprobadas
+                    if ($isApproved) {
+                        $orderModel->reduceStockForOrder((int)$order['id']);
+                    }
 
                     // Registrar log de auditoría
                     \App\Services\AuditLogService::log('PAYMENT_RESPONSE_CALLBACK', 'Respuesta de pasarela recibida para orden ' . $ref . ' - Estado: ' . $status . ' - Transacción Wompi: ' . $transactionId, ['reference' => $ref, 'status' => $status, 'wompi_transaction_id' => $transactionId]);
@@ -217,8 +251,8 @@ class PaymentController extends Controller {
         }
 
         $orderInfo = null;
-        if (!empty($reference)) {
-            $orderInfo = $orderModel->findByOrderNumber($reference);
+        if (!empty($ref)) {
+            $orderInfo = $orderModel->findByOrderNumber($ref);
         }
 
         $this->view('payment_response', [

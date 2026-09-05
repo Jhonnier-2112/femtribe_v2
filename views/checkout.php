@@ -146,9 +146,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const q = Number(item.quantity || item.qty || 1);
             const itemTotal = p * q;
             subtotal += itemTotal;
+            const details = [
+                item.color ? `Color: ${item.color}` : '',
+                item.gender ? `Género: ${item.gender}` : '',
+                item.size ? `Talla: ${item.size}` : ''
+            ].filter(Boolean).join(' • ');
+
             html += `<li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
                 <div>
                     <div class="fw-semibold text-dark">${item.name || item.title}</div>
+                    ${details ? `<div class="text-muted small" style="font-size:0.8rem;">${details}</div>` : ''}
                     <small class="text-muted">Cant: ${q} x $${p.toLocaleString('es-CO')}</small>
                 </div>
                 <span class="fw-semibold">$${itemTotal.toLocaleString('es-CO')}</span>
@@ -157,7 +164,16 @@ document.addEventListener('DOMContentLoaded', function() {
         html += '</ul>';
         summaryList.innerHTML = html;
 
-        const shipping = subtotal > 150000 ? 0 : 12000;
+        let hasPaidShipping = false;
+        let maxShippingCost = 0;
+        items.forEach(it => {
+            if (it.is_free_shipping === false || it.is_free_shipping === 0 || it.is_free_shipping === '0') {
+                hasPaidShipping = true;
+                const cost = Number(it.shipping_cost || 0);
+                if (cost > maxShippingCost) maxShippingCost = cost;
+            }
+        });
+        const shipping = hasPaidShipping ? (maxShippingCost > 0 ? maxShippingCost : 12000) : 0;
         const total = subtotal + shipping;
 
         subtotalEl.textContent = '$' + subtotal.toLocaleString('es-CO') + ' COP';

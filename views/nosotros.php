@@ -311,127 +311,314 @@
   </div>
 </section>
 
+<?php
+// Cargar modelo de testimonios
+if (!class_exists('App\Models\Testimonial')) {
+    $possibleTestimonialPaths = [
+        __DIR__ . '/../backend/models/Testimonial.php',
+        __DIR__ . '/backend/models/Testimonial.php',
+        dirname(__DIR__) . '/backend/models/Testimonial.php'
+    ];
+    foreach ($possibleTestimonialPaths as $tPath) {
+        if (file_exists($tPath)) {
+            require_once $tPath;
+            break;
+        }
+    }
+}
+
+$testimonialModel = class_exists('App\Models\Testimonial') ? new \App\Models\Testimonial() : null;
+$testimonialStats = $testimonialModel ? $testimonialModel->getRatingStats() : ['average' => 5.0, 'total' => 3, 'breakdown' => [5=>3, 4=>0, 3=>0, 2=>0, 1=>0]];
+$allTestimonials = $testimonialModel ? $testimonialModel->getAllApproved(60) : [];
+
+$tSuccess = $_SESSION['testimonial_success'] ?? null;
+$tError = $_SESSION['testimonial_error'] ?? null;
+unset($_SESSION['testimonial_success'], $_SESSION['testimonial_error']);
+
+// Prellenar si el usuario está autenticado
+$currentUserName = '';
+$currentUserRole = '';
+if (!empty($_SESSION['user_nombres'])) {
+    $currentUserName = trim($_SESSION['user_nombres'] . ' ' . ($_SESSION['user_apellidos'] ?? ''));
+    $currentUserRole = 'Comunidad FEMTRIBE';
+}
+?>
+
 <!-- Testimonials Section -->
-<section class="section py-5">
-  <div class="container py-8">
+<section class="section py-5 position-relative" id="testimonios-section" style="background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);">
+  <div class="container py-4">
+
+    <!-- Mensajes de feedback -->
+    <?php if ($tSuccess): ?>
+      <div class="alert alert-success alert-dismissible fade show rounded-4 shadow-sm mb-4 border-0" role="alert" style="background-color: #ecfdf5; color: #065f46;">
+        <i class="fas fa-check-circle me-2 fs-5 text-success"></i> <?= htmlspecialchars($tSuccess) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    <?php endif; ?>
+
+    <?php if ($tError): ?>
+      <div class="alert alert-danger alert-dismissible fade show rounded-4 shadow-sm mb-4 border-0" role="alert">
+        <i class="fas fa-exclamation-triangle me-2 fs-5"></i> <?= htmlspecialchars($tError) ?>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      </div>
+    <?php endif; ?>
+
+    <!-- Encabezado de la Sección -->
+    <div class="row justify-content-center mb-4" data-aos="fade-up">
+      <div class="col-lg-8 text-center">
+        <h5 class="fw-bold mb-2 text-uppercase tracking-wider" style="color: #B2D81F; letter-spacing: 2px;">TESTIMONIOS</h5>
+        <h2 class="display-6 fw-bold mb-3 text-dark">Lo que dicen nuestros corredores</h2>
+        <p class="text-muted fs-6 mb-0">Conoce las vivencias de la tribu, comparte tu experiencia y califica nuestra plataforma.</p>
+      </div>
+    </div>
+
+    <!-- Barra de Calificación Global y Botón de Acción -->
     <div class="row justify-content-center mb-5" data-aos="fade-up">
-      <div class="col-lg-7 text-center">
-        <h5 class="fw-bold mb-3" style="color: #B2D81F;">TESTIMONIOS</h5>
-        <h2 class="display-7 fw-bold">Lo que dicen nuestros corredores</h2>
+      <div class="col-lg-10">
+        <div class="card border-0 rounded-4 shadow-sm p-4 p-md-4" style="background: #ffffff; border: 1px solid rgba(178, 216, 31, 0.25) !important;">
+          <div class="row align-items-center g-3 text-center text-md-start">
+            <div class="col-md-4 col-lg-3 text-center border-end-md">
+              <div class="display-4 fw-bolder text-dark mb-0" id="stat-average-score"><?= number_format($testimonialStats['average'], 1) ?></div>
+              <div class="text-warning fs-5 my-1" id="stat-average-stars">
+                <?php
+                $avgFull = floor($testimonialStats['average']);
+                for ($i = 1; $i <= 5; $i++):
+                    if ($i <= $avgFull): ?>
+                        <i class="fas fa-star" style="color: #B2D81F;"></i>
+                    <?php elseif ($i - $testimonialStats['average'] <= 0.5): ?>
+                        <i class="fas fa-star-half-alt" style="color: #B2D81F;"></i>
+                    <?php else: ?>
+                        <i class="far fa-star text-muted"></i>
+                    <?php endif;
+                endfor; ?>
+              </div>
+              <small class="text-muted fw-semibold" id="stat-total-label">
+                Basado en <span id="stat-total-count"><?= $testimonialStats['total'] ?></span> <?= $testimonialStats['total'] === 1 ? 'opinión' : 'opiniones' ?>
+              </small>
+            </div>
+            
+            <div class="col-md-5 col-lg-5">
+              <h5 class="fw-bold text-dark mb-1">¡Tu opinión nos hace crecer!</h5>
+              <p class="text-muted small mb-0">
+                Cada comentario inspira a nuevos miembros a unirse a la tribu y nos ayuda a perfeccionar la experiencia de nuestra carrera y página web.
+              </p>
+            </div>
+
+            <div class="col-md-3 col-lg-4 text-center text-md-end">
+              <button type="button" class="btn btn-ft-rating px-4 py-3 fw-bold rounded-pill shadow-sm text-dark d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#modalNuevoTestimonio">
+                <i class="fas fa-star me-2 fs-6"></i> Dejar mi testimonio
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
-    <div class="row">
-      <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-        <div class="testimonial-card">
-          <div class="testimonial-content">
-            <div class="testimonial-rating mb-3">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-            <p class="mb-4">"FEMTRIBE cambió mi vida. Gracias a esta comunidad, he logrado completar mi primera Media Maratón y he conocido personas maravillosas que me inspiran cada día."</p>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">
-                <img src="assets/img/karen.png" alt="Karen Guarnizo">
+    <!-- Grid de Testimonios / Comentarios -->
+    <div class="row g-4" id="testimonials-grid">
+      <?php if (!empty($allTestimonials)): ?>
+        <?php foreach ($allTestimonials as $idx => $t): ?>
+          <div class="col-md-6 col-lg-4 mb-2 testimonial-col-item" data-aos="fade-up" data-aos-delay="<?= min(400, ($idx % 3 + 1) * 100) ?>">
+            <div class="testimonial-card h-100 position-relative d-flex flex-column justify-content-between p-4">
+              <!-- Watermark Quote -->
+              <i class="fas fa-quote-right quote-watermark"></i>
+              
+              <div class="testimonial-top">
+                <!-- Estrellas de Calificación -->
+                <div class="testimonial-rating mb-3">
+                  <?php for ($s = 1; $s <= 5; $s++): ?>
+                    <i class="<?= $s <= $t['rating'] ? 'fas fa-star' : 'far fa-star' ?>" style="color: <?= $s <= $t['rating'] ? '#B2D81F' : '#d1d5db' ?>;"></i>
+                  <?php endfor; ?>
+                  <span class="ms-2 text-muted fw-bold small"><?= (int)$t['rating'] ?>.0</span>
+                </div>
+                
+                <!-- Contenido del Comentario -->
+                <p class="testimonial-text mb-4 text-dark">
+                  "<?= nl2br(htmlspecialchars($t['comment'])) ?>"
+                </p>
               </div>
-              <div class="testimonial-info">
-                <h5 class="mb-0">Karen Guarnizo</h5>
-                <small>@karengg17</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-        <div class="testimonial-card">
-          <div class="testimonial-content">
-            <div class="testimonial-rating mb-3">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-            <p class="mb-4">"Gracias a la tribu recuperé la constancia. En esta tribu aprendí que no entreno solo. Aquí todos sumamos, nos apoyamos y crecemos juntos, sin importar las diferencias."</p>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">
-                <img src="assets/img/jairo.png" alt="Jairo Caballero">
-              </div>
-              <div class="testimonial-info">
-                <h5 class="mb-0">Jairo Caballero</h5>
-                <small>@caballerojairoandres</small>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-        <div class="testimonial-card">
-          <div class="testimonial-content">
-            <div class="testimonial-rating mb-3">
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-              <i class="fas fa-star"></i>
-            </div>
-            <p class="mb-4">"Como principiante, encontré en FEMTRIBE el apoyo perfecto para comenzar a correr. Los entrenadores son increíbles y la comunidad te hace sentir como en casa."</p>
-            <div class="testimonial-author">
-              <div class="testimonial-avatar">
-                <img src="assets/img/andrea.png" alt="Andrea Diaz">
-              </div>
-              <div class="testimonial-info">
-                <h5 class="mb-0">Andrea Diaz</h5>
-                <small>@andreadiaz123</small>
+
+              <!-- Autor del testimonio -->
+              <div class="testimonial-author pt-3 border-top">
+                <div class="testimonial-avatar">
+                  <?php if (!empty($t['avatar']) && (file_exists($t['avatar']) || file_exists(__DIR__ . '/../' . $t['avatar']) || filter_var($t['avatar'], FILTER_VALIDATE_URL))): ?>
+                    <img src="<?= htmlspecialchars($t['avatar']) ?>" alt="<?= htmlspecialchars($t['name']) ?>" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'testimonial-initials\'><?= strtoupper(substr(htmlspecialchars($t['name']), 0, 1)) ?></div>';">
+                  <?php else: ?>
+                    <div class="testimonial-initials">
+                      <?= strtoupper(mb_substr(trim($t['name']), 0, 1, 'UTF-8')) ?>
+                    </div>
+                  <?php endif; ?>
+                </div>
+                <div class="testimonial-info overflow-hidden">
+                  <h6 class="mb-0 fw-bold text-dark text-truncate"><?= htmlspecialchars($t['name']) ?></h6>
+                  <small class="text-muted d-block text-truncate"><?= htmlspecialchars($t['role_title'] ?: 'Corredor(a)') ?></small>
+                </div>
+                <div class="ms-auto text-end flex-shrink-0">
+                  <small class="text-muted" style="font-size: 0.75rem;">
+                    <?= !empty($t['created_at']) ? date('d/m/Y', strtotime($t['created_at'])) : '' ?>
+                  </small>
+                </div>
               </div>
             </div>
           </div>
+        <?php endforeach; ?>
+      <?php else: ?>
+        <div class="col-12 text-center py-5">
+          <p class="text-muted">Aún no hay comentarios publicados. ¡Sé el primero en compartir tu experiencia!</p>
         </div>
+      <?php endif; ?>
+    </div>
+
+  </div>
+
+  <!-- Modal para Agregar Testimonio y Calificar -->
+  <div class="modal fade" id="modalNuevoTestimonio" tabindex="-1" aria-labelledby="modalTestimonioLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+        
+        <div class="modal-header text-white p-4" style="background-color: #1a1a1a;">
+          <div>
+            <h5 class="modal-title fw-bold mb-1" id="modalTestimonioLabel" style="color: #ffffff;">
+              <i class="fas fa-star me-2" style="color: #B2D81F;"></i> Calificar y Dejar Testimonio
+            </h5>
+            <small class="text-white-50">Comparte tu experiencia con la comunidad FEMTRIBE</small>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+
+        <form action="/testimonio/guardar" method="POST" id="formTestimonio" class="p-4 bg-white">
+          <input type="hidden" name="rating" id="ratingScoreInput" value="5">
+
+          <!-- Selector Interactivo de Estrellas -->
+          <div class="mb-4 text-center p-3 rounded-4" style="background-color: #f8fafc; border: 1px dashed #e2e8f0;">
+            <label class="form-label fw-bold d-block text-dark mb-2">Tu Calificación de la Página y Experiencia</label>
+            
+            <div class="interactive-stars-box d-flex justify-content-center gap-2 mb-2" id="starRatingContainer">
+              <i class="fas fa-star star-rate-item active" data-value="1" title="1 estrella"></i>
+              <i class="fas fa-star star-rate-item active" data-value="2" title="2 estrellas"></i>
+              <i class="fas fa-star star-rate-item active" data-value="3" title="3 estrellas"></i>
+              <i class="fas fa-star star-rate-item active" data-value="4" title="4 estrellas"></i>
+              <i class="fas fa-star star-rate-item active" data-value="5" title="5 estrellas"></i>
+            </div>
+            <div class="fw-semibold small" id="ratingTextDesc" style="color: #65a30d;">
+              ⭐⭐⭐⭐⭐ ¡Excelente! Me encanta la comunidad y la página
+            </div>
+          </div>
+
+          <!-- Nombre -->
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-dark">Tu Nombre Completo <span class="text-danger">*</span></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-user"></i></span>
+              <input type="text" name="name" id="inputAuthorName" class="form-control border-start-0 ps-0" placeholder="Ej: Karen Guarnizo" value="<?= htmlspecialchars($currentUserName) ?>" required maxlength="150">
+            </div>
+          </div>
+
+          <!-- Rol / Usuario / Instagram -->
+          <div class="mb-3">
+            <label class="form-label fw-bold small text-dark">¿Cómo te identificas? <small class="text-muted fw-normal">(Opcional)</small></label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-end-0 text-muted"><i class="fas fa-at"></i></span>
+              <input type="text" name="role_title" id="inputRoleTitle" class="form-control border-start-0 ps-0" placeholder="Ej: @tu_usuario, Corredora 10K, o Maratón 2026" value="<?= htmlspecialchars($currentUserRole) ?>" maxlength="150">
+            </div>
+          </div>
+
+          <!-- Comentario / Testimonio -->
+          <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-bold small text-dark mb-0">Tu Comentario / Testimonio <span class="text-danger">*</span></label>
+              <small class="text-muted" id="charCountLabel">0 / 1000</small>
+            </div>
+            <textarea name="comment" id="inputCommentText" class="form-control" rows="4" placeholder="¿Qué es lo que más te gusta de FEMTRIBE? Cuéntanos tu historia, tu progreso o qué opinas de nuestra página..." required minlength="5" maxlength="1000"></textarea>
+          </div>
+
+          <!-- Alerta de error JS en el modal si falla -->
+          <div class="alert alert-danger d-none py-2 small rounded-3" id="modalErrorAlert"></div>
+
+          <!-- Botón de Envío -->
+          <div class="mt-4">
+            <button type="submit" class="btn btn-ft-rating w-100 py-3 fw-bold rounded-pill text-dark shadow-sm" id="btnSubmitTestimonial">
+              <span class="btn-text"><i class="fas fa-paper-plane me-2"></i> Publicar mi testimonio</span>
+              <span class="spinner-border spinner-border-sm d-none ms-2" role="status" aria-hidden="true"></span>
+            </button>
+          </div>
+        </form>
+
       </div>
     </div>
   </div>
   
   <style>
+    /* Estilos del Módulo de Testimonios */
+    .btn-ft-rating {
+      background-color: #B2D81F;
+      border: 2px solid #B2D81F;
+      color: #1a1a1a;
+      transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+    .btn-ft-rating:hover {
+      background-color: #9ec217;
+      border-color: #9ec217;
+      color: #000000;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(178, 216, 31, 0.3) !important;
+    }
+
     .testimonial-card {
-      background-color: white;
-      border-radius: 15px;
+      background-color: #ffffff;
+      border-radius: 20px;
       overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-      height: 100%;
-      transition: all 0.3s ease;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+      transition: all 0.35s ease;
+      position: relative;
     }
     
     .testimonial-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      transform: translateY(-8px);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.08);
+      border-color: rgba(178, 216, 31, 0.45);
+    }
+
+    .quote-watermark {
+      position: absolute;
+      top: 18px;
+      right: 22px;
+      font-size: 2.2rem;
+      color: rgba(178, 216, 31, 0.15);
+      pointer-events: none;
     }
     
-    .testimonial-content {
-      padding: 30px;
+    .testimonial-text {
+      font-size: 0.95rem;
+      line-height: 1.65;
+      color: #374151;
+      font-style: italic;
     }
     
     .testimonial-rating i {
-      color: #B2D81F;
       margin-right: 2px;
+      font-size: 0.95rem;
     }
     
     .testimonial-author {
       display: flex;
       align-items: center;
-      margin-top: 20px;
+      margin-top: auto;
     }
     
     .testimonial-avatar {
-      width: 50px;
-      height: 50px;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
       overflow: hidden;
-      margin-right: 15px;
+      margin-right: 14px;
+      flex-shrink: 0;
+      border: 2px solid #B2D81F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f3f4f6;
     }
     
     .testimonial-avatar img {
@@ -439,11 +626,303 @@
       height: 100%;
       object-fit: cover;
     }
-    
-    .testimonial-info small {
-      color: var(--gray-color);
+
+    .testimonial-initials {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #B2D81F 0%, #8cae0a 100%);
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.15rem;
+      text-transform: uppercase;
+    }
+
+    /* Estrellas interactivas en el modal */
+    .star-rate-item {
+      font-size: 2rem;
+      color: #d1d5db;
+      cursor: pointer;
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+    .star-rate-item:hover,
+    .star-rate-item.active {
+      color: #B2D81F;
+    }
+    .star-rate-item:hover {
+      transform: scale(1.25);
+    }
+
+    @media (min-width: 768px) {
+      .border-end-md {
+        border-right: 1px solid #e5e7eb;
+      }
     }
   </style>
+
+  <!-- Script Interactivo para Testimonios y Calificación -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const starItems = document.querySelectorAll('.star-rate-item');
+      const ratingScoreInput = document.getElementById('ratingScoreInput');
+      const ratingTextDesc = document.getElementById('ratingTextDesc');
+      const formTestimonio = document.getElementById('formTestimonio');
+      const inputCommentText = document.getElementById('inputCommentText');
+      const charCountLabel = document.getElementById('charCountLabel');
+      const btnSubmitTestimonial = document.getElementById('btnSubmitTestimonial');
+      const modalErrorAlert = document.getElementById('modalErrorAlert');
+      const testimonialsGrid = document.getElementById('testimonials-grid');
+
+      const ratingDescriptions = {
+        1: "⭐ Regular - Hay cosas por mejorar",
+        2: "⭐⭐ Aceptable - Cumple con lo básico",
+        3: "⭐⭐⭐ Buena - Experiencia positiva",
+        4: "⭐⭐⭐⭐ Muy buena - Me gusta mucho",
+        5: "⭐⭐⭐⭐⭐ ¡Excelente! Me encanta la comunidad y la página"
+      };
+
+      let currentRating = 5;
+
+      // Manejo de hover y selección en estrellas
+      starItems.forEach(star => {
+        star.addEventListener('mouseenter', function() {
+          const val = parseInt(this.getAttribute('data-value'));
+          highlightStars(val);
+          ratingTextDesc.textContent = ratingDescriptions[val] || '';
+        });
+
+        star.addEventListener('mouseleave', function() {
+          highlightStars(currentRating);
+          ratingTextDesc.textContent = ratingDescriptions[currentRating] || '';
+        });
+
+        star.addEventListener('click', function() {
+          currentRating = parseInt(this.getAttribute('data-value'));
+          ratingScoreInput.value = currentRating;
+          highlightStars(currentRating);
+          ratingTextDesc.textContent = ratingDescriptions[currentRating] || '';
+        });
+      });
+
+      function highlightStars(count) {
+        starItems.forEach(s => {
+          const val = parseInt(s.getAttribute('data-value'));
+          if (val <= count) {
+            s.classList.add('active');
+            s.style.color = '#B2D81F';
+          } else {
+            s.classList.remove('active');
+            s.style.color = '#d1d5db';
+          }
+        });
+      }
+
+      // Contador de caracteres
+      if (inputCommentText && charCountLabel) {
+        inputCommentText.addEventListener('input', function() {
+          const len = this.value.length;
+          charCountLabel.textContent = `${len} / 1000`;
+          if (len > 900) {
+            charCountLabel.classList.add('text-danger');
+          } else {
+            charCountLabel.classList.remove('text-danger');
+          }
+        });
+      }
+
+      // Envío AJAX del formulario con fallback
+      if (formTestimonio) {
+        formTestimonio.addEventListener('submit', async function(e) {
+          e.preventDefault();
+
+          if (modalErrorAlert) {
+            modalErrorAlert.classList.add('d-none');
+            modalErrorAlert.textContent = '';
+          }
+
+          const nameVal = document.getElementById('inputAuthorName').value.trim();
+          const commentVal = inputCommentText.value.trim();
+
+          if (!nameVal) {
+            showError('Por favor ingresa tu nombre.');
+            return;
+          }
+          if (commentVal.length < 5) {
+            showError('Por favor escribe un comentario de al menos 5 caracteres.');
+            return;
+          }
+
+          // Spinner estado cargando
+          setLoading(true);
+
+          const formData = new FormData(formTestimonio);
+          formData.append('is_ajax', '1');
+
+          try {
+            const response = await fetch('/testimonio/guardar', {
+              method: 'POST',
+              body: formData,
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              }
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              // Cerrar modal
+              const modalEl = document.getElementById('modalNuevoTestimonio');
+              const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+              modalInstance.hide();
+
+              // Resetear formulario
+              inputCommentText.value = '';
+              if (charCountLabel) charCountLabel.textContent = '0 / 1000';
+
+              // Notificación Toast / Alert
+              mostrarToastExito(data.message || '¡Testimonio publicado con éxito!');
+
+              // Actualizar Estadísticas en pantalla
+              if (data.stats) {
+                const avgEl = document.getElementById('stat-average-score');
+                const totalEl = document.getElementById('stat-total-count');
+                const totalLabel = document.getElementById('stat-total-label');
+                if (avgEl) avgEl.textContent = Number(data.stats.average).toFixed(1);
+                if (totalEl) totalEl.textContent = data.stats.total;
+                if (totalLabel) totalLabel.innerHTML = `Basado en <span id="stat-total-count">${data.stats.total}</span> ${data.stats.total === 1 ? 'opinión' : 'opiniones'}`;
+              }
+
+              // Insertar la nueva tarjeta de testimonio en la cuadrícula de forma inmediata
+              if (data.testimonial && testimonialsGrid) {
+                const newCardHtml = crearCardTestimonioHtml(data.testimonial);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = newCardHtml;
+                const newCardEl = tempDiv.firstElementChild;
+                
+                testimonialsGrid.insertAdjacentElement('afterbegin', newCardEl);
+                
+                // Efecto de iluminación sutil
+                newCardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                newCardEl.querySelector('.testimonial-card').style.borderColor = '#B2D81F';
+                newCardEl.querySelector('.testimonial-card').style.boxShadow = '0 0 25px rgba(178, 216, 31, 0.35)';
+              }
+
+            } else {
+              showError(data.message || 'Error al guardar el testimonio.');
+            }
+          } catch (err) {
+            console.error('Error enviando testimonio:', err);
+            // Si la llamada AJAX falla, enviar por el flujo clásico del formulario
+            formTestimonio.submit();
+          } finally {
+            setLoading(false);
+          }
+        });
+      }
+
+      function setLoading(isLoading) {
+        if (!btnSubmitTestimonial) return;
+        const btnText = btnSubmitTestimonial.querySelector('.btn-text');
+        const spinner = btnSubmitTestimonial.querySelector('.spinner-border');
+        if (isLoading) {
+          btnSubmitTestimonial.disabled = true;
+          if (btnText) btnText.classList.add('opacity-50');
+          if (spinner) spinner.classList.remove('d-none');
+        } else {
+          btnSubmitTestimonial.disabled = false;
+          if (btnText) btnText.classList.remove('opacity-50');
+          if (spinner) spinner.classList.add('d-none');
+        }
+      }
+
+      function showError(msg) {
+        if (modalErrorAlert) {
+          modalErrorAlert.textContent = msg;
+          modalErrorAlert.classList.remove('d-none');
+        } else {
+          alert(msg);
+        }
+      }
+
+      function mostrarToastExito(msg) {
+        const toastBox = document.createElement('div');
+        toastBox.className = 'position-fixed bottom-0 end-0 p-3';
+        toastBox.style.zIndex = '9999';
+        toastBox.innerHTML = `
+          <div class="toast show align-items-center text-white border-0 rounded-4 shadow-lg" style="background-color: #1a1a1a;" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body d-flex align-items-center">
+                <i class="fas fa-check-circle fs-4 me-3" style="color: #B2D81F;"></i>
+                <div>
+                  <h6 class="mb-0 fw-bold" style="color: #B2D81F;">¡Testimonio publicado!</h6>
+                  <p class="mb-0 small text-light">${msg}</p>
+                </div>
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(toastBox);
+        setTimeout(() => {
+          toastBox.remove();
+        }, 5000);
+      }
+
+      function crearCardTestimonioHtml(t) {
+        const ratingNum = parseInt(t.rating) || 5;
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+          starsHtml += `<i class="${i <= ratingNum ? 'fas fa-star' : 'far fa-star'}" style="color: ${i <= ratingNum ? '#B2D81F' : '#d1d5db'};"></i>`;
+        }
+
+        const initial = (t.name || 'C').charAt(0).toUpperCase();
+        let avatarHtml = `<div class="testimonial-initials">${initial}</div>`;
+        if (t.avatar) {
+          avatarHtml = `<img src="${t.avatar}" alt="${escapeHtml(t.name)}" onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'testimonial-initials\\'>${initial}</div>';">`;
+        }
+
+        const roleText = escapeHtml(t.role_title || 'Corredor(a)');
+        const nowFormatted = new Date().toLocaleDateString('es-CO');
+
+        return `
+          <div class="col-md-6 col-lg-4 mb-2 testimonial-col-item animate__animated animate__fadeIn">
+            <div class="testimonial-card h-100 position-relative d-flex flex-column justify-content-between p-4">
+              <i class="fas fa-quote-right quote-watermark"></i>
+              <div class="testimonial-top">
+                <div class="testimonial-rating mb-3">
+                  ${starsHtml}
+                  <span class="ms-2 text-muted fw-bold small">${ratingNum}.0</span>
+                </div>
+                <p class="testimonial-text mb-4 text-dark">
+                  "${escapeHtml(t.comment)}"
+                </p>
+              </div>
+              <div class="testimonial-author pt-3 border-top">
+                <div class="testimonial-avatar">
+                  ${avatarHtml}
+                </div>
+                <div class="testimonial-info overflow-hidden">
+                  <h6 class="mb-0 fw-bold text-dark text-truncate">${escapeHtml(t.name)}</h6>
+                  <small class="text-muted d-block text-truncate">${roleText}</small>
+                </div>
+                <div class="ms-auto text-end flex-shrink-0">
+                  <small class="text-muted" style="font-size: 0.75rem;">${nowFormatted}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function escapeHtml(string) {
+        const div = document.createElement('div');
+        div.textContent = string || '';
+        return div.innerHTML;
+      }
+    });
+  </script>
 </section>
 
 <!-- Call to Action -->

@@ -79,7 +79,6 @@ class EmailService {
             $logoPaths = [
                 __DIR__ . '/../../img/logocorreo.png',
                 __DIR__ . '/../../assets/img/logocorreo.png',
-                __DIR__ . '/../../pruebas/img/logocorreo.png',
                 __DIR__ . '/../../assets/img/logocarrera.png',
                 __DIR__ . '/../../assets/img/logoverde.png',
             ];

@@ -91,12 +91,29 @@ require __DIR__ . '/../layouts/header.php';
                                                 <span class="badge bg-danger-subtle text-danger ms-1" style="font-size: 0.7rem;">Oferta</span>
                                             <?php endif; ?>
                                         </td>
-                                        <!-- Precio -->
-                                        <td class="fw-bold text-dark">$<?= number_format($p['price'], 0, ',', '.') ?></td>
+                                        <!-- Precio y Envío -->
+                                        <td class="fw-bold text-dark">
+                                            $<?= number_format($p['price'], 0, ',', '.') ?>
+                                            <div class="mt-1">
+                                                <?php if (!isset($p['is_free_shipping']) || (int)$p['is_free_shipping'] === 1): ?>
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 0.68rem;">
+                                                        <i class="fas fa-truck me-1"></i> Envío Gratis
+                                                    </span>
+                                                <?php else: ?>
+                                                    <span class="badge bg-light text-dark border rounded-pill px-2 py-0.5" style="font-size: 0.68rem;">
+                                                        <i class="fas fa-truck me-1 text-muted"></i> Envío $<?= number_format((float)($p['shipping_cost'] ?? 0), 0, ',', '.') ?>
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
                                         <!-- Stock -->
                                         <td>
-                                            <?php if ($p['stock'] <= 5): ?>
-                                                <span class="text-danger fw-bold"><i class="fas fa-exclamation-triangle me-1"></i><?= $p['stock'] ?> (Bajo)</span>
+                                            <?php if ($p['stock'] <= 0): ?>
+                                                <span class="badge bg-danger">Agotado (0)</span>
+                                            <?php elseif ($p['stock'] < 10): ?>
+                                                <span class="badge bg-warning text-dark fw-bold border border-warning" style="background-color: #ffc107 !important;">
+                                                    <i class="fas fa-fire text-danger me-1"></i><?= $p['stock'] ?> (Últimos productos)
+                                                </span>
                                             <?php else: ?>
                                                 <span class="text-success fw-bold"><?= $p['stock'] ?></span>
                                             <?php endif; ?>

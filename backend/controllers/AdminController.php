@@ -312,12 +312,33 @@ class AdminController extends Controller {
         $gender      = $_POST['gender'] ?? 'unisex';
         $type        = $_POST['type'] ?? 'camisetas';
         $description = trim($_POST['description'] ?? '');
-        $isNew       = isset($_POST['is_new']) ? 1 : 0;
-        $isOffer     = isset($_POST['is_offer']) ? 1 : 0;
+        $isNew          = isset($_POST['is_new']) ? 1 : 0;
+        $isOffer        = isset($_POST['is_offer']) ? 1 : 0;
+        $isFreeShipping = isset($_POST['is_free_shipping']) ? (int)$_POST['is_free_shipping'] : 1;
+        $shippingCost   = ($isFreeShipping === 1) ? 0.00 : max(0.0, floatval($_POST['shipping_cost'] ?? 0));
 
         // Procesar colores (array o string)
         $rawColors   = $_POST['colors'] ?? [];
-        $colorsStr   = is_array($rawColors) ? implode(', ', array_filter(array_map('trim', $rawColors))) : trim((string)$rawColors);
+        $colorsList  = [];
+        if (is_array($rawColors)) {
+            foreach ($rawColors as $rc) {
+                $parts = explode(',', (string)$rc);
+                foreach ($parts as $p) {
+                    $p = trim($p);
+                    if ($p !== '' && !in_array($p, $colorsList, true)) {
+                        $colorsList[] = $p;
+                    }
+                }
+            }
+        } elseif (is_string($rawColors) && trim($rawColors) !== '') {
+            foreach (explode(',', $rawColors) as $p) {
+                $p = trim($p);
+                if ($p !== '' && !in_array($p, $colorsList, true)) {
+                    $colorsList[] = $p;
+                }
+            }
+        }
+        $colorsStr   = implode(', ', $colorsList);
 
         // Procesar tallas (array o string)
         $rawSizes    = $_POST['sizes'] ?? [];
@@ -329,19 +350,21 @@ class AdminController extends Controller {
 
         // Guardar estado actual del formulario para mantenerlo si falla
         $oldProductData = [
-            'name'        => $name,
-            'sku'         => $sku,
-            'price'       => $price,
-            'stock'       => $stock,
-            'category_id' => $categoryId,
-            'gender'      => $gender,
-            'type'        => $type,
-            'colors'      => $colorsStr,
-            'sizes'       => $sizesStr,
-            'description' => $description,
-            'is_new'      => $isNew,
-            'is_offer'    => $isOffer,
-            'media'       => $mediaList
+            'name'             => $name,
+            'sku'              => $sku,
+            'price'            => $price,
+            'stock'            => $stock,
+            'category_id'      => $categoryId,
+            'gender'           => $gender,
+            'type'             => $type,
+            'colors'           => $colorsStr,
+            'sizes'            => $sizesStr,
+            'description'      => $description,
+            'is_new'           => $isNew,
+            'is_offer'         => $isOffer,
+            'is_free_shipping' => $isFreeShipping,
+            'shipping_cost'    => $shippingCost,
+            'media'            => $mediaList
         ];
 
         // Imagen principal: primera imagen del listado, o placeholder
@@ -391,29 +414,31 @@ class AdminController extends Controller {
             }
 
             $sql = "INSERT INTO products 
-                        (sku, name, slug, description, price, stock, category, category_id, gender, type, colors, sizes, image, video, images, is_new, is_offer, is_active, created_at)
+                        (sku, name, slug, description, price, stock, category, category_id, gender, type, colors, sizes, image, video, images, is_new, is_offer, is_free_shipping, shipping_cost, is_active, created_at)
                     VALUES 
-                        (:sku, :name, :slug, :description, :price, :stock, :category, :category_id, :gender, :type, :colors, :sizes, :image, :video, :images, :is_new, :is_offer, 1, NOW())";
+                        (:sku, :name, :slug, :description, :price, :stock, :category, :category_id, :gender, :type, :colors, :sizes, :image, :video, :images, :is_new, :is_offer, :is_free_shipping, :shipping_cost, 1, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $ok = $stmt->execute([
-                ':sku'         => $sku,
-                ':name'        => $name,
-                ':slug'        => $slug,
-                ':description' => $description,
-                ':price'       => $price,
-                ':stock'       => $stock,
-                ':category'    => $categoryName,
-                ':category_id' => $categoryId,
-                ':gender'      => $gender,
-                ':type'        => $type,
-                ':colors'      => $colorsStr !== '' ? $colorsStr : null,
-                ':sizes'       => $sizesStr !== '' ? $sizesStr : null,
-                ':image'       => $firstImage,
-                ':video'       => $firstVideo,
-                ':images'      => $imagesStr !== '' ? $imagesStr : null,
-                ':is_new'      => $isNew,
-                ':is_offer'    => $isOffer,
+                ':sku'              => $sku,
+                ':name'             => $name,
+                ':slug'             => $slug,
+                ':description'      => $description,
+                ':price'            => $price,
+                ':stock'            => $stock,
+                ':category'         => $categoryName,
+                ':category_id'      => $categoryId,
+                ':gender'           => $gender,
+                ':type'             => $type,
+                ':colors'           => $colorsStr !== '' ? $colorsStr : null,
+                ':sizes'            => $sizesStr !== '' ? $sizesStr : null,
+                ':image'            => $firstImage,
+                ':video'            => $firstVideo,
+                ':images'           => $imagesStr !== '' ? $imagesStr : null,
+                ':is_new'           => $isNew,
+                ':is_offer'         => $isOffer,
+                ':is_free_shipping' => $isFreeShipping,
+                ':shipping_cost'    => $shippingCost,
             ]);
 
             if ($ok) {
@@ -460,12 +485,33 @@ class AdminController extends Controller {
         $gender      = $_POST['gender'] ?? 'unisex';
         $type        = $_POST['type'] ?? 'camisetas';
         $description = trim($_POST['description'] ?? '');
-        $isNew       = isset($_POST['is_new']) ? 1 : 0;
-        $isOffer     = isset($_POST['is_offer']) ? 1 : 0;
+        $isNew          = isset($_POST['is_new']) ? 1 : 0;
+        $isOffer        = isset($_POST['is_offer']) ? 1 : 0;
+        $isFreeShipping = isset($_POST['is_free_shipping']) ? (int)$_POST['is_free_shipping'] : 1;
+        $shippingCost   = ($isFreeShipping === 1) ? 0.00 : max(0.0, floatval($_POST['shipping_cost'] ?? 0));
 
         // Procesar colores (array o string)
         $rawColors   = $_POST['colors'] ?? [];
-        $colorsStr   = is_array($rawColors) ? implode(', ', array_filter(array_map('trim', $rawColors))) : trim((string)$rawColors);
+        $colorsList  = [];
+        if (is_array($rawColors)) {
+            foreach ($rawColors as $rc) {
+                $parts = explode(',', (string)$rc);
+                foreach ($parts as $p) {
+                    $p = trim($p);
+                    if ($p !== '' && !in_array($p, $colorsList, true)) {
+                        $colorsList[] = $p;
+                    }
+                }
+            }
+        } elseif (is_string($rawColors) && trim($rawColors) !== '') {
+            foreach (explode(',', $rawColors) as $p) {
+                $p = trim($p);
+                if ($p !== '' && !in_array($p, $colorsList, true)) {
+                    $colorsList[] = $p;
+                }
+            }
+        }
+        $colorsStr   = implode(', ', $colorsList);
 
         // Procesar tallas (array o string)
         $rawSizes    = $_POST['sizes'] ?? [];
@@ -524,29 +570,33 @@ class AdminController extends Controller {
                         video = :video, 
                         images = :images, 
                         is_new = :is_new, 
-                        is_offer = :is_offer 
+                        is_offer = :is_offer,
+                        is_free_shipping = :is_free_shipping,
+                        shipping_cost = :shipping_cost
                     WHERE id = :id";
 
             $stmt = $this->db->prepare($sql);
             $ok = $stmt->execute([
-                ':sku'         => $sku,
-                ':name'        => $name,
-                ':slug'        => $slug,
-                ':description' => $description,
-                ':price'       => $price,
-                ':stock'       => $stock,
-                ':category'    => $categoryName,
-                ':category_id' => $categoryId,
-                ':gender'      => $gender,
-                ':type'        => $type,
-                ':colors'      => $colorsStr !== '' ? $colorsStr : null,
-                ':sizes'       => $sizesStr !== '' ? $sizesStr : null,
-                ':image'       => $firstImage,
-                ':video'       => $firstVideo,
-                ':images'      => $imagesStr !== '' ? $imagesStr : null,
-                ':is_new'      => $isNew,
-                ':is_offer'    => $isOffer,
-                ':id'          => $id
+                ':sku'              => $sku,
+                ':name'             => $name,
+                ':slug'             => $slug,
+                ':description'      => $description,
+                ':price'            => $price,
+                ':stock'            => $stock,
+                ':category'         => $categoryName,
+                ':category_id'      => $categoryId,
+                ':gender'           => $gender,
+                ':type'             => $type,
+                ':colors'           => $colorsStr !== '' ? $colorsStr : null,
+                ':sizes'            => $sizesStr !== '' ? $sizesStr : null,
+                ':image'            => $firstImage,
+                ':video'            => $firstVideo,
+                ':images'           => $imagesStr !== '' ? $imagesStr : null,
+                ':is_new'           => $isNew,
+                ':is_offer'         => $isOffer,
+                ':is_free_shipping' => $isFreeShipping,
+                ':shipping_cost'    => $shippingCost,
+                ':id'               => $id
             ]);
 
             if ($ok) {

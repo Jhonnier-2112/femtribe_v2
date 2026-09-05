@@ -17,12 +17,25 @@ class Router {
 
     public function dispatch() {
         $method = $_SERVER['REQUEST_METHOD'];
+        if ($method === 'HEAD') {
+            $method = 'GET';
+        }
         $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
         // Ajuste de base path si la app corre en subcarpeta (p.ej. /runner/public)
         $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
         if ($scriptDir && $scriptDir !== '/' && strpos($uri, $scriptDir) === 0) {
             $uri = substr($uri, strlen($scriptDir));
+            if ($uri === '' || $uri === false) { $uri = '/'; }
+        }
+
+        // Si la URI contiene prefijo /pruebas o /public_html (alias o residuo en navegador)
+        if (strpos($uri, '/pruebas') === 0) {
+            $uri = substr($uri, strlen('/pruebas'));
+            if ($uri === '' || $uri === false) { $uri = '/'; }
+        }
+        if (strpos($uri, '/public_html') === 0) {
+            $uri = substr($uri, strlen('/public_html'));
             if ($uri === '' || $uri === false) { $uri = '/'; }
         }
 

@@ -47,8 +47,14 @@ class BancolombiaPaymentService {
         $currency = 'COP';
         $signature = $this->generateIntegritySignature($reference, $amount, $currency);
 
-        $baseUrl = defined('BASE_URL') ? BASE_URL : 'http://localhost:8000';
-        $redirectUrl = $baseUrl . '/payment/response';
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        $isLocal = (bool)preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?$/', $host);
+        if ($isLocal && !empty($host)) {
+            $redirectUrl = 'http://' . $host . '/payment/response';
+        } else {
+            $baseUrl = defined('BASE_URL') ? BASE_URL : 'https://femtribe.com.co';
+            $redirectUrl = rtrim($baseUrl, '/') . '/payment/response';
+        }
 
         return [
             'publicKey' => $this->publicKey,
@@ -75,11 +81,14 @@ class BancolombiaPaymentService {
     public function getTransactionStatus(string $transactionId): ?array {
         $url = $this->baseUrl . '/transactions/' . urlencode($transactionId);
 
+        // La API de Wompi requiere la llave privada (prv_...) para consultar detalles de transacciones
+        $authKey = !empty($this->privateKey) ? $this->privateKey : $this->publicKey;
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Authorization: Bearer ' . $this->publicKey,
+            'Authorization: Bearer ' . $authKey,
             'Content-Type: application/json'
         ]);
         curl_setopt($ch, CURLOPT_TIMEOUT, 15);
@@ -91,6 +100,26 @@ class BancolombiaPaymentService {
         if ($httpCode === 200 && $response) {
             $data = json_decode($response, true);
             return $data['data'] ?? null;
+        }
+
+        // Si falló con la llave privada, reintentar con la llave pública como respaldo
+        if ($httpCode !== 200 && $authKey !== $this->publicKey && !empty($this->publicKey)) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Authorization: Bearer ' . $this->publicKey,
+                'Content-Type: application/json'
+            ]);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+
+            if ($httpCode === 200 && $response) {
+                $data = json_decode($response, true);
+                return $data['data'] ?? null;
+            }
         }
 
         return null;

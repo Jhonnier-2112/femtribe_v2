@@ -9,10 +9,24 @@ $frontendViews = realpath(__DIR__ . '/views');
 
 // Rutas Públicas Principales
 $router->get('/', 'HomeController@index');
+$router->get('/home', 'HomeController@index');
+$router->get('/inicio', 'HomeController@index');
 $router->get('/nosotros', function() use ($frontendViews) {
     require $frontendViews . '/nosotros.php';
 });
+$router->get('/eventos', 'EventController@index');
+$router->get('/evento', 'EventController@index');
+$router->get('/blog', 'HomeController@blog');
+$router->get('/contacto', function() {
+    header('Location: /#lead-femtribe');
+    exit;
+});
 $router->post('/contacto', 'HomeController@contacto');
+
+// Rutas de Testimonios y Calificación de la Página
+$router->post('/testimonio/guardar', 'TestimonialController@store');
+$router->post('/testimonios/guardar', 'TestimonialController@store');
+$router->get('/api/testimonios', 'TestimonialController@apiList');
 
 // Rutas Legales
 $router->get('/terminos', function() use ($frontendViews) {
@@ -31,10 +45,13 @@ $router->post('/inscribirse/guardar', 'RegistrationController@store');
 $router->post('/inscribirse/verificar-documento', 'RegistrationController@checkDocumentStages');
 $router->get('/registrar', 'RegistrationController@create');
 $router->post('/registrar', 'RegistrationController@store');
+$router->get('/inscripcion', 'RegistrationController@create');
 $router->get('/registration_success', 'RegistrationController@success');
 $router->get('/consulta_inscripcion', 'RegistrationController@consultaForm');
+$router->get('/consulta-inscripcion', 'RegistrationController@consultaForm');
 $router->get('/consultar', 'RegistrationController@consultaForm');
 $router->post('/consultar_inscripcion', 'RegistrationController@consultarInscripcion');
+$router->post('/consulta-inscripcion', 'RegistrationController@consultarInscripcion');
 $router->post('/consultar', 'RegistrationController@consultarInscripcion');
 
 // Rutas de Tienda / E-Commerce y Categorías

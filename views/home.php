@@ -235,7 +235,7 @@
             Verifica tu inscripción y consulta los datos de tu registro.
           </p>
 
-          <a href="<?= $inscribeteUrl ?>" class="btn-consulta-inscripcion inscribete-btn-link">
+          <a href="/consulta_inscripcion" class="btn-consulta-inscripcion">
             CONSULTA DE INSCRIPCIÓN
           </a>
 
@@ -373,11 +373,11 @@
     <div class="row align-items-center justify-content-between g-4 g-lg-5">
 
       <!-- COLUMNA IZQUIERDA: banner.png centrado + FECHA en blanco -->
-      <div class="col-12 col-lg-5 text-center" data-aos="fade-right">
+      <div class="col-12 col-lg-5 text-center ft-col-left aos-init aos-animate" data-aos="fade-right">
+        <p class="ft-lead-date">FECHA: 14 Y 15 DE NOVIEMBRE</p>
         <div class="ft-lead-banner-wrapper">
-          <img src="assets/img/CorreconFemtribe2.0/banner.png" alt="Banner FEMTRIBE 2.0" class="ft-lead-banner img-fluid" onerror="this.onerror=null;this.src='assets/img/banner_camiseta_carrera.png';">
+          <img src="assets/img/CorreconFemtribe2.0/CCF-logo-blanco.png" alt="Logo Corre Con FEMTRIBE 2.0" class="ft-lead-banner img-fluid" onerror="this.onerror=null;this.src='assets/img/banner_camiseta_carrera.png';">
         </div>
-        <p class="ft-lead-date">FECHA: 15 de Noviembre</p>
       </div>
 
       <!-- COLUMNA DERECHA: título + subtítulo + formulario -->
@@ -2931,7 +2931,7 @@
      ========================================================================= -->
 <script>
   // Fecha objetivo de la carrera
-  const targetDate = new Date("2026-11-29T07:00:00").getTime();
+  const targetDate = new Date("2026-11-14T06:00:00").getTime();
 
   function updateCountdown() {
     const now = new Date().getTime();

@@ -41,7 +41,13 @@ $isProduction = ($envApp === 'production');
 // Configuración de entorno
 if (!defined('APP_ENV')) define('APP_ENV', $envApp);
 if (!defined('APP_DEBUG')) define('APP_DEBUG', filter_var(getenv('APP_DEBUG') ?: ($isLocal ? 'true' : 'false'), FILTER_VALIDATE_BOOLEAN));
-if (!defined('BASE_URL')) define('BASE_URL', getenv('APP_URL') ?: ($isProduction ? 'https://' . $host : 'http://' . ($host ?: 'localhost:8000')));
+if (!defined('BASE_URL')) {
+    if ($isLocal && !empty($host)) {
+        define('BASE_URL', 'http://' . $host);
+    } else {
+        define('BASE_URL', getenv('APP_URL') ?: ($isProduction ? 'https://' . ($host ?: 'femtribe.com.co') : 'http://' . ($host ?: 'localhost:8000')));
+    }
+}
 
 // Configuración de base de datos
 if (!defined('DB_HOST')) define('DB_HOST', getenv('DB_HOST') ?: ($isProduction ? 'localhost' : '127.0.0.1'));

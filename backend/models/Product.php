@@ -97,7 +97,7 @@ class Product {
             END, created_at DESC";
         }
 
-        $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, price, image, video, images, is_new, is_offer
+        $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, price, stock, image, video, images, is_new, is_offer, is_free_shipping, shipping_cost
                 FROM products $whereSql ORDER BY $orderSql LIMIT :limit OFFSET :offset";
         $stmt = $this->conn->prepare($sql);
         foreach ($params as $k => $v) {
@@ -122,7 +122,7 @@ class Product {
     public function findBySlug(string $slug): ?array {
         if (!$this->conn) return null;
         try {
-            $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, price, image, video, images, is_new, is_offer
+            $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, price, stock, image, video, images, is_new, is_offer, is_free_shipping, shipping_cost
                     FROM products WHERE slug = :slug AND is_active = 1 LIMIT 1";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindValue(':slug', $slug);
@@ -137,7 +137,7 @@ class Product {
     public function findById(int $id): ?array {
         if (!$this->conn) return null;
         try {
-            $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, price, image, video, images, is_new, is_offer
+            $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, price, stock, image, video, images, is_new, is_offer, is_free_shipping, shipping_cost
                     FROM products WHERE id = :id AND is_active = 1 LIMIT 1";
             $stmt = $this->conn->prepare($sql);
             $stmt->bindValue(':id', $id, PDO::PARAM_INT);

@@ -15,12 +15,15 @@ $pType        = $product['type'] ?? 'camisetas';
 $pColors      = $product['colors'] ?? '';
 $pSizes       = $product['sizes']  ?? '';
 $pDescription = $product['description'] ?? '';
-$pIsNew       = isset($product['is_new'])  && $product['is_new']  == 1;
-$pIsOffer     = isset($product['is_offer']) && $product['is_offer'] == 1;
+$pIsNew          = isset($product['is_new'])  && $product['is_new']  == 1;
+$pIsOffer        = isset($product['is_offer']) && $product['is_offer'] == 1;
+$pIsFreeShipping = !isset($product['is_free_shipping']) || (int)$product['is_free_shipping'] === 1;
+$pShippingCost   = isset($product['shipping_cost']) ? (float)$product['shipping_cost'] : 0.00;
 
 // Procesar colores y tallas para pre-selección
-$selectedColors = array_map('strtolower', array_filter(array_map('trim', explode(',', (string)$pColors))));
-$selectedSizes  = array_map('strtoupper', array_filter(array_map('trim', explode(',', (string)$pSizes))));
+$rawSelectedColors   = array_values(array_filter(array_map('trim', explode(',', (string)$pColors))));
+$selectedColorsLower = array_map('strtolower', $rawSelectedColors);
+$selectedSizes       = array_map('strtoupper', array_filter(array_map('trim', explode(',', (string)$pSizes))));
 
 // Capturar mensajes de sesión antes de renderizar
 $sessionError   = $_SESSION['admin_error']   ?? '';
@@ -248,6 +251,41 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
                          value="<?= (int)$pStock ?>" min="0" required>
                 </div>
 
+                <!-- Configuración de Envío -->
+                <div class="col-12">
+                  <div class="p-3 rounded-4 border" style="background: #f8fafc; border-color: #e2e8f0 !important;">
+                    <label class="form-label fw-bold small text-muted text-uppercase mb-2 d-flex align-items-center gap-2">
+                      <i class="fas fa-shipping-fast text-dark"></i> Modalidad de Envío
+                    </label>
+                    <div class="row g-3 align-items-center">
+                      <div class="col-12 col-md-6">
+                        <div class="d-flex gap-2">
+                          <input type="radio" class="btn-check" name="is_free_shipping" id="shippingFree" value="1" <?= $pIsFreeShipping ? 'checked' : '' ?> onchange="toggleShippingCostInput(true)">
+                          <label class="btn btn-outline-success flex-fill py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" for="shippingFree" style="border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-check-circle"></i> Envío Gratis
+                          </label>
+
+                          <input type="radio" class="btn-check" name="is_free_shipping" id="shippingPaid" value="0" <?= !$pIsFreeShipping ? 'checked' : '' ?> onchange="toggleShippingCostInput(false)">
+                          <label class="btn btn-outline-dark flex-fill py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" for="shippingPaid" style="border-radius: 12px; font-size: 0.9rem;">
+                            <i class="fas fa-tag"></i> Tiene Costo
+                          </label>
+                        </div>
+                      </div>
+
+                      <div class="col-12 col-md-6" id="shippingCostContainer" style="<?= $pIsFreeShipping ? 'display: none;' : '' ?>">
+                        <div class="input-group">
+                          <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-dollar-sign"></i></span>
+                          <input type="number" name="shipping_cost" id="shippingCostInput" class="form-control py-2" 
+                                 placeholder="Costo de envío (ej: 12000)" 
+                                 value="<?= (float)$pShippingCost ?>" step="500" min="0">
+                          <span class="input-group-text bg-white text-muted small">COP</span>
+                        </div>
+                        <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">Valor del flete a cobrar en el checkout por este producto.</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Categoría -->
                 <div class="col-12 col-md-4">
                   <label class="form-label fw-bold small text-muted text-uppercase">Categoría</label>
@@ -299,12 +337,12 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
                         'Gris' => '#64748b', 'Amarillo' => '#eab308', 'Morado' => '#a855f7'
                     ];
                     $presetColorKeys = array_map('strtolower', array_keys($colorOptions));
-                    $customColorsList = array_filter($selectedColors, function($c) use ($presetColorKeys) {
-                        return !in_array($c, $presetColorKeys);
+                    $customColorsList = array_filter($rawSelectedColors, function($c) use ($presetColorKeys) {
+                        return !in_array(strtolower($c), $presetColorKeys);
                     });
                     foreach ($colorOptions as $cName => $cHex): 
                         $cLower = strtolower($cName);
-                        $isChecked = in_array($cLower, $selectedColors);
+                        $isChecked = in_array($cLower, $selectedColorsLower);
                     ?>
                       <div>
                         <input type="checkbox" name="colors[]" value="<?= $cName ?>" id="color_<?= $cName ?>" class="chip-check" <?= $isChecked ? 'checked' : '' ?>>
@@ -999,6 +1037,23 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
   });
 
 })();
+
+function toggleShippingCostInput(isFree) {
+  const container = document.getElementById('shippingCostContainer');
+  const input = document.getElementById('shippingCostInput');
+  if (container) {
+    if (isFree) {
+      container.style.display = 'none';
+      if (input) input.value = '0';
+    } else {
+      container.style.display = 'block';
+      if (input && (!input.value || parseFloat(input.value) === 0)) {
+        input.value = '12000';
+      }
+      if (input) input.focus();
+    }
+  }
+}
 </script>
 
 <?php require __DIR__ . '/../layouts/footer.php'; ?>

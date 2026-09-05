@@ -69,9 +69,50 @@ class Order {
                 $quantity = intval($item['quantity'] ?? $item['qty'] ?? $item['cantidad'] ?? 1);
                 $price = floatval($item['price'] ?? 0);
                 $subtotal = $price * $quantity;
+                $productId = null;
+
+                // 1. Validar si viene product_id o id numérico válido
+                $candId = $item['product_id'] ?? $item['id'] ?? null;
+                if (!empty($candId) && is_numeric($candId) && (int)$candId > 0) {
+                    $chk = $this->conn->prepare("SELECT id FROM products WHERE id = :id LIMIT 1");
+                    $chk->execute([':id' => (int)$candId]);
+                    $productId = $chk->fetchColumn() ?: null;
+                }
+
+                // 2. Buscar por slug (con guion y con guion bajo)
+                if (!$productId && !empty($item['slug'])) {
+                    $slug1 = strtolower(trim($item['slug']));
+                    $slug2 = str_replace('-', '_', $slug1);
+                    $slug3 = str_replace('_', '-', $slug1);
+                    $pStmt = $this->conn->prepare("SELECT id FROM products WHERE slug IN (:s1, :s2, :s3) LIMIT 1");
+                    $pStmt->execute([':s1' => $slug1, ':s2' => $slug2, ':s3' => $slug3]);
+                    $productId = $pStmt->fetchColumn() ?: null;
+                }
+
+                // 3. Buscar por nombre exacto o decodificado
+                if (!$productId && !empty($item['name'])) {
+                    $rawName = trim($item['name']);
+                    $cleanName = trim(html_entity_decode($rawName, ENT_QUOTES, 'UTF-8'));
+                    $pStmt = $this->conn->prepare("SELECT id FROM products WHERE name = :n1 OR name = :n2 OR LOWER(name) = LOWER(:n2) LIMIT 1");
+                    $pStmt->execute([':n1' => $rawName, ':n2' => $cleanName]);
+                    $productId = $pStmt->fetchColumn() ?: null;
+                }
+
+                // 4. Buscar por aproximación (LIKE)
+                if (!$productId && !empty($item['name']) && stripos($item['name'], 'inscripción') === false && stripos($item['name'], 'carrera') === false) {
+                    $cleanName = trim(html_entity_decode($item['name'], ENT_QUOTES, 'UTF-8'));
+                    $words = explode(' ', $cleanName);
+                    if (count($words) >= 2) {
+                        $keyword = '%' . $words[0] . '%' . $words[1] . '%';
+                        $likeStmt = $this->conn->prepare("SELECT id FROM products WHERE name LIKE :kw LIMIT 1");
+                        $likeStmt->execute([':kw' => $keyword]);
+                        $productId = $likeStmt->fetchColumn() ?: null;
+                    }
+                }
+
                 $itemStmt->execute([
                     ':order_id' => $orderId,
-                    ':product_id' => $item['product_id'] ?? null,
+                    ':product_id' => $productId,
                     ':product_name' => $item['name'] ?? $item['product_name'] ?? 'Producto',
                     ':price' => $price,
                     ':quantity' => $quantity,
@@ -80,6 +121,11 @@ class Order {
             }
 
             $this->conn->commit();
+
+            // Si la orden se crea directamente en estado paid, descontar stock
+            if (isset($data['status']) && strtolower($data['status']) === 'paid') {
+                $this->reduceStockForOrder($orderId);
+            }
 
             return [
                 'id' => $orderId,
@@ -118,10 +164,23 @@ class Order {
     }
 
     /**
-     * Actualiza el estado de la orden
+     * Actualiza el estado de la orden y descuenta stock si pasa a paid
      */
     public function updateStatus(int $orderId, string $status, ?string $transactionRef = null): bool {
         try {
+            try {
+                $checkStmt = $this->conn->prepare("SELECT status, stock_reduced FROM orders WHERE id = :id LIMIT 1");
+                $checkStmt->execute([':id' => $orderId]);
+                $orderRow = $checkStmt->fetch(PDO::FETCH_ASSOC);
+            } catch (PDOException $exCol) {
+                try {
+                    $this->conn->exec("ALTER TABLE orders ADD COLUMN stock_reduced TINYINT(1) NOT NULL DEFAULT 0");
+                } catch (\Throwable $t) {}
+                $checkStmt = $this->conn->prepare("SELECT status, stock_reduced FROM orders WHERE id = :id LIMIT 1");
+                $checkStmt->execute([':id' => $orderId]);
+                $orderRow = $checkStmt->fetch(PDO::FETCH_ASSOC);
+            }
+
             $sql = "UPDATE orders SET status = :status, updated_at = NOW()";
             $params = [':status' => $status, ':order_id' => $orderId];
 
@@ -132,8 +191,96 @@ class Order {
 
             $sql .= " WHERE id = :order_id";
             $stmt = $this->conn->prepare($sql);
-            return $stmt->execute($params);
+            $res = $stmt->execute($params);
+
+            // Si pasa a estado 'paid' y el stock no ha sido descontado aún:
+            if ($res && strtolower($status) === 'paid' && empty($orderRow['stock_reduced'])) {
+                $this->reduceStockForOrder($orderId);
+            }
+
+            return $res;
         } catch (PDOException $e) {
+            error_log("Order::updateStatus() Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Reduce el stock de los productos adquiridos en una orden pagada
+     */
+    public function reduceStockForOrder(int $orderId): bool {
+        try {
+            try {
+                $check = $this->conn->prepare("SELECT stock_reduced FROM orders WHERE id = :id LIMIT 1");
+                $check->execute([':id' => $orderId]);
+                $isReduced = $check->fetchColumn();
+            } catch (PDOException $exCol) {
+                try {
+                    $this->conn->exec("ALTER TABLE orders ADD COLUMN stock_reduced TINYINT(1) NOT NULL DEFAULT 0");
+                } catch (\Throwable $t) {}
+                $isReduced = 0;
+            }
+
+            if ($isReduced) {
+                return true; // Ya fue descontado previamente (idempotente)
+            }
+
+            $stmt = $this->conn->prepare("SELECT * FROM order_items WHERE order_id = :order_id");
+            $stmt->execute([':order_id' => $orderId]);
+            $items = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+            foreach ($items as $item) {
+                $qty = max(1, intval($item['quantity'] ?? 1));
+                $productId = $item['product_id'] ?? null;
+
+                // Si no tiene product_id directo, intentar localizar el producto
+                if (!$productId && !empty($item['product_name'])) {
+                    $rawName = trim($item['product_name']);
+                    $cleanName = trim(html_entity_decode($rawName, ENT_QUOTES, 'UTF-8'));
+                    $slug1 = strtolower(str_replace(' ', '_', $cleanName));
+                    $slug2 = strtolower(str_replace(' ', '-', $cleanName));
+
+                    // 1. Por nombre exacto o slug
+                    $pStmt = $this->conn->prepare("SELECT id FROM products WHERE name = :n1 OR name = :n2 OR slug = :s1 OR slug = :s2 LIMIT 1");
+                    $pStmt->execute([
+                        ':n1' => $rawName,
+                        ':n2' => $cleanName,
+                        ':s1' => $slug1,
+                        ':s2' => $slug2
+                    ]);
+                    $productId = $pStmt->fetchColumn() ?: null;
+
+                    // 2. Por aproximación (LIKE) si no es inscripción de carrera
+                    if (!$productId && stripos($rawName, 'inscripción') === false && stripos($rawName, 'carrera') === false) {
+                        $words = explode(' ', $cleanName);
+                        if (count($words) >= 2) {
+                            $likeStmt = $this->conn->prepare("SELECT id FROM products WHERE name LIKE :kw LIMIT 1");
+                            $likeStmt->execute([':kw' => '%' . $words[0] . '%' . $words[1] . '%']);
+                            $productId = $likeStmt->fetchColumn() ?: null;
+                        }
+                    }
+                }
+
+                if ($productId) {
+                    if (empty($item['product_id'])) {
+                        $upItem = $this->conn->prepare("UPDATE order_items SET product_id = :product_id WHERE id = :item_id");
+                        $upItem->execute([':product_id' => $productId, ':item_id' => $item['id']]);
+                    }
+                    $update = $this->conn->prepare("UPDATE products SET stock = GREATEST(0, stock - :qty) WHERE id = :product_id");
+                    $update->execute([
+                        ':qty' => $qty,
+                        ':product_id' => $productId
+                    ]);
+                    error_log("[Order::reduceStockForOrder] Orden {$orderId}: Stock reducido en {$qty} unidad(es) para producto ID {$productId} ('{$item['product_name']}').");
+                }
+            }
+
+            $markStmt = $this->conn->prepare("UPDATE orders SET stock_reduced = 1 WHERE id = :id");
+            $markStmt->execute([':id' => $orderId]);
+
+            return true;
+        } catch (PDOException $e) {
+            error_log("Order::reduceStockForOrder() Error: " . $e->getMessage());
             return false;
         }
     }

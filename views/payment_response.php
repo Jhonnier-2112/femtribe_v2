@@ -7,7 +7,7 @@ $ord = $order ?? [];
 $status = strtoupper($tx['status'] ?? $ord['status'] ?? 'PENDING');
 ?>
 
-<div class="container py-5">
+<div class="container py-5" style="margin-top: 100px; padding-top: 20px;">
     <div class="row justify-content-center">
         <div class="col-md-7 col-lg-6">
             <div class="card shadow-lg border-0 rounded-4 text-center p-4 p-md-5">
