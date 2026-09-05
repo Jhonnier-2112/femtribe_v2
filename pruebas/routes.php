@@ -12,6 +12,7 @@ $router->get('/', 'HomeController@index');
 $router->get('/nosotros', function() use ($frontendViews) {
     require $frontendViews . '/nosotros.php';
 });
+$router->post('/contacto', 'HomeController@contacto');
 
 // Rutas Legales
 $router->get('/terminos', function() use ($frontendViews) {

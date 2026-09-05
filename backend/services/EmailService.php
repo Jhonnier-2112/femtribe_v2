@@ -388,4 +388,99 @@ class EmailService {
                 return !empty($tipo) ? ucfirst($tipo) : 'Documento';
         }
     }
+
+    public function sendContactLeadEmail(array $data): bool {
+        try {
+            $this->mailer->clearAddresses();
+            $this->mailer->clearAttachments();
+            $this->mailer->clearCustomHeaders();
+            $this->mailer->clearReplyTos();
+
+            // Destinatario: MAIL_FROM_ADDRESS desde .env
+            $toEmail = getenv('MAIL_FROM_ADDRESS') ?: (\EmailConfig::getUsername() ?: 'femtribe25@gmail.com');
+            $toName  = getenv('MAIL_FROM_NAME') ?: 'FEMTRIBE';
+            $this->mailer->addAddress($toEmail, $toName);
+
+            // Remitente SMTP
+            $fromEmail = \EmailConfig::getUsername();
+            $fromName  = getenv('MAIL_FROM_NAME') ?: 'FEMTRIBE Web';
+            $this->mailer->setFrom($fromEmail, $fromName);
+
+            // Reply-to al correo del remitente del formulario
+            $senderEmail = trim($data['email'] ?? '');
+            $senderName  = trim($data['nombre'] ?? '');
+            if (!empty($senderEmail)) {
+                $this->mailer->addReplyTo($senderEmail, $senderName ?: $senderEmail);
+            }
+
+            $this->mailer->isHTML(true);
+            $this->mailer->Subject = '📩 Nuevo contacto web: ' . ($senderName ?: 'Interesado') . ' - ' . ($data['origen'] ?? '¿ESTÁS LISTO?');
+
+            $nombreEsc  = htmlspecialchars($senderName);
+            $emailEsc   = htmlspecialchars($senderEmail);
+            $mensajeEsc = nl2br(htmlspecialchars(trim($data['mensaje'] ?? '')));
+            $origenEsc  = htmlspecialchars($data['origen'] ?? 'Sección ¿ESTÁS LISTO? (Web)');
+            $fecha      = date('d/m/Y h:i A');
+
+            $body = '<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Mensaje de Contacto</title>
+    <style>
+        body { font-family: "Montserrat", Arial, sans-serif; background-color: #f4f4f7; margin: 0; padding: 20px; color: #222; }
+        .card { background-color: #ffffff; max-width: 600px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 5px solid #B2D81F; }
+        .header { background-color: #003A77; color: #ffffff; padding: 25px 20px; text-align: center; }
+        .header h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: 0.5px; }
+        .header p { margin: 6px 0 0; font-size: 13px; color: #B2D81F; font-weight: 600; }
+        .content { padding: 30px 25px; }
+        .field { margin-bottom: 20px; }
+        .label { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #6b7280; letter-spacing: 0.8px; margin-bottom: 4px; }
+        .value { font-size: 15px; color: #111827; font-weight: 600; }
+        .message-box { background-color: #f8fafc; border-left: 4px solid #B2D81F; padding: 16px 20px; border-radius: 6px; font-size: 14px; line-height: 1.6; color: #1f2937; margin-top: 8px; border: 1px solid #e2e8f0; border-left-width: 4px; border-left-color: #B2D81F; }
+        .footer { background-color: #f9fafb; padding: 18px 20px; text-align: center; font-size: 12px; color: #6b7280; border-top: 1px solid #e5e7eb; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="header">
+            <h2>Nuevo Contacto desde la Web</h2>
+            <p>' . $origenEsc . '</p>
+        </div>
+        <div class="content">
+            <div class="field">
+                <div class="label">Nombre</div>
+                <div class="value">👤 ' . $nombreEsc . '</div>
+            </div>
+            <div class="field">
+                <div class="label">Correo Electrónico</div>
+                <div class="value">✉️ <a href="mailto:' . $emailEsc . '" style="color: #003A77; text-decoration: none;">' . $emailEsc . '</a></div>
+            </div>
+            <div class="field">
+                <div class="label">Fecha y Hora</div>
+                <div class="value">📅 ' . $fecha . '</div>
+            </div>
+            <div class="field">
+                <div class="label">Mensaje</div>
+                <div class="message-box">' . $mensajeEsc . '</div>
+            </div>
+        </div>
+        <div class="footer">
+            Puedes responder directamente a este correo para comunicarte con <strong>' . $nombreEsc . '</strong> (' . $emailEsc . ').
+        </div>
+    </div>
+</body>
+</html>';
+
+            $this->mailer->Body = $body;
+            $this->mailer->AltBody = "Nuevo mensaje de contacto web ({$origenEsc}):\n\nNombre: {$senderName}\nCorreo: {$senderEmail}\nFecha: {$fecha}\n\nMensaje:\n" . trim($data['mensaje'] ?? '');
+
+            $result = $this->mailer->send();
+            error_log("Email de contacto enviado para " . $senderEmail . ": " . ($result ? "ÉXITO" : "FALLÓ"));
+            return (bool)$result;
+        } catch (Exception $e) {
+            error_log("Error en sendContactLeadEmail: " . $e->getMessage());
+            throw $e;
+        }
+    }
 }

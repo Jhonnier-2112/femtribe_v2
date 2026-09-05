@@ -397,8 +397,9 @@
             <label for="leadMensaje" class="ft-lead-label">Mensaje</label>
             <textarea class="ft-lead-input ft-lead-textarea form-control" id="leadMensaje" name="mensaje" rows="4" required placeholder="¿En qué podemos ayudarte?"></textarea>
           </div>
+          <div id="leadFormFeedback" class="mb-3" style="display: none;"></div>
           <div class="d-flex justify-content-end">
-            <button type="submit" class="ft-lead-btn">Enviar</button>
+            <button type="submit" class="ft-lead-btn" id="leadSubmitBtn">Enviar</button>
           </div>
         </form>
       </div>
@@ -3038,6 +3039,89 @@
         }
       });
     });
+
+    // Formulario ¿ESTÁS LISTO? -> Enviar a MAIL_FROM_ADDRESS (femtribe25@gmail.com) sin redirección
+    const leadForm = document.getElementById('leadFormHome');
+    const leadFeedback = document.getElementById('leadFormFeedback');
+    if (leadForm) {
+      leadForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const nombreInput = document.getElementById('leadNombre');
+        const emailInput = document.getElementById('leadEmail');
+        const mensajeInput = document.getElementById('leadMensaje');
+        const submitBtn = document.getElementById('leadSubmitBtn') || leadForm.querySelector('button[type="submit"]');
+
+        const nombre = (nombreInput ? nombreInput.value : '').trim();
+        const email = (emailInput ? emailInput.value : '').trim();
+        const mensaje = (mensajeInput ? mensajeInput.value : '').trim();
+
+        if (leadFeedback) {
+          leadFeedback.style.display = 'none';
+          leadFeedback.innerHTML = '';
+        }
+
+        if (!nombre || !email || !mensaje) {
+          if (leadFeedback) {
+            leadFeedback.className = 'alert alert-warning py-2 px-3 small rounded-3';
+            leadFeedback.style.display = 'block';
+            leadFeedback.textContent = 'Por favor completa todos los campos del formulario.';
+          }
+          if (!nombre && nombreInput) nombreInput.focus();
+          else if (!email && emailInput) emailInput.focus();
+          else if (!mensaje && mensajeInput) mensajeInput.focus();
+          return;
+        }
+
+        const originalBtnContent = submitBtn ? submitBtn.innerHTML : 'Enviar';
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Enviando...';
+        }
+
+        try {
+          const formData = new FormData(leadForm);
+          const response = await fetch(leadForm.getAttribute('action') || '/contacto', {
+            method: 'POST',
+            body: formData,
+            headers: {
+              'Accept': 'application/json'
+            }
+          });
+
+          const data = await response.json().catch(() => null);
+
+          if (response.ok && data && data.success) {
+            leadForm.reset();
+            if (leadFeedback) {
+              leadFeedback.className = 'alert py-2 px-3 small rounded-3 fw-semibold';
+              leadFeedback.style.backgroundColor = '#B2D81F';
+              leadFeedback.style.color = '#003A77';
+              leadFeedback.style.border = '1px solid #9dc415';
+              leadFeedback.style.display = 'block';
+              leadFeedback.textContent = '✓ ' + (data.message || '¡Mensaje enviado con éxito! Te responderemos pronto.');
+            }
+          } else {
+            if (leadFeedback) {
+              leadFeedback.className = 'alert alert-danger py-2 px-3 small rounded-3';
+              leadFeedback.style.display = 'block';
+              leadFeedback.textContent = '✕ ' + ((data && data.message) ? data.message : 'Error al enviar el mensaje. Por favor intenta de nuevo.');
+            }
+          }
+        } catch (err) {
+          if (leadFeedback) {
+            leadFeedback.className = 'alert alert-danger py-2 px-3 small rounded-3';
+            leadFeedback.style.display = 'block';
+            leadFeedback.textContent = '✕ Error de conexión al enviar el formulario. Por favor intenta de nuevo.';
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnContent;
+          }
+        }
+      });
+    }
   });
 </script>
 

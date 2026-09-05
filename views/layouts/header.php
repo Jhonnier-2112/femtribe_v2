@@ -1,3 +1,9 @@
+<?php
+$siteWaNumber = defined('WHATSAPP_BUSINESS_NUMBER') 
+    ? WHATSAPP_BUSINESS_NUMBER 
+    : (getenv('WHATSAPP_BUSINESS_NUMBER') ?: '573104771933');
+$siteWaClean = preg_replace('/[^0-9]/', '', $siteWaNumber);
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -194,7 +200,7 @@
 
                     <!-- Botones de Acción -->
                     <div class="d-flex flex-column gap-2">
-                        <a href="https://wa.me/573104771933?text=Hola%20FEMTRIBE,%20quisiera%20recibir%20notificaci%C3%B3n%20cuando%20se%20habiliten%20las%20inscripciones." target="_blank" class="btn btn-dark w-100 py-2.5 rounded-pill fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm" id="proxModalWhatsappBtn" style="background: #25D366; border-color: #25D366; color: #ffffff;">
+                        <a href="https://wa.me/<?= $siteWaClean ?>?text=Hola%20FEMTRIBE,%20quisiera%20recibir%20notificaci%C3%B3n%20cuando%20se%20habiliten%20las%20inscripciones." target="_blank" class="btn btn-dark w-100 py-2.5 rounded-pill fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm" id="proxModalWhatsappBtn" style="background: #25D366; border-color: #25D366; color: #ffffff;">
                             <i class="fab fa-whatsapp fs-5"></i>
                             <span id="proxModalWhatsappText">Avisarme por WhatsApp</span>
                         </a>
@@ -323,7 +329,8 @@
         // Variables globales de configuración de módulos
         window.FEMTRIBE_CONFIG = {
             registrationsEnabled: <?= (defined('ENABLE_REGISTRATIONS') && ENABLE_REGISTRATIONS) ? 'true' : 'false' ?>,
-            productsEnabled: <?= (defined('ENABLE_PRODUCTS') && ENABLE_PRODUCTS) ? 'true' : 'false' ?>
+            productsEnabled: <?= (defined('ENABLE_PRODUCTS') && ENABLE_PRODUCTS) ? 'true' : 'false' ?>,
+            whatsappNumber: '<?= $siteWaClean ?>'
         };
 
         // Función global para desplegar el Modal de Próximamente (Inscripciones / Productos)
@@ -350,7 +357,7 @@
                 if (messageEl) messageEl.innerHTML = customData.message || 'Nuestra colección exclusiva deportiva y accesorios estará disponible muy pronto para ti.';
                 if (noticeTextEl) noticeTextEl.textContent = customData.notice || 'Estamos preparando prendas de alto rendimiento y productos exclusivos. ¡Muy pronto abriremos compras!';
                 if (waBtn) {
-                    waBtn.href = 'https://wa.me/573104771933?text=' + encodeURIComponent('Hola FEMTRIBE, me gustaría recibir información sobre el lanzamiento de los productos de la tienda.');
+                    waBtn.href = 'https://wa.me/<?= $siteWaClean ?>?text=' + encodeURIComponent('Hola FEMTRIBE, me gustaría recibir información sobre el lanzamiento de los productos de la tienda.');
                 }
                 if (waText) waText.textContent = 'Consultar Productos por WhatsApp';
             } else {
@@ -365,7 +372,7 @@
                 if (messageEl) messageEl.innerHTML = customData.message || 'Estamos ultimando los detalles para que vivas una experiencia única en <strong>Corre con FEMTRIBE</strong>. Las inscripciones se habilitarán muy pronto.';
                 if (noticeTextEl) noticeTextEl.textContent = customData.notice || 'Mantente atenta(o) a nuestras redes oficiales o escríbenos a WhatsApp para ser de las primeras en enterarte de la apertura de cupos.';
                 if (waBtn) {
-                    waBtn.href = 'https://wa.me/573104771933?text=' + encodeURIComponent('Hola FEMTRIBE, quisiera recibir notificación cuando se habiliten las inscripciones de la carrera.');
+                    waBtn.href = 'https://wa.me/<?= $siteWaClean ?>?text=' + encodeURIComponent('Hola FEMTRIBE, quisiera recibir notificación cuando se habiliten las inscripciones de la carrera.');
                 }
                 if (waText) waText.textContent = 'Avisarme por WhatsApp';
             }
