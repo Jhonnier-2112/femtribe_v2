@@ -60,9 +60,25 @@ class Order {
 
             $orderId = $this->conn->lastInsertId();
 
+            // Asegurar que existan columnas size, gender, color en order_items
+            $hasCols = true;
+            try {
+                $chkCol = $this->conn->query("SHOW COLUMNS FROM order_items LIKE 'size'")->fetch();
+                if (!$chkCol) {
+                    $this->conn->exec("ALTER TABLE order_items ADD COLUMN size VARCHAR(20) NULL AFTER product_name, ADD COLUMN gender VARCHAR(20) NULL AFTER size, ADD COLUMN color VARCHAR(50) NULL AFTER gender");
+                }
+            } catch (\Throwable $t) {
+                $hasCols = false;
+            }
+
             // Insertar items de la orden
-            $itemSql = "INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal, created_at)
-                        VALUES (:order_id, :product_id, :product_name, :price, :quantity, :subtotal, NOW())";
+            if ($hasCols) {
+                $itemSql = "INSERT INTO order_items (order_id, product_id, product_name, size, gender, color, price, quantity, subtotal, created_at)
+                            VALUES (:order_id, :product_id, :product_name, :size, :gender, :color, :price, :quantity, :subtotal, NOW())";
+            } else {
+                $itemSql = "INSERT INTO order_items (order_id, product_id, product_name, price, quantity, subtotal, created_at)
+                            VALUES (:order_id, :product_id, :product_name, :price, :quantity, :subtotal, NOW())";
+            }
             $itemStmt = $this->conn->prepare($itemSql);
 
             foreach ($items as $item) {
@@ -110,14 +126,21 @@ class Order {
                     }
                 }
 
-                $itemStmt->execute([
+                $itemParams = [
                     ':order_id' => $orderId,
                     ':product_id' => $productId,
                     ':product_name' => $item['name'] ?? $item['product_name'] ?? 'Producto',
                     ':price' => $price,
                     ':quantity' => $quantity,
                     ':subtotal' => $subtotal
-                ]);
+                ];
+                if ($hasCols) {
+                    $itemParams[':size'] = !empty($item['size']) ? trim((string)$item['size']) : null;
+                    $itemParams[':gender'] = !empty($item['gender']) ? trim((string)$item['gender']) : null;
+                    $itemParams[':color'] = !empty($item['color']) ? trim((string)$item['color']) : null;
+                }
+
+                $itemStmt->execute($itemParams);
             }
 
             $this->conn->commit();
@@ -266,12 +289,67 @@ class Order {
                         $upItem = $this->conn->prepare("UPDATE order_items SET product_id = :product_id WHERE id = :item_id");
                         $upItem->execute([':product_id' => $productId, ':item_id' => $item['id']]);
                     }
-                    $update = $this->conn->prepare("UPDATE products SET stock = GREATEST(0, stock - :qty) WHERE id = :product_id");
-                    $update->execute([
-                        ':qty' => $qty,
-                        ':product_id' => $productId
-                    ]);
-                    error_log("[Order::reduceStockForOrder] Orden {$orderId}: Stock reducido en {$qty} unidad(es) para producto ID {$productId} ('{$item['product_name']}').");
+
+                    // Consultar stock y size_stock del producto
+                    $pStmt = $this->conn->prepare("SELECT stock, size_stock FROM products WHERE id = :id LIMIT 1");
+                    $pStmt->execute([':id' => $productId]);
+                    $pRow = $pStmt->fetch(PDO::FETCH_ASSOC);
+
+                    $itemSize = !empty($item['size']) ? trim((string)$item['size']) : '';
+                    $itemGender = !empty($item['gender']) ? strtolower(trim((string)$item['gender'])) : '';
+
+                    $reducedBySize = false;
+                    if ($pRow && !empty($pRow['size_stock'])) {
+                        $stockMap = json_decode($pRow['size_stock'], true);
+                        if (is_array($stockMap)) {
+                            // Normalizar clave de género
+                            if ($itemGender === 'men' || $itemGender === 'caballero') $itemGender = 'hombre';
+                            if ($itemGender === 'women' || $itemGender === 'dama') $itemGender = 'mujer';
+                            if (in_array($itemGender, ['niño', 'niños', 'ninos', 'child', 'children'], true)) $itemGender = 'kids';
+
+                            if ($itemGender && isset($stockMap[$itemGender]) && is_array($stockMap[$itemGender]) && isset($stockMap[$itemGender][$itemSize])) {
+                                $stockMap[$itemGender][$itemSize] = max(0, intval($stockMap[$itemGender][$itemSize]) - $qty);
+                                $reducedBySize = true;
+                            } else {
+                                // Buscar la talla en cualquier género si no vino género específico
+                                foreach (['mujer', 'hombre', 'kids'] as $gKey) {
+                                    if (isset($stockMap[$gKey][$itemSize])) {
+                                        $stockMap[$gKey][$itemSize] = max(0, intval($stockMap[$gKey][$itemSize]) - $qty);
+                                        $reducedBySize = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if ($reducedBySize) {
+                                // Recalcular total general sumando todas las tallas
+                                $newTotalStock = 0;
+                                foreach ($stockMap as $g => $sList) {
+                                    if (is_array($sList)) {
+                                        foreach ($sList as $sz => $cnt) {
+                                            $newTotalStock += max(0, intval($cnt));
+                                        }
+                                    }
+                                }
+                                $update = $this->conn->prepare("UPDATE products SET size_stock = :size_stock, stock = :stock WHERE id = :product_id");
+                                $update->execute([
+                                    ':size_stock' => json_encode($stockMap, JSON_UNESCAPED_UNICODE),
+                                    ':stock' => $newTotalStock,
+                                    ':product_id' => $productId
+                                ]);
+                                error_log("[Order::reduceStockForOrder] Orden {$orderId}: Stock por talla ({$itemGender} - {$itemSize}) reducido en {$qty}. Nuevo stock total: {$newTotalStock} para producto ID {$productId}.");
+                            }
+                        }
+                    }
+
+                    if (!$reducedBySize) {
+                        $update = $this->conn->prepare("UPDATE products SET stock = GREATEST(0, stock - :qty) WHERE id = :product_id");
+                        $update->execute([
+                            ':qty' => $qty,
+                            ':product_id' => $productId
+                        ]);
+                        error_log("[Order::reduceStockForOrder] Orden {$orderId}: Stock general reducido en {$qty} unidad(es) para producto ID {$productId} ('{$item['product_name']}').");
+                    }
                 }
             }
 

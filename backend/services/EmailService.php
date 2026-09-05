@@ -237,10 +237,16 @@ class EmailService {
         // Datos opcionales: Mascota / Acudiente
         $extraInfoHtml = '';
         if (!empty($participantData['nombre_mascota'])) {
-            $extraInfoHtml .= '<tr><td style="padding: 6px 0; color: #666; font-size: 13px;">🐾 Mascota:</td><td style="padding: 6px 0; font-weight: 600; color: #111; font-size: 13px;">' . htmlspecialchars($participantData['nombre_mascota']) . ' (' . htmlspecialchars($participantData['raza_mascota'] ?? 'Criollo') . ')</td></tr>';
+            $panoleteStr = !empty($participantData['talla_panolete_mascota']) ? ' - Pañoleta: ' . htmlspecialchars($participantData['talla_panolete_mascota']) : '';
+            $extraInfoHtml .= '<tr><td style="padding: 6px 0; color: #666; font-size: 13px;">🐾 Mascota:</td><td style="padding: 6px 0; font-weight: 600; color: #111; font-size: 13px;">' . htmlspecialchars($participantData['nombre_mascota']) . ' (' . htmlspecialchars($participantData['raza_mascota'] ?? 'Criollo') . ')' . $panoleteStr . '</td></tr>';
+        }
+        if (!empty($participantData['modalidad_nino']) || ($participantData['categoria_participante'] ?? '') === 'nino') {
+            $modTxt = (($participantData['modalidad_nino'] ?? '') === 'solo') ? 'Correrá solo (De 8 a 10 años)' : 'Acompañado por un adulto';
+            $extraInfoHtml .= '<tr><td style="padding: 6px 0; color: #666; font-size: 13px;">🏃 Modalidad 3K KIDS:</td><td style="padding: 6px 0; font-weight: 600; color: #111; font-size: 13px;">' . htmlspecialchars($modTxt) . '</td></tr>';
         }
         if (!empty($participantData['acudiente_nombre'])) {
-            $extraInfoHtml .= '<tr><td style="padding: 6px 0; color: #666; font-size: 13px;">👤 Acudiente:</td><td style="padding: 6px 0; font-weight: 600; color: #111; font-size: 13px;">' . htmlspecialchars($participantData['acudiente_nombre']) . ' (Doc: ' . htmlspecialchars($participantData['acudiente_documento'] ?? '') . ')</td></tr>';
+            $adultLabel = (($participantData['modalidad_nino'] ?? '') === 'solo') ? '👤 Acudiente/Tutor:' : '👥 Adulto Acompañante:';
+            $extraInfoHtml .= '<tr><td style="padding: 6px 0; color: #666; font-size: 13px;">' . $adultLabel . '</td><td style="padding: 6px 0; font-weight: 600; color: #111; font-size: 13px;">' . htmlspecialchars($participantData['acudiente_nombre']) . ' (Doc: ' . htmlspecialchars($participantData['acudiente_documento'] ?? '') . ')</td></tr>';
         }
 
         $fechaRegistro = !empty($participantData['created_at']) ? date('d/m/Y h:i A', strtotime($participantData['created_at'])) : date('d/m/Y h:i A');
@@ -331,15 +337,57 @@ class EmailService {
                 </table>
             </div>
 
-            <!-- Información Importante -->
-            <div class="card" style="background-color: #f5f5f5;">
-                <h3 class="card-title" style="border-bottom-color: #333;">📦 Entrega de Kits</h3>
-                <p style="font-size: 13px; color: #444; margin: 0 0 8px 0;">
-                    Para reclamar tu kit oficial y dorsal de carrera, deberás presentar tu <strong>documento de identidad original</strong> o este comprobante con el número de orden <strong>#' . $orderNumber . '</strong>.
-                </p>
-                <p style="font-size: 12px; color: #666; margin: 0;">
-                    Las fechas exactas, lugar y horarios de entrega de kits serán publicados en nuestra plataforma web y redes oficiales.
-                </p>
+            <!-- Información Importante: Entrega de Kits -->
+            <div class="card" style="background-color: #f8fafc; border-left: 4px solid #6da632;">
+                <h3 class="card-title" style="border-bottom-color: #6da632; color: #1a1a1a;">📦 Entrega de Kits</h3>
+                <table class="table-info" style="margin-bottom: 12px;">
+                    <tr>
+                        <td class="td-label" style="width: 32%; color: #555;">📅 Fechas y Horarios:</td>
+                        <td class="td-val" style="width: 68%;">
+                            • <strong>Viernes, 13 de noviembre:</strong> 8:00 a.m. a 6:00 p.m.<br>
+                            • <strong>Sábado, 14 de noviembre:</strong> 8:00 a.m. a 1:00 p.m.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td-label" style="color: #555;">📍 Lugar:</td>
+                        <td class="td-val">
+                            <strong>Pacandé - Casa de la Cultura de Ricaurte</strong><br>
+                            <span style="font-size: 12px; color: #666; font-weight: normal;">Cra. 16 # 3-26, Ricaurte, Cundinamarca</span>
+                        </td>
+                    </tr>
+                </table>
+                <div style="border-top: 1px dashed #d1d5db; padding-top: 10px; margin-top: 8px;">
+                    <p style="font-size: 12.5px; color: #444; margin: 0; line-height: 1.5;">
+                        📌 Para reclamar tu kit oficial y dorsal de carrera, deberás presentar tu <strong>documento de identidad original</strong> o este comprobante con el número de orden <strong>#' . $orderNumber . '</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Días de Carrera y Puntos de Encuentro -->
+            <div class="card" style="background-color: #f8fafc; border-left: 4px solid #003A77;">
+                <h3 class="card-title" style="border-bottom-color: #003A77; color: #1a1a1a;">🏁 Días de Carrera y Puntos de Encuentro</h3>
+                <table class="table-info" style="margin-bottom: 12px;">
+                    <tr>
+                        <td class="td-label" style="width: 32%; color: #555;">🏃 3K:</td>
+                        <td class="td-val" style="width: 68%;">
+                            <strong>Sábado, 14 de noviembre</strong><br>
+                            <span style="font-size: 13px; color: #222;"><strong>Punto de encuentro:</strong> Iglesia Antigua de la Inmaculada Concepción</span><br>
+                            <span style="font-size: 12px; color: #666;">Dirección: Carrera 16 # 16-2</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="td-label" style="padding-top: 10px; color: #555;">🏃 5K y 10K:</td>
+                        <td class="td-val" style="padding-top: 10px;">
+                            <strong>Domingo, 15 de noviembre</strong><br>
+                            <span style="font-size: 13px; color: #222;"><strong>Punto de encuentro:</strong> Parque Biosaludable</span>
+                        </td>
+                    </tr>
+                </table>
+                <div style="background-color: #fff9db; border-left: 3px solid #f59e0b; padding: 10px 12px; border-radius: 6px; margin-top: 10px;">
+                    <p style="font-size: 12px; color: #78350f; margin: 0; line-height: 1.45;">
+                        📢 <strong>Importante:</strong> Debes estar muy pendiente a nuestras redes sociales oficiales (<a href="https://www.instagram.com/fem_tribe" target="_blank" style="color: #003A77; font-weight: 700; text-decoration: underline;">@fem_tribe</a> en Instagram) ante cualquier actualización o cambio que se pueda realizar en los horarios o puntos de encuentro.
+                    </p>
+                </div>
             </div>
 
             <!-- Bloque de Soporte y Dudas (femtribe25@gmail.com) -->

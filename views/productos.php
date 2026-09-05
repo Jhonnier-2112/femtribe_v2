@@ -212,10 +212,19 @@
                             <div class="filters-list">
                               <label class="filter-option">
                                 <input type="checkbox" name="type[]" data-group="accesorios" value="botella_plegable" <?php echo in_array('botella_plegable', $currentTypesMobile) ? 'checked' : ''; ?> />
-                                <span>Termo Plegable</span>
+                                <span>Termo / Botella Plegable</span>
+                              </label>
+                              <label class="filter-option">
+                                <input type="checkbox" name="type[]" data-group="accesorios" value="accesorios" <?php echo in_array('accesorios', $currentTypesMobile) ? 'checked' : ''; ?> />
+                                <span>Accesorios Varios</span>
                               </label>
                             </div>
                           </div>
+                        </div>
+                        <div class="mt-3">
+                          <a href="<?php echo $hrefTodos; ?>" class="btn btn-sm btn-outline-dark w-100 rounded-pill py-2 text-uppercase fw-bold" style="font-size:0.78rem;">
+                            <i class="fas fa-list me-1"></i>Ver Todos los Productos
+                          </a>
                         </div>
                       </form>
                     </div>
@@ -285,6 +294,23 @@
         
 
         <?php if (!empty($products)) : ?>
+            <?php
+            // Cargar en un solo query las imágenes de product_media para todos los productos de la página
+            $productMediaMap = [];
+            $pIds = array_filter(array_map(function($prod) { return (int)($prod['id'] ?? 0); }, $products));
+            if (!empty($pIds)) {
+                try {
+                    $dbMed = (new \App\Config\Database())->getConnection();
+                    if ($dbMed) {
+                        $inIds = implode(',', $pIds);
+                        $stmtMed = $dbMed->query("SELECT product_id, type, url FROM product_media WHERE product_id IN ($inIds) AND type = 'image' ORDER BY sort_order ASC, id ASC");
+                        while ($mRow = $stmtMed->fetch(PDO::FETCH_ASSOC)) {
+                            $productMediaMap[(int)$mRow['product_id']][] = $mRow['url'];
+                        }
+                    }
+                } catch (\Throwable $e) {}
+            }
+            ?>
             <div class="row g-4">
                 <?php foreach ($products as $p) : ?>
                     <div class="col-6 col-md-4 col-lg-3">
@@ -293,111 +319,171 @@
                           $isEsqueleto = ($pType === 'esqueletos');
                         ?>
                         <a href="/producto?slug=<?php echo urlencode((string)($p['slug'] ?? '')); ?>" class="card h-100 shadow-sm product-card <?php echo $isEsqueleto ? 'esqueleto-card' : ''; ?>" style="border-radius: 12px; overflow: hidden; text-decoration:none; color: inherit; display:block;">
-                            <div class="position-relative image-box" style="aspect-ratio: 4 / 5;">
-                                <?php
-                                    // Fallback inteligente de imagen si no viene en BD
-                                    $imgRel = isset($p['image']) ? trim($p['image']) : '';
-                                    $imgRel = ltrim($imgRel, '/');
-                                    $finalImg = '';
-                                    $backImg = '';
+                            <?php
+                                // Soportar assets en /public/assets y también en /assets según despliegue
+                                $baseCandidates = array_filter(array_unique([
+                                    realpath(__DIR__ . '/../'),
+                                    rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/'),
+                                    realpath(__DIR__ . '/../../public_html'),
+                                    realpath(__DIR__ . '/../../public')
+                                ]));
 
-                                    // Soportar assets en /public/assets y también en /assets según despliegue
-                                    $baseCandidates = [
-                                        __DIR__ . '/../public_html/',
-                                        __DIR__ . '/../../public_html/',
-                                        __DIR__ . '/../../public/',
-                                        rtrim((string)($_SERVER['DOCUMENT_ROOT'] ?? ''), '/') . '/'
-                                    ];
-                                    $existsRel = function($rel) use ($baseCandidates) {
-                                        $rel = ltrim($rel, '/');
-                                        foreach ($baseCandidates as $base) {
-                                            if ($base !== '' && is_file($base . $rel)) { return true; }
-                                        }
-                                        return false;
-                                    };
-                                    $slug = isset($p['slug']) ? $p['slug'] : '';
-                                    $slugU = str_replace('-', '_', $slug);
-
-                                    $candidates = [];
-                                    if ($imgRel) {
-                                        $candidates[] = $imgRel;
+                                $existsRel = function($rel) use ($baseCandidates) {
+                                    if (empty($rel)) return false;
+                                    $rel = ltrim($rel, '/');
+                                    $variations = [$rel];
+                                    if (strpos($rel, 'assets/') !== 0) {
+                                        $variations[] = 'assets/' . $rel;
                                     }
-                                    // Intentar por slug con diferentes extensiones
+                                    foreach ($baseCandidates as $base) {
+                                        if (!$base) continue;
+                                        foreach ($variations as $v) {
+                                            if (is_file($base . '/' . $v)) { return true; }
+                                        }
+                                    }
+                                    return false;
+                                };
+
+                                $resolveRel = function($rel) use ($baseCandidates) {
+                                    if (empty($rel)) return '';
+                                    $rel = ltrim($rel, '/');
+                                    $variations = [$rel];
+                                    if (strpos($rel, 'assets/') !== 0) {
+                                        $variations[] = 'assets/' . $rel;
+                                    }
+                                    foreach ($baseCandidates as $base) {
+                                        if (!$base) continue;
+                                        foreach ($variations as $v) {
+                                            if (is_file($base . '/' . $v)) { return $v; }
+                                        }
+                                    }
+                                    return $rel;
+                                };
+
+                                // Recopilar todas las imágenes cargadas para este producto
+                                $uploadedImages = [];
+                                $pId = (int)($p['id'] ?? 0);
+                                if (!empty($productMediaMap[$pId])) {
+                                    foreach ($productMediaMap[$pId] as $mUrl) {
+                                        $cleanU = ltrim(trim($mUrl), '/');
+                                        if ($cleanU !== '' && !in_array($cleanU, $uploadedImages, true)) {
+                                            $uploadedImages[] = $cleanU;
+                                        }
+                                    }
+                                }
+                                if (!empty($p['images'])) {
+                                    foreach (explode(',', (string)$p['images']) as $rawImg) {
+                                        $cleanU = ltrim(trim($rawImg), '/');
+                                        if ($cleanU !== '' && !in_array($cleanU, $uploadedImages, true)) {
+                                            $uploadedImages[] = $cleanU;
+                                        }
+                                    }
+                                }
+                                if (!empty($p['image'])) {
+                                    $cleanU = ltrim(trim($p['image']), '/');
+                                    if ($cleanU !== '' && !in_array($cleanU, $uploadedImages, true)) {
+                                        array_unshift($uploadedImages, $cleanU);
+                                    }
+                                }
+
+                                $slug = isset($p['slug']) ? $p['slug'] : '';
+                                $slugU = str_replace('-', '_', $slug);
+
+                                // 1. Imagen frontal: primera imagen cargada
+                                $finalImg = '';
+                                if (!empty($uploadedImages[0])) {
+                                    $finalImg = $resolveRel($uploadedImages[0]);
+                                }
+                                if (empty($finalImg) || !$existsRel($finalImg)) {
+                                    $candidates = [];
+                                    if (!empty($p['image'])) {
+                                        $candidates[] = ltrim(trim($p['image']), '/');
+                                    }
                                     foreach (['jpg','jpeg','png','svg'] as $ext) {
                                         $candidates[] = "assets/img/products/{$slug}.{$ext}";
                                         $candidates[] = "assets/img/products/{$slugU}.{$ext}";
-                                        // Soportar nombre 'frontal' como imagen principal
                                         $candidates[] = "assets/img/products/{$slug}_frontal.{$ext}";
                                         $candidates[] = "assets/img/products/{$slugU}_frontal.{$ext}";
-                                        // Fallback por typo histórico: "ofical" (sin i)
                                         if ($slug === 'camiseta_oficial_femtribe') {
                                             $candidates[] = "assets/img/products/camiseta_ofical_femtribe.{$ext}";
                                         }
-                                        // Fallback para nombres genéricos de esqueleto
                                         if ($slug === 'esqueleto_limite_run_2025_femtribe') {
                                             $candidates[] = "assets/img/products/esqueletos_femtribe.{$ext}";
                                             $candidates[] = "assets/img/products/esqueleto_femtribe.{$ext}";
                                         }
                                     }
-
                                     foreach ($candidates as $rel) {
-                                        if ($existsRel($rel)) { $finalImg = $rel; break; }
+                                        if ($existsRel($rel)) { $finalImg = $resolveRel($rel); break; }
                                     }
-                                    
-                                    // Buscar imagen trasera (back) con variantes de nombre
+                                }
+
+                                // Fallbacks semánticos por nombre si aún no hay imagen frontal
+                                if (empty($finalImg) || !$existsRel($finalImg)) {
+                                    if (strpos($slug, 'carrera') !== false && $existsRel('assets/img/products/camiseta_oficial_carrera.png')) $finalImg = 'assets/img/products/camiseta_oficial_carrera.png';
+                                    elseif (strpos($slug, 'training') !== false && $existsRel('assets/img/products/camiseta_oficial_femtribe.png')) $finalImg = 'assets/img/products/camiseta_oficial_femtribe.png';
+                                    elseif (strpos($slug, 'esqueleto') !== false && $existsRel('assets/img/products/esqueleto_femtribe.png')) $finalImg = 'assets/img/products/esqueleto_femtribe.png';
+                                    elseif ((strpos($slug, 'flask') !== false || strpos($slug, 'termo') !== false) && $existsRel('assets/img/products/termo_frontal.png')) $finalImg = 'assets/img/products/termo_frontal.png';
+                                    elseif (!empty($uploadedImages[0])) $finalImg = $uploadedImages[0];
+                                }
+
+                                // 2. Imagen trasera (hover flip): segunda imagen cargada
+                                $backImg = '';
+                                if (!empty($uploadedImages[1])) {
+                                    $backImg = $resolveRel($uploadedImages[1]);
+                                }
+                                if (empty($backImg)) {
+                                    // Fallback: variantes en disco (_back, -back, _trasera, etc.)
                                     $backCandidates = [];
                                     foreach (['jpg','jpeg','png','svg'] as $ext) {
-                                        // Variante con underscore
                                         $backCandidates[] = "assets/img/products/{$slug}_back.{$ext}";
                                         $backCandidates[] = "assets/img/products/{$slugU}_back.{$ext}";
-                                        // Variante con guion
                                         $backCandidates[] = "assets/img/products/{$slug}-back.{$ext}";
                                         $backCandidates[] = "assets/img/products/{$slugU}-back.{$ext}";
-                                        // Variante en español (trasera)
                                         $backCandidates[] = "assets/img/products/{$slug}_trasera.{$ext}";
                                         $backCandidates[] = "assets/img/products/{$slugU}_trasera.{$ext}";
                                         $backCandidates[] = "assets/img/products/{$slug}-trasera.{$ext}";
                                         $backCandidates[] = "assets/img/products/{$slugU}-trasera.{$ext}";
-                                        // Variante color negro
                                         $backCandidates[] = "assets/img/products/{$slug}_black.{$ext}";
                                         $backCandidates[] = "assets/img/products/{$slugU}_black.{$ext}";
                                         $backCandidates[] = "assets/img/products/{$slug}-black.{$ext}";
                                         $backCandidates[] = "assets/img/products/{$slugU}-black.{$ext}";
                                         if ($slug === 'camiseta_oficial_femtribe') {
-                                            // Fallback por typo histórico: negro con "ofical"
                                             $backCandidates[] = "assets/img/products/camiseta_ofical_femtribe_black.{$ext}";
                                         }
-                                        // Fallback explícito para back en esqueleto
                                         if ($slug === 'esqueleto_limite_run_2025_femtribe') {
                                             $backCandidates[] = "assets/img/products/esqueleto_femtribe_back.{$ext}";
                                             $backCandidates[] = "assets/img/products/esqueletos_femtribe_back.{$ext}";
                                         }
                                     }
 
-                                    // Si se detectó imagen frontal, generar candidatos derivados del nombre frontal
                                     if (!empty($finalImg)) {
                                         $frontNoExt = preg_replace('/\.(jpg|jpeg|png)$/i', '', $finalImg);
                                         foreach (['jpg','jpeg','png'] as $ext) {
-                                            // mismo directorio que la frontal
                                             $backCandidates[] = $frontNoExt . '_back.' . $ext;
-                                            // pruebas alternando guion/underscore
                                             $backCandidates[] = str_replace('_', '-', $frontNoExt) . '-back.' . $ext;
                                             $backCandidates[] = str_replace('-', '_', $frontNoExt) . '_back.' . $ext;
-                                            // Si la frontal termina en '_frontal', probar el equivalente '_back'
                                             $backCandidates[] = preg_replace('/(_|-)frontal$/i', '$1back', $frontNoExt) . '.' . $ext;
-                                            // variante español
                                             $backCandidates[] = $frontNoExt . '_trasera.' . $ext;
-                                            // variante color negro desde la frontal
                                             $backCandidates[] = $frontNoExt . '_black.' . $ext;
                                             $backCandidates[] = str_replace('_', '-', $frontNoExt) . '-black.' . $ext;
                                             $backCandidates[] = str_replace('-', '_', $frontNoExt) . '_black.' . $ext;
                                         }
                                     }
-                                    
+
                                     foreach ($backCandidates as $rel) {
-                                        if ($existsRel($rel)) { $backImg = $rel; break; }
+                                        if ($existsRel($rel)) { $backImg = $resolveRel($rel); break; }
                                     }
-                                ?>
+                                }
+
+                                // Fallbacks semánticos para imagen trasera si no vino una segunda imagen cargada
+                                if (empty($backImg)) {
+                                    if (strpos($slug, 'carrera') !== false && $existsRel('assets/img/products/camiseta_oficial_carrera_back.png')) $backImg = 'assets/img/products/camiseta_oficial_carrera_back.png';
+                                    elseif (strpos($slug, 'training') !== false && $existsRel('assets/img/products/camiseta_oficial_femtribe_back.png')) $backImg = 'assets/img/products/camiseta_oficial_femtribe_back.png';
+                                    elseif (strpos($slug, 'esqueleto') !== false && $existsRel('assets/img/products/esqueleto_femtribe_back.png')) $backImg = 'assets/img/products/esqueleto_femtribe_back.png';
+                                    elseif ((strpos($slug, 'flask') !== false || strpos($slug, 'termo') !== false) && $existsRel('assets/img/products/termo_back.png')) $backImg = 'assets/img/products/termo_back.png';
+                                }
+                            ?>
+                            <div class="position-relative image-box <?= !empty($backImg) ? 'has-back' : '' ?>" style="aspect-ratio: 4 / 5;">
                                 <?php if (!empty($finalImg)) : ?>
                                   <img src="/<?php echo htmlspecialchars(ltrim($finalImg, '/')); ?>" alt="<?php echo htmlspecialchars($p['name']); ?> frontal" class="product-image front" style="width:100%; height:100%;" />
                                   <?php if (!empty($backImg)) : ?>
@@ -411,122 +497,19 @@
                                     </div>
                                   </div>
                                 <?php endif; ?>
-
-                <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                  const filterForms = Array.from(document.querySelectorAll('.filters-form'));
-                  const sortingForm = document.querySelector('.sorting-controls');
-                  const orderSelect = sortingForm ? sortingForm.querySelector('select[name="order"]') : null;
-
-                  if (orderSelect && sortingForm) {
-                    orderSelect.addEventListener('change', () => {
-                      sortingForm.submit();
-                    });
-                  }
-
-                  function attachFilterHandlers(form) {
-                    const catHidden = form.querySelector('#filter-category-hidden');
-                    const ropaChecks = Array.from(form.querySelectorAll('input[name="type[]"][data-group="textil"]'));
-                    const accChecks = Array.from(form.querySelectorAll('input[name="type[]"][data-group="accesorios"]'));
-                    function updateCategory() {
-                      const anyRopa = ropaChecks.some(c => c.checked);
-                      const anyAcc = accChecks.some(c => c.checked);
-                      if (anyRopa && anyAcc) {
-                        catHidden.value = '';
-                      } else if (anyRopa) {
-                        catHidden.value = 'textil';
-                      } else if (anyAcc) {
-                        catHidden.value = 'accesorios';
-                      }
-                    }
-                    // Ajustar categoría desde el estado inicial si hay checkboxes seleccionados
-                    if (catHidden && (ropaChecks.some(c => c.checked) || accChecks.some(c => c.checked))) {
-                      updateCategory();
-                    }
-                    [...ropaChecks, ...accChecks].forEach(chk => {
-                      chk.addEventListener('change', () => {
-                        updateCategory();
-                        form.submit();
-                      });
-                    });
-                    form.addEventListener('submit', () => {
-                      updateCategory();
-                      if (!catHidden.value) { catHidden.removeAttribute('name'); }
-                    });
-                    const bindToggle = (hdr) => {
-                      const body = hdr.nextElementSibling;
-                      if (!body) return;
-                      const toggle = () => {
-                        const isOpen = body.classList.toggle('open');
-                        hdr.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                        const chev = hdr.querySelector('.chevron');
-                        if (chev) chev.classList.toggle('rotate', isOpen);
-                      };
-                      hdr.addEventListener('click', toggle);
-                      hdr.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-                      });
-                    };
-                    form.querySelectorAll('.filter-header').forEach(bindToggle);
-                  }
-                  filterForms.forEach(attachFilterHandlers);
-
-                  // Fallback defensivo: si por alguna razón no se adjuntaron manejadores dentro del formulario,
-                  // enlazar directamente a encabezados visibles en sidebar y overlay móvil.
-                  const extraHeaders = Array.from(document.querySelectorAll('.filters-sidebar .filter-header, #filtersOverlay .filter-header'));
-                  extraHeaders.forEach(h => {
-                    // Evitar duplicar manejadores si ya existe atributo de control
-                    if (!h.__boundToggle) {
-                      const body = h.nextElementSibling;
-                      if (!body) return;
-                      const toggle = () => {
-                        const isOpen = body.classList.toggle('open');
-                        h.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                        const chev = h.querySelector('.chevron');
-                        if (chev) chev.classList.toggle('rotate', isOpen);
-                      };
-                      h.addEventListener('click', toggle);
-                      h.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-                      });
-                      h.__boundToggle = true;
-                    }
-                  });
-
-                  // Overlays móviles
-                  const filtersOverlay = document.getElementById('filtersOverlay');
-                  const sortOverlay = document.getElementById('sortOverlay');
-                  const openFiltersBtn = document.getElementById('openFiltersBtn');
-                  const openSortBtn = document.getElementById('openSortBtn');
-                  function openOverlay(el){ if (el) el.setAttribute('aria-hidden','false'); }
-                  function closeOverlay(el){ if (el) el.setAttribute('aria-hidden','true'); }
-                  if (openFiltersBtn) openFiltersBtn.addEventListener('click', () => openOverlay(filtersOverlay));
-                  if (openSortBtn) openSortBtn.addEventListener('click', () => openOverlay(sortOverlay));
-                  document.querySelectorAll('.overlay .overlay-close').forEach(btn => {
-                    btn.addEventListener('click', () => closeOverlay(btn.closest('.overlay')));
-                  });
-                  document.querySelectorAll('.overlay').forEach(ov => {
-                    ov.addEventListener('click', (e) => {
-                      if (e.target === ov) closeOverlay(ov);
-                    });
-                  });
-                  document.querySelectorAll('#sortOverlay .sort-option').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                      const val = btn.getAttribute('data-order');
-                      if (orderSelect) { orderSelect.value = val; }
-                      if (sortingForm) { sortingForm.submit(); }
-                    });
-                  });
-                });
-                </script>
                                 
-                                <div class="position-absolute top-0 start-0 p-2 d-flex gap-2" style="z-index: 20;">
+                                <div class="position-absolute top-0 start-0 p-2 d-flex gap-2 flex-wrap" style="z-index: 20;">
                                     <?php 
+                                        $isUpcoming = !empty($p['is_upcoming']);
                                         $slugRaw = isset($p['slug']) ? (string)$p['slug'] : '';
                                         $slugNorm = str_replace('-', '_', strtolower($slugRaw));
                                         $pStock = isset($p['stock']) ? (int)$p['stock'] : 0;
                                     ?>
-                                    <?php if ($pStock <= 0) : ?>
+                                    <?php if ($isUpcoming) : ?>
+                                        <span class="badge bg-warning text-dark shadow-sm fw-bold border border-warning" style="border-radius:999px; padding:6px 12px; background-color: #ffc107 !important;">
+                                            <i class="fas fa-clock me-1"></i>Próximamente
+                                        </span>
+                                    <?php elseif ($pStock <= 0) : ?>
                                         <span class="badge bg-secondary shadow-sm" style="border-radius:999px; padding:6px 10px;">Agotado</span>
                                     <?php elseif ($pStock < 10) : ?>
                                         <span class="badge bg-warning text-dark shadow-sm fw-bold border border-warning" style="border-radius:999px; padding:6px 12px; background-color: #ffc107 !important;">
@@ -541,14 +524,19 @@
                             </div>
                             <div class="card-body d-flex flex-column">
                                 <h5 class="card-title mb-2 text-center" style="min-height: 44px;">
-                                    <?php echo htmlspecialchars($p['name']); ?>
+                                    <?php echo htmlspecialchars($p['name']); ?><?php if (!empty($p['is_upcoming'])): ?> <span class="text-warning-emphasis fw-bold" style="font-size:0.85em;"> - Próximamente</span><?php endif; ?>
                                 </h5>
                                 <div class="mb-2 text-center">
                                     <?php 
+                                        $isUpcoming = !empty($p['is_upcoming']);
                                         $slugRaw = isset($p['slug']) ? (string)$p['slug'] : '';
                                         $slugNorm = str_replace('-', '_', strtolower($slugRaw));
                                     ?>
-                                    <?php if ($slugNorm === 'camiseta_oficial_carrera') : ?>
+                                    <?php if ($isUpcoming) : ?>
+                                        <span class="badge bg-warning text-dark px-3 py-1.5 fw-bold rounded-pill shadow-sm" style="font-size: 0.85rem; background-color: #ffc107 !important;">
+                                            <i class="fas fa-clock me-1"></i>- Próximamente
+                                        </span>
+                                    <?php elseif ($slugNorm === 'camiseta_oficial_carrera') : ?>
                                         <span class="h6 fw-bold">$<?php echo number_format(65000, 0, ',', '.'); ?></span>
                                     <?php else : ?>
                                         <span class="h6 fw-bold">$<?php echo number_format((float)$p['price'], 0, ',', '.'); ?></span>
@@ -559,7 +547,11 @@
                                     $pShipCost = isset($p['shipping_cost']) ? (float)$p['shipping_cost'] : 0.00;
                                 ?>
                                 <div class="mb-2 text-center">
-                                    <?php if ($pIsFree || $pShipCost <= 0): ?>
+                                    <?php if (!empty($p['is_upcoming'])): ?>
+                                        <span class="badge bg-light text-muted border rounded-pill px-2.5 py-0.5" style="font-size: 0.72rem;">
+                                            <i class="fas fa-eye me-1"></i> Muestra de exhibición
+                                        </span>
+                                    <?php elseif ($pIsFree || $pShipCost <= 0): ?>
                                         <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 0.72rem;">
                                             <i class="fas fa-truck me-1"></i> Envío Gratis
                                         </span>
@@ -570,7 +562,11 @@
                                     <?php endif; ?>
                                 </div>
                                 <div class="text-center mt-auto pt-1">
-                                    <?php if ($pStock <= 0): ?>
+                                    <?php if (!empty($p['is_upcoming'])): ?>
+                                        <span class="badge bg-dark text-white rounded-pill px-3 py-1 small fw-semibold" style="font-size: 0.75rem;">
+                                            <i class="fas fa-calendar-alt me-1 text-warning"></i> Próximamente a la venta
+                                        </span>
+                                    <?php elseif ($pStock <= 0): ?>
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-2.5 py-1 small">Agotado</span>
                                     <?php elseif ($pStock < 10): ?>
                                         <span class="badge bg-warning-subtle text-dark border border-warning rounded-pill px-2.5 py-1 fw-bold small" style="font-size: 0.75rem;">
@@ -634,35 +630,183 @@
         .product-card.esqueleto-card .product-image { object-fit: contain !important; }
         .product-card.esqueleto-card .image-box { background: #fff; }
         .product-card.esqueleto-card .image-wrapper { padding: 8px; }
+        /* Hover flip suave en tarjetas con 2 imágenes */
+        .product-card .image-box { position: relative; overflow: hidden; }
+        .product-card .product-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.28s ease, transform 0.35s ease;
+        }
+        .product-card .product-image.front {
+            opacity: 1;
+            z-index: 1;
+        }
+        .product-card .product-image.back {
+            opacity: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+        /* Solo activar flip si tiene segunda imagen (.has-back) */
+        .product-card:hover .image-box.has-back .product-image.front {
+            opacity: 0;
+        }
+        .product-card:hover .image-box.has-back .product-image.back {
+            opacity: 1;
+            transform: scale(1.03);
+        }
+        .image-box.tap-flip .product-image.front {
+            opacity: 0 !important;
+        }
+        .image-box.tap-flip .product-image.back {
+            opacity: 1 !important;
+            transform: scale(1.03);
+        }
     </style>
     <script>
-      // No hay controles de compra en tarjetas; sólo navegación al detalle.
       document.addEventListener('DOMContentLoaded', function() {
-        const isCoarse = window.matchMedia('(hover: none)').matches || window.matchMedia('(pointer: coarse)').matches;
-        if (!isCoarse) return;
-
         // En dispositivos táctiles: primer tap hace flip, segundo tap navega
-        const cards = Array.from(document.querySelectorAll('.product-card'));
-        cards.forEach(card => {
-          const imageBox = card.querySelector('.image-box');
-          const backImg = card.querySelector('.product-image.back');
-          if (!imageBox || !backImg) return; // sin imagen trasera, no aplica flip
+        const isCoarse = window.matchMedia('(hover: none)').matches || window.matchMedia('(pointer: coarse)').matches;
+        if (isCoarse) {
+          const cards = Array.from(document.querySelectorAll('.product-card'));
+          cards.forEach(card => {
+            const imageBox = card.querySelector('.image-box');
+            const backImg = card.querySelector('.product-image.back');
+            if (!imageBox || !backImg) return; // sin imagen trasera, no aplica flip
 
-          card.addEventListener('click', function(e) {
-            const flipped = imageBox.classList.contains('tap-flip');
-            if (!flipped) {
-              imageBox.classList.add('tap-flip');
-              // Evitar navegación en el primer tap
-              e.preventDefault();
-              // Opcional: quitar flip si el usuario no navega en ~3s
-              setTimeout(() => {
+            card.addEventListener('click', function(e) {
+              const flipped = imageBox.classList.contains('tap-flip');
+              if (!flipped) {
+                imageBox.classList.add('tap-flip');
+                e.preventDefault();
+                setTimeout(() => {
+                  imageBox.classList.remove('tap-flip');
+                }, 3000);
+              } else {
                 imageBox.classList.remove('tap-flip');
-              }, 3000);
-            } else {
-              // Ya está flipped: permitir navegación y restaurar estado visual
-              imageBox.classList.remove('tap-flip');
+              }
+            }, true);
+          });
+        }
+
+        // Filtros y ordenamiento
+        const filterForms = Array.from(document.querySelectorAll('.filters-form'));
+        const sortingForm = document.querySelector('.sorting-controls');
+        const orderSelect = sortingForm ? sortingForm.querySelector('select[name="order"]') : null;
+
+        if (orderSelect && sortingForm) {
+          orderSelect.addEventListener('change', () => {
+            sortingForm.submit();
+          });
+        }
+
+        function attachFilterHandlers(form) {
+          const catHidden = form.querySelector('#filter-category-hidden');
+          const ropaChecks = Array.from(form.querySelectorAll('input[name="type[]"][data-group="textil"]'));
+          const accChecks = Array.from(form.querySelectorAll('input[name="type[]"][data-group="accesorios"]'));
+          function updateCategory() {
+            const anyRopa = ropaChecks.some(c => c.checked);
+            const anyAcc = accChecks.some(c => c.checked);
+            if (anyRopa && anyAcc) {
+              catHidden.value = '';
+            } else if (anyRopa) {
+              catHidden.value = 'textil';
+            } else if (anyAcc) {
+              catHidden.value = 'accesorios';
             }
-          }, true);
+          }
+          if (catHidden && (ropaChecks.some(c => c.checked) || accChecks.some(c => c.checked))) {
+            updateCategory();
+          }
+          // Manejar clic en cualquier área del botón de opción
+          form.querySelectorAll('.filter-option').forEach(opt => {
+            opt.addEventListener('click', function(e) {
+              if (e.target && e.target.tagName.toLowerCase() === 'input') {
+                return;
+              }
+              e.preventDefault();
+              const chk = this.querySelector('input[type="checkbox"]');
+              if (chk) {
+                chk.checked = !chk.checked;
+                chk.dispatchEvent(new Event('change', { bubbles: true }));
+              }
+            });
+          });
+
+          [...ropaChecks, ...accChecks].forEach(chk => {
+            chk.addEventListener('change', () => {
+              updateCategory();
+              form.submit();
+            });
+          });
+          form.addEventListener('submit', () => {
+            updateCategory();
+            if (!catHidden.value) { catHidden.removeAttribute('name'); }
+          });
+          const bindToggle = (hdr) => {
+            const body = hdr.nextElementSibling;
+            if (!body) return;
+            const toggle = () => {
+              const isOpen = body.classList.toggle('open');
+              hdr.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+              const chev = hdr.querySelector('.chevron');
+              if (chev) chev.classList.toggle('rotate', isOpen);
+            };
+            hdr.addEventListener('click', toggle);
+            hdr.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+            });
+          };
+          form.querySelectorAll('.filter-header').forEach(bindToggle);
+        }
+        filterForms.forEach(attachFilterHandlers);
+
+        // Encabezados visibles en sidebar y overlay móvil
+        const extraHeaders = Array.from(document.querySelectorAll('.filters-sidebar .filter-header, #filtersOverlay .filter-header'));
+        extraHeaders.forEach(h => {
+          if (!h.__boundToggle) {
+            const body = h.nextElementSibling;
+            if (!body) return;
+            const toggle = () => {
+              const isOpen = body.classList.toggle('open');
+              h.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+              const chev = h.querySelector('.chevron');
+              if (chev) chev.classList.toggle('rotate', isOpen);
+            };
+            h.addEventListener('click', toggle);
+            h.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+            });
+            h.__boundToggle = true;
+          }
+        });
+
+        // Overlays móviles
+        const filtersOverlay = document.getElementById('filtersOverlay');
+        const sortOverlay = document.getElementById('sortOverlay');
+        const openFiltersBtn = document.getElementById('openFiltersBtn');
+        const openSortBtn = document.getElementById('openSortBtn');
+        function openOverlay(el){ if (el) el.setAttribute('aria-hidden','false'); }
+        function closeOverlay(el){ if (el) el.setAttribute('aria-hidden','true'); }
+        if (openFiltersBtn) openFiltersBtn.addEventListener('click', () => openOverlay(filtersOverlay));
+        if (openSortBtn) openSortBtn.addEventListener('click', () => openOverlay(sortOverlay));
+        document.querySelectorAll('.overlay .overlay-close').forEach(btn => {
+          btn.addEventListener('click', () => closeOverlay(btn.closest('.overlay')));
+        });
+        document.querySelectorAll('.overlay').forEach(ov => {
+          ov.addEventListener('click', (e) => {
+            if (e.target === ov) closeOverlay(ov);
+          });
+        });
+        document.querySelectorAll('#sortOverlay .sort-option').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const val = btn.getAttribute('data-order');
+            if (orderSelect) { orderSelect.value = val; }
+            if (sortingForm) { sortingForm.submit(); }
+          });
         });
       });
     </script>

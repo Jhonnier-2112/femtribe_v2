@@ -35,6 +35,7 @@
       $slugNorm = strtolower(trim((string)$slug));
       $isFreeShipping = !isset($p['is_free_shipping']) || (int)$p['is_free_shipping'] === 1;
       $shippingCost   = isset($p['shipping_cost']) ? (float)$p['shipping_cost'] : 0.00;
+      $isUpcoming     = !empty($p['is_upcoming']);
       // Detectar accesorio temprano para usar en construcción de slides
       $isAccessory = ($category === 'accesorios')
         || str_contains($slugNorm, 'termo')
@@ -44,47 +45,64 @@
       $isTextilType = in_array($type, ['camisetas', 'esqueletos'], true);
 
       $slides = [];
-      
-      // 1. Imagen principal
-      if (!empty($p['image'])) {
-        $slides[] = ['src' => $p['image'], 'label' => 'Principal', 'type' => 'image'];
+      $addedUrls = [];
+
+      $addSlide = function($src, $label, $type = 'image') use (&$slides, &$addedUrls) {
+        $clean = ltrim(trim((string)$src), '/');
+        if ($clean === '' || isset($addedUrls[$clean])) {
+          return;
+        }
+        $addedUrls[$clean] = true;
+        $slides[] = ['src' => $clean, 'label' => $label, 'type' => $type];
+      };
+
+      // Si no viene $media pero tenemos el ID del producto, cargarlo desde product_media
+      if (empty($media) && !empty($p['id'])) {
+        try {
+          $mediaModel = new \App\Models\ProductMedia();
+          $media = $mediaModel->getByProductId((int)$p['id']);
+        } catch (\Throwable $t) {}
       }
 
-      // 2. Medios de la tabla product_media (pasados como $media)
+      // 1. Cargar medios desde product_media (ordenados por sort_order)
       if (!empty($media) && is_array($media)) {
         $imgCount = 1;
         $vidCount = 1;
         foreach ($media as $item) {
-          if ($item['type'] === 'video') {
-            $slides[] = ['src' => $item['url'], 'label' => 'Video ' . $vidCount++, 'type' => 'video'];
+          $isVid = (($item['type'] ?? '') === 'video');
+          if ($isVid) {
+            $addSlide($item['url'] ?? '', 'Video ' . $vidCount++, 'video');
           } else {
-            $slides[] = ['src' => $item['url'], 'label' => 'Detalle ' . $imgCount++, 'type' => 'image'];
-          }
-        }
-      } else {
-        // Fallback para compatibilidad con campos heredados de base de datos
-        if (!empty($p['images'])) {
-          $extraImages = explode(',', $p['images']);
-          foreach ($extraImages as $idx => $img) {
-            $img = trim($img);
-            if ($img !== '') {
-              $slides[] = ['src' => $img, 'label' => 'Detalle ' . ($idx + 1), 'type' => 'image'];
-            }
-          }
-        }
-        if (!empty($p['video'])) {
-          $videos = explode(',', $p['video']);
-          $videos = array_slice($videos, 0, 2);
-          foreach ($videos as $idx => $vid) {
-            $vid = trim($vid);
-            if ($vid !== '') {
-              $slides[] = ['src' => $vid, 'label' => 'Video ' . ($idx + 1), 'type' => 'video'];
-            }
+            $label = ($imgCount === 1) ? 'Principal' : ('Detalle ' . $imgCount);
+            $addSlide($item['url'] ?? '', $label, 'image');
+            $imgCount++;
           }
         }
       }
 
-      // Fallback si no hay slides
+      // 2. Imagen principal del producto (solo si no fue agregada previamente)
+      if (!empty($p['image'])) {
+        $addSlide($p['image'], 'Principal', 'image');
+      }
+
+      // 3. Medios heredados en p['images'] (evitando duplicados)
+      if (!empty($p['images'])) {
+        $extraImages = explode(',', (string)$p['images']);
+        foreach ($extraImages as $idx => $img) {
+          $addSlide(trim($img), 'Detalle ' . ($idx + 1), 'image');
+        }
+      }
+
+      // 4. Videos heredados en p['video']
+      if (!empty($p['video'])) {
+        $videos = explode(',', (string)$p['video']);
+        $videos = array_slice($videos, 0, 2);
+        foreach ($videos as $idx => $vid) {
+          $addSlide(trim($vid), 'Video ' . ($idx + 1), 'video');
+        }
+      }
+
+      // 5. Fallback si no hay slides
       if (empty($slides)) {
         $slides[] = ['src' => 'assets/img/products/placeholder.png', 'label' => 'Placeholder', 'type' => 'image'];
       }
@@ -139,20 +157,36 @@
         </div>
       </div>
       <div class="col-12 col-md-6">
-        <h1 class="h3 mb-2"><?php echo $name; ?></h1>
+        <h1 class="h3 mb-2">
+          <?php echo $name; ?>
+          <?php if ($isUpcoming): ?>
+            <span class="badge bg-warning text-dark align-middle ms-2 fs-6 shadow-sm border border-warning" style="background-color: #ffc107 !important;">
+              <i class="fas fa-clock me-1"></i>- Próximamente
+            </span>
+          <?php endif; ?>
+        </h1>
         <?php if (strtolower((string)$slug) === 'camiseta_oficial_carrera'): ?>
           <div class="mb-2"><span class="badge" style="background:#FFE08A; color:#3A3A3A; font-weight:700; border-radius:999px; padding:6px 10px;">Edición especial limitada</span></div>
         <?php endif; ?>
         <div class="mb-3 d-flex align-items-center gap-2 flex-wrap">
-          <span class="h4 fw-bold text-dark mb-0">$<?php echo number_format($price, 0, ',', '.'); ?></span>
-          <?php if ($isFreeShipping || $shippingCost <= 0): ?>
-            <span class="badge d-inline-flex align-items-center gap-1 px-3 py-1.5 rounded-pill shadow-sm" style="background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; font-size: 0.82rem;">
-              <i class="fas fa-truck text-success"></i> Envío Gratis
+          <?php if ($isUpcoming): ?>
+            <span class="badge bg-warning text-dark px-3 py-2 fw-bold fs-6 rounded-pill border border-warning shadow-sm" style="background-color: #ffc107 !important;">
+              <i class="fas fa-bullhorn me-1 text-dark"></i> Producto en Próximo Lanzamiento
+            </span>
+            <span class="badge bg-light text-muted border rounded-pill px-3 py-1.5" style="font-size: 0.82rem;">
+              <i class="fas fa-eye me-1"></i> Exhibición previa (Sin venta inmediata)
             </span>
           <?php else: ?>
-            <span class="badge bg-light text-dark border rounded-pill px-3 py-1.5 shadow-sm" style="font-size: 0.82rem;">
-              <i class="fas fa-truck text-muted me-1"></i> Envío: $<?php echo number_format($shippingCost, 0, ',', '.'); ?> COP
-            </span>
+            <span class="h4 fw-bold text-dark mb-0">$<?php echo number_format($price, 0, ',', '.'); ?></span>
+            <?php if ($isFreeShipping || $shippingCost <= 0): ?>
+              <span class="badge d-inline-flex align-items-center gap-1 px-3 py-1.5 rounded-pill shadow-sm" style="background-color: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; font-size: 0.82rem;">
+                <i class="fas fa-truck text-success"></i> Envío Gratis
+              </span>
+            <?php else: ?>
+              <span class="badge bg-light text-dark border rounded-pill px-3 py-1.5 shadow-sm" style="font-size: 0.82rem;">
+                <i class="fas fa-truck text-muted me-1"></i> Envío: $<?php echo number_format($shippingCost, 0, ',', '.'); ?> COP
+              </span>
+            <?php endif; ?>
           <?php endif; ?>
         </div>
         <?php
@@ -301,6 +335,28 @@
           $isOutOfStock = ($productStock <= 0);
           $isLowStock = (!$isOutOfStock && $productStock < 10);
         ?>
+        <?php if ($isUpcoming): ?>
+          <div class="card card-body border-warning rounded-4 p-4 shadow-sm" style="background: #fffbeb;">
+            <div class="d-flex align-items-center gap-3">
+              <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning text-dark shadow-sm" style="width: 50px; height: 50px; min-width: 50px;">
+                <i class="fas fa-clock fs-4"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold mb-1 text-dark">¡Próximamente a la venta!</h5>
+                <p class="mb-0 text-muted small" style="line-height: 1.5;">
+                  Este producto estará disponible para la compra muy pronto. Actualmente se encuentra en exhibición para que puedas conocer sus características, diseño y detalles.
+                </p>
+              </div>
+            </div>
+            <hr class="my-3" style="border-color: #fde68a;">
+            <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+              <span class="text-muted small"><i class="fas fa-bell me-1 text-warning"></i>Mantente atenta a nuestros canales oficiales para el lanzamiento.</span>
+              <a href="/productos" class="btn btn-sm btn-dark rounded-pill px-3 py-2 fw-semibold">
+                <i class="fas fa-arrow-left me-1"></i>Ver otros productos
+              </a>
+            </div>
+          </div>
+        <?php else: ?>
         <div class="product-options card card-body" style="border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="h6 mb-0">Selecciona tus opciones</h2>
@@ -365,11 +421,18 @@
             </div>
 
             <div class="mb-2">
-              <label class="form-label">Talla</label>
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label mb-0 fw-semibold">Talla</label>
+                <div id="sizeStockBadge"></div>
+              </div>
               <div id="sizesKids" class="size-grid d-none" aria-label="Tallas Kids">
+                <button type="button" class="size-chip" data-size="4">4</button>
+                <button type="button" class="size-chip" data-size="6">6</button>
+                <button type="button" class="size-chip" data-size="8">8</button>
+                <button type="button" class="size-chip" data-size="10">10</button>
+                <button type="button" class="size-chip" data-size="12">12</button>
                 <button type="button" class="size-chip" data-size="14">14</button>
                 <button type="button" class="size-chip" data-size="16">16</button>
-                <button type="button" class="size-chip" data-size="18">18</button>
               </div>
               <div id="sizesMen" class="size-grid <?php echo $defaultGender==='hombre'? '': 'd-none'; ?>" aria-label="Tallas Hombre">
                 <button type="button" class="size-chip" data-size="XS">XS</button>
@@ -427,6 +490,7 @@
             </button>
           </div>
         </div>
+        <?php endif; ?>
       </div>
     </div>
   </div>
@@ -614,9 +678,11 @@
     const sizesWomen = document.getElementById('sizesWomen');
     const summary = document.getElementById('selectionSummary');
     const errorBox = document.getElementById('selectionError');
+    const sizeStockBadge = document.getElementById('sizeStockBadge');
     const isOutOfStock = <?php echo json_encode($isOutOfStock); ?>;
     const productId = <?php echo (int)($p['id'] ?? 0); ?>;
-    const currentStock = <?php echo (int)$productStock; ?>;
+    let currentStock = <?php echo (int)$productStock; ?>;
+    const productSizeStock = <?php echo json_encode(!empty($p['size_stock']) ? json_decode($p['size_stock'], true) : null, JSON_UNESCAPED_UNICODE); ?>;
 
     // Manejar selección interactiva de color
     colorChips.forEach(chip => {
@@ -637,34 +703,66 @@
       });
     });
 
-    function updateButtonState(){
-      try {
-        const btn = document.getElementById('addToCart');
-        const buyBtn = document.getElementById('buyNow');
-        const valid = isValidSelection();
-        if (btn) btn.disabled = !valid || isOutOfStock;
-        if (buyBtn) buyBtn.disabled = !valid || isOutOfStock;
-      } catch(_){}
-    }
     const isAccessory = <?php echo json_encode((bool)$isAccessory); ?>;
     let selectedGender = isAccessory ? '' : (document.querySelector('input[name="gender"]:checked')?.value || '');
     let selectedSize = '';
+    let selectedSizeStock = currentStock;
+
+    function getActiveGrid() {
+      if (selectedGender === 'kids') return sizesKids;
+      if (selectedGender === 'hombre') return sizesMen;
+      return sizesWomen;
+    }
+
+    function refreshSizesStockState() {
+      if (isAccessory || !productSizeStock) return;
+      const genderStock = productSizeStock[selectedGender] || {};
+      const activeGrid = getActiveGrid();
+      if (!activeGrid) return;
+
+      activeGrid.querySelectorAll('.size-chip').forEach(btn => {
+        const sz = btn.dataset.size;
+        if (genderStock[sz] !== undefined) {
+          const qty = parseInt(genderStock[sz], 10);
+          btn.dataset.stock = qty;
+          if (qty <= 0) {
+            btn.classList.add('out-of-stock');
+            btn.setAttribute('title', `Talla ${sz} agotada`);
+          } else {
+            btn.classList.remove('out-of-stock');
+            btn.setAttribute('title', `${qty} unidades disponibles`);
+          }
+        } else {
+          btn.dataset.stock = '0';
+          btn.classList.add('out-of-stock');
+          btn.setAttribute('title', `Talla ${sz} no disponible`);
+        }
+      });
+    }
 
     function updateSizesVisibility(){
       sizesKids?.classList.toggle('d-none', selectedGender !== 'kids');
       sizesMen?.classList.toggle('d-none', selectedGender !== 'hombre');
       sizesWomen?.classList.toggle('d-none', selectedGender !== 'mujer');
-      // reset selection when switching group
+      
+      // Resetear talla seleccionada al cambiar de categoría
       document.querySelectorAll('.size-chip.selected').forEach(b => b.classList.remove('selected'));
       selectedSize = '';
+      selectedSizeStock = currentStock;
+      if (sizeStockBadge) sizeStockBadge.innerHTML = '';
+
+      refreshSizesStockState();
       renderSummary();
       renderValidation();
+      updateQtyLimits();
     }
+
     function renderSummary(){
       if (isAccessory) {
         summary.textContent = `Color: ${selectedColor}`;
       } else {
-        summary.textContent = `Color: ${selectedColor} • Género: ${selectedGender} ${selectedSize? '• Talla: '+selectedSize : ''}`;
+        const genderLabel = selectedGender ? (selectedGender.charAt(0).toUpperCase() + selectedGender.slice(1)) : '';
+        summary.textContent = `Color: ${selectedColor} • Género: ${genderLabel} ${selectedSize ? '• Talla: ' + selectedSize : ''}`;
       }
     }
 
@@ -672,9 +770,9 @@
       if (isOutOfStock) return false;
       if (!selectedColor && availableColors.length > 0) return false;
       if (isAccessory) return true;
-      const hasGender = !!selectedGender;
-      const hasSize = !!selectedSize;
-      return hasGender && hasSize;
+      if (!selectedGender || !selectedSize) return false;
+      if (productSizeStock && selectedSizeStock <= 0) return false;
+      return true;
     }
 
     function renderValidation(){
@@ -689,12 +787,24 @@
           msg = 'Selecciona el género antes de agregar.';
         } else if (!selectedSize) {
           msg = 'Selecciona la talla antes de agregar.';
+        } else if (productSizeStock && selectedSizeStock <= 0) {
+          msg = `La talla ${selectedSize} (${selectedGender}) se encuentra agotada. Por favor selecciona otra talla.`;
         }
         if (errorBox) { errorBox.textContent = msg; errorBox.classList.remove('d-none'); }
       } else {
         if (errorBox) { errorBox.textContent = ''; errorBox.classList.add('d-none'); }
       }
       updateButtonState();
+    }
+
+    function updateButtonState(){
+      try {
+        const btn = document.getElementById('addToCart');
+        const buyBtn = document.getElementById('buyNow');
+        const valid = isValidSelection();
+        if (btn) btn.disabled = !valid || isOutOfStock;
+        if (buyBtn) buyBtn.disabled = !valid || isOutOfStock;
+      } catch(_){}
     }
 
     if (!isAccessory) {
@@ -704,18 +814,45 @@
         selectedGender = r.value;
         updateSizesVisibility();
       });
+
       document.querySelectorAll('.size-grid .size-chip').forEach(btn => {
         btn.addEventListener('click', () => {
+          if (btn.classList.contains('out-of-stock')) {
+            const sz = btn.dataset.size || '';
+            if (errorBox) {
+              errorBox.textContent = `La talla ${sz} para ${selectedGender} está agotada. Elige otra talla disponible.`;
+              errorBox.classList.remove('d-none');
+            }
+            return;
+          }
+
           const grid = btn.parentElement;
           grid.querySelectorAll('.size-chip').forEach(b => b.classList.remove('selected'));
           btn.classList.add('selected');
           selectedSize = btn.dataset.size || '';
+          
+          if (productSizeStock) {
+            const szStock = btn.dataset.stock !== undefined ? parseInt(btn.dataset.stock, 10) : currentStock;
+            selectedSizeStock = szStock;
+            if (sizeStockBadge) {
+              if (szStock <= 0) {
+                sizeStockBadge.innerHTML = '<span class="badge bg-danger">Agotado</span>';
+              } else if (szStock < 5) {
+                sizeStockBadge.innerHTML = `<span class="badge bg-warning text-dark border border-warning" style="background-color: #ffc107 !important;"><i class="fas fa-fire me-1 text-danger"></i>¡Últimas ${szStock} disponibles!</span>`;
+              } else {
+                sizeStockBadge.innerHTML = `<span class="badge bg-success-subtle text-success-emphasis border border-success-subtle"><i class="fas fa-check-circle me-1"></i>${szStock} disponibles</span>`;
+              }
+            }
+          }
+
+          updateQtyLimits();
           renderSummary();
           renderValidation();
           updateButtonState();
         });
       });
-      // inicialización
+
+      // Inicialización de tallas
       updateSizesVisibility();
     }
 
@@ -727,9 +864,31 @@
     const qtyInput = document.getElementById('qty');
     const minusBtn = document.querySelector('.qty-btn.minus');
     const plusBtn = document.querySelector('.qty-btn.plus');
+
+    function updateQtyLimits(){
+      if (!qtyInput) return;
+      const effStock = (productSizeStock && selectedSize) ? selectedSizeStock : currentStock;
+      const maxLimit = effStock > 0 ? Math.min(20, effStock) : 1;
+      qtyInput.max = maxLimit;
+      if (parseInt(qtyInput.value, 10) > maxLimit) {
+        qtyInput.value = maxLimit;
+      }
+      if (effStock <= 0) {
+        qtyInput.value = 1;
+        qtyInput.disabled = true;
+        if (minusBtn) minusBtn.disabled = true;
+        if (plusBtn) plusBtn.disabled = true;
+      } else {
+        qtyInput.disabled = false;
+        if (minusBtn) minusBtn.disabled = false;
+        if (plusBtn) plusBtn.disabled = false;
+      }
+    }
+
     function clampQty(val){
       const min = parseInt(qtyInput?.min || '1', 10);
-      const max = Math.min(parseInt(qtyInput?.max || '20', 10), currentStock > 0 ? currentStock : 1);
+      const effStock = (productSizeStock && selectedSize) ? selectedSizeStock : currentStock;
+      const max = Math.min(parseInt(qtyInput?.max || '20', 10), effStock > 0 ? effStock : 1);
       return Math.max(min, Math.min(max, val));
     }
     minusBtn?.addEventListener('click', () => {

@@ -79,7 +79,7 @@ class Category {
      */
     public function getProducts(int $categoryId, int $limit = 12, int $offset = 0): array {
         try {
-            $sql = "SELECT p.id, p.sku, p.name, p.slug, p.description, p.category, p.gender, p.type, p.price, p.image, p.is_new, p.is_offer 
+            $sql = "SELECT p.id, p.sku, p.name, p.slug, p.description, p.category, p.gender, p.type, p.price, p.image, p.is_new, p.is_offer, p.is_upcoming, p.size_stock 
                     FROM products p 
                     LEFT JOIN category_product cp ON p.id = cp.product_id 
                     WHERE (cp.category_id = :cat_id OR p.category_id = :cat_id) AND p.is_active = 1 

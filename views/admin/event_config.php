@@ -265,7 +265,7 @@
                                             <label class="form-label text-warning small mb-1 fw-bold">Precio Preventa (COP) *</label>
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-text bg-secondary bg-opacity-25 border-secondary text-white-50">$</span>
-                                                <input type="number" step="500" min="0" class="form-control bg-dark text-white border-secondary border-opacity-50 fw-bold text-warning" name="stages[<?= $stg['id'] ?>][presale_price]" value="<?= (float)$stg['presale_price'] ?>" required>
+                                                <input type="number" step="any" min="0" class="form-control bg-dark text-white border-secondary border-opacity-50 fw-bold text-warning" name="stages[<?= $stg['id'] ?>][presale_price]" value="<?= (float)$stg['presale_price'] ?>" required>
                                             </div>
                                         </div>
 
@@ -273,7 +273,7 @@
                                             <label class="form-label text-success small mb-1 fw-bold">Precio Normal (COP) *</label>
                                             <div class="input-group input-group-sm">
                                                 <span class="input-group-text bg-secondary bg-opacity-25 border-secondary text-white-50">$</span>
-                                                <input type="number" step="500" min="0" class="form-control bg-dark text-white border-secondary border-opacity-50 fw-bold text-success" name="stages[<?= $stg['id'] ?>][price]" value="<?= (float)$stg['price'] ?>" required>
+                                                <input type="number" step="any" min="0" class="form-control bg-dark text-white border-secondary border-opacity-50 fw-bold text-success" name="stages[<?= $stg['id'] ?>][price]" value="<?= (float)$stg['price'] ?>" required>
                                             </div>
                                         </div>
                                     </div>
@@ -477,11 +477,11 @@
                     <div class="row g-3 mb-3">
                         <div class="col-md-6">
                             <label for="new_stage_presale" class="form-label text-warning fw-semibold">Precio Preventa (COP) *</label>
-                            <input type="number" step="500" min="0" class="form-control bg-dark text-warning fw-bold border-secondary py-2 rounded-3" id="new_stage_presale" name="presale_price" placeholder="45000" required>
+                            <input type="number" step="any" min="0" class="form-control bg-dark text-warning fw-bold border-secondary py-2 rounded-3" id="new_stage_presale" name="presale_price" placeholder="45000" required>
                         </div>
                         <div class="col-md-6">
                             <label for="new_stage_price" class="form-label text-success fw-semibold">Precio Normal (COP) *</label>
-                            <input type="number" step="500" min="0" class="form-control bg-dark text-success fw-bold border-secondary py-2 rounded-3" id="new_stage_price" name="price" placeholder="55000" required>
+                            <input type="number" step="any" min="0" class="form-control bg-dark text-success fw-bold border-secondary py-2 rounded-3" id="new_stage_price" name="price" placeholder="55000" required>
                         </div>
                     </div>
 

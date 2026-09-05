@@ -471,19 +471,19 @@
                 <div class="form-check form-check-inline bg-white px-3 py-2 rounded-3 border shadow-sm">
                   <input class="form-check-input" type="radio" name="categoria_participante" id="catAdulto" value="adulto" checked>
                   <label class="form-check-label fw-bold text-dark" for="catAdulto">
-                    <i class="fas fa-user-ninja text-success me-1"></i>Adulto (5K / 10K)
+                    <i class="fas fa-user-ninja text-success me-1"></i>DISTANCIA 5K - 10K <span class="badge bg-success bg-opacity-10 text-success ms-1" style="font-size:0.75rem;">Desde 11 años</span>
                   </label>
                 </div>
                 <div class="form-check form-check-inline bg-white px-3 py-2 rounded-3 border shadow-sm">
                   <input class="form-check-input" type="radio" name="categoria_participante" id="catNino" value="nino">
                   <label class="form-check-label fw-bold text-dark" for="catNino">
-                    <i class="fas fa-child text-primary me-1"></i>3K Niño y Adulto (Infantil)
+                    <i class="fas fa-child text-primary me-1"></i>DISTANCIA 3K KIDS <span class="badge bg-primary bg-opacity-10 text-primary ms-1" style="font-size:0.75rem;">Hasta 10 años</span>
                   </label>
                 </div>
                 <div class="form-check form-check-inline bg-white px-3 py-2 rounded-3 border shadow-sm">
                   <input class="form-check-input" type="radio" name="categoria_participante" id="catMascota" value="mascota">
                   <label class="form-check-label fw-bold text-dark" for="catMascota">
-                    <i class="fas fa-dog text-warning me-1"></i>3K Perro y Adulto (Pet Run)
+                    <i class="fas fa-dog text-warning me-1"></i>DISTANCIA 3K PET
                   </label>
                 </div>
               </div>
@@ -593,30 +593,93 @@
 
             <!-- Sección Condicional: Datos de la Mascota -->
             <div id="petSection" class="card p-3 mb-4 border-warning bg-warning bg-opacity-10 rounded-4 d-none">
-              <h5 class="fw-bold text-dark mb-3"><i class="fas fa-paw me-2 text-warning"></i>Datos de la Mascota</h5>
+              <h5 class="fw-bold text-dark mb-3"><i class="fas fa-dog me-2 text-warning"></i>Datos de la Mascota y Pañoleta</h5>
               <div class="row g-3">
-                <div class="col-md-6">
-                  <label class="form-label-sport">Nombre de la Mascota *</label>
-                  <input type="text" class="form-control form-control-sport" name="nombre_mascota" placeholder="Ej. Firulais / Bruno">
+                <div class="col-md-4">
+                  <label class="form-label-sport" for="nombre_mascota">
+                    <i class="fas fa-paw text-warning me-1"></i>Nombre de la Mascota *
+                  </label>
+                  <input type="text" class="form-control form-control-sport" id="nombre_mascota" name="nombre_mascota" placeholder="Ej. Firulais / Bruno">
+                  <div class="invalid-feedback">
+                    Por favor ingresa el nombre de tu mascota.
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label-sport">Raza / Tipo de Mascota</label>
-                  <input type="text" class="form-control form-control-sport" name="raza_mascota" placeholder="Ej. Criollo, Labrador, Poodle">
+                <div class="col-md-4">
+                  <label class="form-label-sport" for="raza_mascota">
+                    <i class="fas fa-bone text-warning me-1"></i>Raza / Tipo de Mascota
+                  </label>
+                  <input type="text" class="form-control form-control-sport" id="raza_mascota" name="raza_mascota" placeholder="Ej. Criollo, Labrador, Poodle">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label-sport" for="talla_panolete_mascota">
+                    <i class="fas fa-certificate text-warning me-1"></i>Talla pañoleta mascota *
+                  </label>
+                  <select name="talla_panolete_mascota" id="talla_panolete_mascota" class="form-select form-select-sport">
+                    <option value="">Selecciona talla</option>
+                    <option value="XS">XS raza pequeña</option>
+                    <option value="M">M razas medianas - grandes</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    Por favor selecciona la talla de la pañoleta de la mascota.
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Sección Condicional: Datos del Acudiente (Niños) -->
-            <div id="tutorSection" class="card p-3 mb-4 border-info bg-info bg-opacity-10 rounded-4 d-none">
-              <h5 class="fw-bold text-dark mb-3"><i class="fas fa-user-shield me-2 text-primary"></i>Datos del Acudiente / Tutor Responsable</h5>
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <label class="form-label-sport">Nombre Completo del Acudiente *</label>
-                  <input type="text" class="form-control form-control-sport" name="acudiente_nombre" placeholder="Nombre del Padre/Madre/Tutor">
+            <!-- Sección Condicional: Modalidad 3K KIDS y Datos del Adulto / Acudiente -->
+            <div id="tutorSection" class="card p-4 mb-4 border-primary bg-primary bg-opacity-10 rounded-4 d-none shadow-sm">
+              <div class="d-flex align-items-center justify-content-between mb-2 flex-wrap gap-2">
+                <h5 class="fw-bold text-dark mb-0">
+                  <i class="fas fa-child me-2 text-primary"></i>Modalidad 3K KIDS y Acompañamiento
+                </h5>
+                <span class="badge bg-primary text-white px-3 py-1.5 rounded-pill shadow-sm" style="font-size: 0.78rem;">
+                  DISTANCIA 3K KIDS
+                </span>
+              </div>
+              
+              <div class="alert alert-light border border-primary border-opacity-25 rounded-3 py-2 px-3 mb-3 text-dark small">
+                <i class="fas fa-shield-alt text-primary me-2"></i>
+                <strong>Regla de Participación:</strong> Categoría 3K KIDS para niños de <strong>hasta 10 años</strong>. Los menores de <strong>8 años</strong> deben correr acompañados obligatoriamente por un adulto. Los niños de <strong>8 a 10 años</strong> pueden correr <strong>solos o acompañados</strong>.
+              </div>
+
+              <!-- Selector de Modalidad -->
+              <div class="mb-3">
+                <label class="form-label-sport fw-bold mb-2">¿Cómo participará el menor en la carrera? *</label>
+                <div class="d-flex gap-3 flex-wrap" id="modalidadNinoContainer">
+                  <div class="form-check form-check-inline bg-white px-3 py-2 rounded-3 border shadow-sm mb-0">
+                    <input class="form-check-input" type="radio" name="modalidad_nino" id="modAcompanado" value="acompanado" checked>
+                    <label class="form-check-label fw-bold text-dark" for="modAcompanado">
+                      <i class="fas fa-user-friends text-primary me-1"></i>Acompañado por un adulto
+                    </label>
+                  </div>
+                  <div class="form-check form-check-inline bg-white px-3 py-2 rounded-3 border shadow-sm mb-0" id="modSoloWrapper">
+                    <input class="form-check-input" type="radio" name="modalidad_nino" id="modSolo" value="solo">
+                    <label class="form-check-label fw-bold text-dark" for="modSolo">
+                      <i class="fas fa-running text-success me-1"></i>Correrá solo (De 8 a 10 años)
+                    </label>
+                  </div>
                 </div>
-                <div class="col-md-6">
-                  <label class="form-label-sport">Número de Documento del Acudiente *</label>
-                  <input type="text" class="form-control form-control-sport" name="acudiente_documento" placeholder="Número de Cédula">
+                
+                <!-- Aviso dinámico según la edad del menor calculada -->
+                <div id="kidsAgeNotice" class="mt-2 small"></div>
+              </div>
+
+              <!-- Datos del Adulto Acompañante o Acudiente que Autoriza -->
+              <div id="adultDataSection" class="pt-2 border-top border-primary border-opacity-25">
+                <h6 class="fw-bold text-dark mb-2" id="adultDataTitle">
+                  <i class="fas fa-user-shield text-primary me-1"></i>Datos del Adulto Acompañante en Carrera *
+                </h6>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label-sport" id="lblAcudienteNombre" for="acudiente_nombre">Nombre Completo del Adulto *</label>
+                    <input type="text" class="form-control form-control-sport" name="acudiente_nombre" id="acudiente_nombre" placeholder="Nombre completo del adulto">
+                    <div class="invalid-feedback">Por favor ingresa el nombre del adulto.</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label-sport" id="lblAcudienteDoc" for="acudiente_documento">Número de Documento del Adulto *</label>
+                    <input type="text" class="form-control form-control-sport" name="acudiente_documento" id="acudiente_documento" placeholder="Número de cédula">
+                    <div class="invalid-feedback">Por favor ingresa el documento del adulto.</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -664,6 +727,7 @@
                   <option value="">Selecciona</option>
                   <option value="cedula_ciudadania" <?= in_array($userDocType, ['CC', 'cedula_ciudadania']) ? 'selected' : '' ?>>Cédula de ciudadanía</option>
                   <option value="tarjeta_identidad" <?= in_array($userDocType, ['TI', 'tarjeta_identidad']) ? 'selected' : '' ?>>Tarjeta de identidad</option>
+                  <option value="registro_civil" <?= in_array($userDocType, ['RC', 'registro_civil']) ? 'selected' : '' ?>>Registro civil (Niños)</option>
                   <option value="pasaporte" <?= in_array($userDocType, ['Pasaporte', 'pasaporte']) ? 'selected' : '' ?>>Pasaporte</option>
                 </select>
                 <div class="invalid-feedback">
@@ -770,7 +834,7 @@
               </div>
             </div>
 
-            <!-- Tercera fila: Talla de Camiseta (Adulto y Niño) -->
+            <!-- Tercera fila: Talla de Camiseta (Adulto, Niño) y Pañoleta Mascota -->
             <div class="row">
               <div class="col-md-6 mb-4" id="shirtAdultContainer">
                 <label class="form-label-sport" for="talla_camiseta_adulto">
@@ -808,6 +872,21 @@
                 </select>
                 <div class="invalid-feedback">
                   Por favor selecciona la talla de camiseta de niño.
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-4 d-none" id="scarfPetContainer">
+                <label class="form-label-sport" for="talla_panolete_mascota_mirror">
+                  <i class="fas fa-certificate me-2 text-warning"></i>
+                  Talla pañoleta mascota *
+                </label>
+                <select id="talla_panolete_mascota_mirror" class="form-select form-select-sport">
+                  <option value="">Selecciona talla</option>
+                  <option value="XS">XS raza pequeña</option>
+                  <option value="M">M razas medianas - grandes</option>
+                </select>
+                <div class="invalid-feedback">
+                  Por favor selecciona la talla de la pañoleta de la mascota.
                 </div>
               </div>
             </div>
@@ -1303,10 +1382,21 @@ document.addEventListener('DOMContentLoaded', function() {
                      isAgeValid = false;
                      ageErrorMessage = 'Edad máxima para adulto: menos de 90 años';
                    }
+                 } else if (selectedCat === 'nino') {
+                   if (edad >= 18) {
+                     isAgeValid = false;
+                     ageErrorMessage = 'La categoría 3K KIDS es para menores de 18 años';
+                   } else if (edad < 2) {
+                     isAgeValid = false;
+                     ageErrorMessage = 'Edad mínima para 3K KIDS: 2 años';
+                   }
+                   if (typeof updateKidsOptionsByAge === 'function') {
+                     updateKidsOptionsByAge(edad);
+                   }
                  } else {
                    if (edad < 8) {
                      isAgeValid = false;
-                     ageErrorMessage = 'Edad mínima: 8 años';
+                     ageErrorMessage = 'Edad mínima para 3K PET: 8 años';
                    }
                  }
 
@@ -1314,10 +1404,10 @@ document.addEventListener('DOMContentLoaded', function() {
                  const docTypeSelect = form.querySelector('[name="tipo_documento"]');
                  if (docTypeSelect && docTypeSelect.value) {
                    const docType = docTypeSelect.value;
-                   if (docType === 'tarjeta_identidad' && edad >= 18) {
+                   if ((docType === 'tarjeta_identidad' || docType === 'registro_civil') && edad >= 18) {
                      isAgeValid = false;
-                     ageErrorMessage = 'Para Tarjeta de Identidad debes ser menor de 18 años.';
-                     showValidationError(docTypeSelect, 'La Tarjeta de Identidad es para menores de 18 años.');
+                     ageErrorMessage = 'El documento seleccionado es para menores de 18 años.';
+                     showValidationError(docTypeSelect, 'El documento seleccionado es para menores de 18 años.');
                    } else if (docType === 'cedula_ciudadania' && edad < 18) {
                      isAgeValid = false;
                      ageErrorMessage = 'Para Cédula de Ciudadanía debes tener 18 años o más.';
@@ -1493,19 +1583,37 @@ function performAdditionalValidation(form) {
     let isAgeValid = true;
 
     if (selectedCat === 'adulto') {
-      if (!edad || edad < 18) {
-        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'Edad mínima para adulto: 18 años');
-        errors.push('Edad para adulto menor de 18 años');
+      if (!edad || edad < 11) {
+        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'La edad mínima para participar en 5K y 10K es de 11 años');
+        errors.push('Para 5K y 10K debes tener al menos 11 años cumplidos');
         isAgeValid = false;
       } else if (edad >= 90) {
-        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'Edad máxima para adulto: menos de 90 años');
-        errors.push('Edad para adulto mayor o igual a 90 años');
+        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'Edad máxima para participar: menos de 90 años');
+        errors.push('Edad mayor o igual a 90 años');
+        isAgeValid = false;
+      }
+    } else if (selectedCat === 'nino') {
+      if (edad > 10) {
+        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'La categoría 3K KIDS es para niños de hasta 10 años. A partir de los 11 años deben inscribirse en 5K o 10K');
+        errors.push('La categoría 3K KIDS es para niños de hasta 10 años');
+        isAgeValid = false;
+      } else if (edad < 2) {
+        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'La edad mínima sugerida para 3K KIDS es de 2 años');
+        errors.push('Edad mínima 2 años');
+        isAgeValid = false;
+      }
+      
+      const modRadio = form.querySelector('input[name="modalidad_nino"]:checked');
+      const modVal = modRadio ? modRadio.value : (edad < 8 ? 'acompanado' : 'solo');
+      if (edad < 8 && modVal === 'solo') {
+        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'Los menores de 8 años deben correr acompañados obligatoriamente por un adulto');
+        errors.push('Menor de 8 años debe correr acompañado por un adulto');
         isAgeValid = false;
       }
     } else {
       if (!edad || edad < 8) {
-        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'Debes tener al menos 8 años para registrarte');
-        errors.push('Edad insuficiente');
+        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'Debes tener al menos 8 años para participar en 3K PET');
+        errors.push('Edad insuficiente para 3K PET');
         isAgeValid = false;
       }
     }
@@ -1513,10 +1621,10 @@ function performAdditionalValidation(form) {
     const docTypeSelect = form.querySelector('[name="tipo_documento"]');
     if (docTypeSelect && docTypeSelect.value) {
       const docType = docTypeSelect.value;
-      if (docType === 'tarjeta_identidad' && edad >= 18) {
-        showValidationError(docTypeSelect, 'La Tarjeta de Identidad es para menores de 18 años.');
-        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'Para Tarjeta de Identidad debes ser menor de 18 años.');
-        errors.push('Tarjeta de Identidad con edad de adulto');
+      if ((docType === 'tarjeta_identidad' || docType === 'registro_civil') && edad >= 18) {
+        showValidationError(docTypeSelect, 'El documento seleccionado es para menores de 18 años.');
+        showValidationError(form.querySelector('[name="fecha_nacimiento"]'), 'Para el documento seleccionado debes ser menor de 18 años.');
+        errors.push('Documento de menor con edad de adulto');
         isAgeValid = false;
       } else if (docType === 'cedula_ciudadania' && edad < 18) {
         showValidationError(docTypeSelect, 'La Cédula de Ciudadanía es para mayores de 18 años.');
@@ -1701,6 +1809,29 @@ function performAdditionalValidation(form) {
           } else if (shirtChild) {
             clearValidationErrors(shirtChild);
           }
+
+          const acudienteNombre = form.querySelector('[name="acudiente_nombre"]');
+          const acudienteDoc = form.querySelector('[name="acudiente_documento"]');
+          const modRadio = form.querySelector('input[name="modalidad_nino"]:checked');
+          const modVal = modRadio ? modRadio.value : 'acompanado';
+
+          if (acudienteNombre && (!acudienteNombre.value || acudienteNombre.value.trim() === '')) {
+            const msg = (modVal === 'acompanado') ? 'Ingresa el nombre del adulto acompañante' : 'Ingresa el nombre del acudiente / tutor';
+            errors.push(msg);
+            showValidationError(acudienteNombre, msg);
+            hasErrors = true;
+          } else if (acudienteNombre) {
+            clearValidationErrors(acudienteNombre);
+          }
+
+          if (acudienteDoc && (!acudienteDoc.value || acudienteDoc.value.trim() === '')) {
+            const msg = (modVal === 'acompanado') ? 'Ingresa el documento del adulto acompañante' : 'Ingresa el documento del acudiente / tutor';
+            errors.push(msg);
+            showValidationError(acudienteDoc, msg);
+            hasErrors = true;
+          } else if (acudienteDoc) {
+            clearValidationErrors(acudienteDoc);
+          }
         } else {
           const shirtAdult = form.querySelector('[name="talla_camiseta_adulto"]');
           if (shirtAdult && (!shirtAdult.value || shirtAdult.value.trim() === '')) {
@@ -1709,6 +1840,30 @@ function performAdditionalValidation(form) {
             hasErrors = true;
           } else if (shirtAdult) {
             clearValidationErrors(shirtAdult);
+          }
+        }
+
+        // Validación para DISTANCIA 3K PET (Mascota)
+        if (currentCat === 'mascota') {
+          const petNameInput = form.querySelector('[name="nombre_mascota"]');
+          if (petNameInput && (!petNameInput.value || petNameInput.value.trim() === '')) {
+            errors.push('Ingresa el nombre de la mascota');
+            showValidationError(petNameInput, 'Por favor ingresa el nombre de tu mascota');
+            hasErrors = true;
+          } else if (petNameInput) {
+            clearValidationErrors(petNameInput);
+          }
+
+          const scarfInput = form.querySelector('[name="talla_panolete_mascota"]');
+          const scarfMirror = form.querySelector('#talla_panolete_mascota_mirror');
+          if (scarfInput && (!scarfInput.value || scarfInput.value.trim() === '')) {
+            errors.push('Selecciona la talla de la pañoleta de la mascota (XS o M)');
+            showValidationError(scarfInput, 'Selecciona la talla de la pañoleta');
+            if (scarfMirror) showValidationError(scarfMirror, 'Selecciona la talla de la pañoleta');
+            hasErrors = true;
+          } else if (scarfInput) {
+            clearValidationErrors(scarfInput);
+            if (scarfMirror) clearValidationErrors(scarfMirror);
           }
         }
         
@@ -1799,6 +1954,24 @@ function performAdditionalValidation(form) {
               showValidationError(fechaNacimientoInput, 'Edad máxima para adulto: menos de 90 años');
               hasErrors = true;
             }
+          } else if (selectedCat === 'nino') {
+            if (edad >= 18) {
+              errors.push('La categoría 3K KIDS es para menores de 18 años');
+              showValidationError(fechaNacimientoInput, 'La categoría 3K KIDS es para menores de 18 años');
+              hasErrors = true;
+            } else if (edad < 2) {
+              errors.push('La edad mínima para participar en 3K KIDS es de 2 años');
+              showValidationError(fechaNacimientoInput, 'Edad mínima: 2 años');
+              hasErrors = true;
+            }
+
+            const modChecked = form.querySelector('input[name="modalidad_nino"]:checked');
+            const modVal = modChecked ? modChecked.value : (edad < 8 ? 'acompanado' : 'solo');
+            if (edad < 8 && modVal === 'solo') {
+              errors.push('Los menores de 8 años deben correr acompañados obligatoriamente por un adulto');
+              showValidationError(fechaNacimientoInput, 'Menores de 8 años deben correr acompañados por un adulto');
+              hasErrors = true;
+            }
           } else {
             if (edad < 8) {
               errors.push('Debes tener al menos 8 años para participar');
@@ -1810,10 +1983,10 @@ function performAdditionalValidation(form) {
           // 2. Validar por tipo de documento
           if (docTypeSelect && docTypeSelect.value) {
             const docType = docTypeSelect.value;
-            if (docType === 'tarjeta_identidad' && edad >= 18) {
-              errors.push('Para Tarjeta de Identidad debes ser menor de 18 años.');
-              showValidationError(docTypeSelect, 'La Tarjeta de Identidad es para menores de 18 años.');
-              showValidationError(fechaNacimientoInput, 'Para Tarjeta de Identidad debes ser menor de 18 años.');
+            if ((docType === 'tarjeta_identidad' || docType === 'registro_civil') && edad >= 18) {
+              errors.push('El tipo de documento seleccionado es solo para menores de 18 años.');
+              showValidationError(docTypeSelect, 'El documento es para menores de 18 años.');
+              showValidationError(fechaNacimientoInput, 'El documento seleccionado es para menores de 18 años.');
               hasErrors = true;
             } else if (docType === 'cedula_ciudadania' && edad < 18) {
               errors.push('Para Cédula de Ciudadanía debes tener 18 años o más.');
@@ -1856,13 +2029,26 @@ function performAdditionalValidation(form) {
           }
         } else {
           if (checkedStages.length === 0) {
-            errors.push('Debe seleccionar al menos una etapa para inscribirse');
+            errors.push('Debe seleccionar una etapa para inscribirse en 3K');
             const container = form.querySelector('#stagesContainer');
             if (container) {
               container.classList.add('is-invalid');
               const feedback = container.parentNode.querySelector('.invalid-feedback') || document.createElement('div');
               feedback.className = 'invalid-feedback d-block';
-              feedback.textContent = 'Debe seleccionar al menos una etapa para inscribirse';
+              feedback.textContent = 'Debe seleccionar una etapa para inscribirse';
+              if (!container.parentNode.querySelector('.invalid-feedback')) {
+                container.parentNode.appendChild(feedback);
+              }
+            }
+            hasErrors = true;
+          } else if (checkedStages.length > 1) {
+            errors.push('Solo puedes seleccionar un tipo de carrera en 3K');
+            const container = form.querySelector('#stagesContainer');
+            if (container) {
+              container.classList.add('is-invalid');
+              const feedback = container.parentNode.querySelector('.invalid-feedback') || document.createElement('div');
+              feedback.className = 'invalid-feedback d-block';
+              feedback.textContent = 'Solo puedes seleccionar una carrera';
               if (!container.parentNode.querySelector('.invalid-feedback')) {
                 container.parentNode.appendChild(feedback);
               }
@@ -1965,7 +2151,9 @@ function showConfirmationModal(form) {
   function getDocumentTypeText(value) {
     const types = {
       'cedula': 'Cédula de Ciudadanía',
+      'cedula_ciudadania': 'Cédula de Ciudadanía',
       'tarjeta_identidad': 'Tarjeta de Identidad',
+      'registro_civil': 'Registro Civil',
       'cedula_extranjeria': 'Cédula de Extranjería',
       'pasaporte': 'Pasaporte'
     };
@@ -2020,7 +2208,19 @@ function showConfirmationModal(form) {
           <p class="mb-1"><strong>Municipio:</strong> ${data.municipio || 'No especificado'}</p>
           <p class="mb-3"><strong>EPS:</strong> ${data.eps || 'No especificado'}</p>
           
-          <h6 class="text-primary mb-2"><i class="fas fa-phone me-2"></i>Contacto de Emergencia</h6>
+          <h6 class="text-primary mb-2"><i class="fas fa-tshirt me-2"></i>Tallas y Elementos</h6>
+          <p class="mb-1"><strong>Camiseta Adulto:</strong> ${data.talla_camiseta_adulto || 'No especificada'}</p>
+          ${data.categoria_participante === 'nino' ? `
+            <p class="mb-1 text-primary-emphasis"><strong><i class="fas fa-child me-1"></i>Modalidad 3K KIDS:</strong> ${data.modalidad_nino === 'solo' ? 'Correrá solo (De 8 a 10 años)' : 'Acompañado por un adulto'}</p>
+            <p class="mb-1 text-primary-emphasis"><strong><i class="fas fa-user-shield me-1"></i>${data.modalidad_nino === 'solo' ? 'Acudiente / Tutor:' : 'Adulto Acompañante:'}</strong> ${data.acudiente_nombre || 'No especificado'} (Doc: ${data.acudiente_documento || 'No especificado'})</p>
+            <p class="mb-1"><strong>Camiseta Niño:</strong> ${data.talla_camiseta_nino || 'No especificada'}</p>
+          ` : ''}
+          ${data.categoria_participante === 'mascota' ? `
+            <p class="mb-1 text-warning-emphasis"><strong><i class="fas fa-dog me-1"></i>Mascota:</strong> ${data.nombre_mascota || 'Sin nombre'} (${data.raza_mascota || 'Sin raza'})</p>
+            <p class="mb-2 text-warning-emphasis"><strong><i class="fas fa-certificate me-1"></i>Pañoleta Mascota:</strong> ${data.talla_panolete_mascota === 'XS' ? 'XS raza pequeña' : (data.talla_panolete_mascota === 'M' ? 'M razas medianas - grandes' : (data.talla_panolete_mascota || 'No especificada'))}</p>
+          ` : ''}
+
+          <h6 class="text-primary mb-2 mt-2"><i class="fas fa-phone me-2"></i>Contacto de Emergencia</h6>
           <p class="mb-1"><strong>Nombre:</strong> ${data.parentesco_emergencia === 'otro' ? (data.nombre_emergencia_alt || 'No especificado') : (data.nombre_emergencia || 'No especificado')}</p>
           <p class="mb-1"><strong>Parentesco:</strong> ${data.parentesco_emergencia === 'otro' ? (data.otro_parentesco || 'Otro') : (data.parentesco_emergencia || 'No especificado')}</p>
           <p class="mb-1"><strong>Celular:</strong> ${data.celular_emergencia || 'No especificado'}</p>
@@ -2256,6 +2456,90 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
   const shirtChildSelect = document.getElementById('talla_camiseta_nino');
   const shirtAdultSelect = document.getElementById('talla_camiseta_adulto');
 
+  function updateKidsOptionsByAge(edad) {
+    const modSolo = document.getElementById('modSolo');
+    const modAcompanado = document.getElementById('modAcompanado');
+    const modSoloWrapper = document.getElementById('modSoloWrapper');
+    const kidsNotice = document.getElementById('kidsAgeNotice');
+    const adultTitle = document.getElementById('adultDataTitle');
+    const lblNombre = document.getElementById('lblAcudienteNombre');
+    const lblDoc = document.getElementById('lblAcudienteDoc');
+    const inputNombre = document.getElementById('acudiente_nombre');
+    const inputDoc = document.getElementById('acudiente_documento');
+
+    if (!modSolo || !modAcompanado) return;
+
+    const ageNum = parseInt(edad, 10);
+    if (isNaN(ageNum) || ageNum <= 0) {
+      if (kidsNotice) {
+        kidsNotice.innerHTML = '<span class="text-muted"><i class="fas fa-info-circle me-1"></i>Ingresa la fecha de nacimiento del menor para validar su acompañamiento.</span>';
+      }
+      return;
+    }
+
+    if (ageNum < 8) {
+      // Menores de 8 años: obligatorio acompañados por un adulto
+      modSolo.disabled = true;
+      modAcompanado.checked = true;
+      if (modSoloWrapper) {
+        modSoloWrapper.classList.add('opacity-50');
+        modSoloWrapper.title = 'No disponible: menores de 8 años deben correr acompañados por un adulto';
+      }
+      if (kidsNotice) {
+        kidsNotice.innerHTML = `<span class="badge bg-warning text-dark p-2 w-100 text-start text-wrap"><i class="fas fa-exclamation-triangle me-1"></i>El menor tiene <strong>${ageNum} años</strong> (&lt; 8 años): <strong>Debe correr obligatoriamente acompañado por un adulto</strong> durante el recorrido.</span>`;
+      }
+      if (adultTitle) {
+        adultTitle.innerHTML = '<i class="fas fa-user-friends text-primary me-1"></i>Datos del Adulto Acompañante en Carrera *';
+      }
+      if (lblNombre) lblNombre.textContent = 'Nombre Completo del Adulto Acompañante *';
+      if (lblDoc) lblDoc.textContent = 'Número de Documento del Adulto Acompañante *';
+      if (inputNombre) inputNombre.placeholder = 'Nombre del adulto que corre con el niño';
+      if (inputDoc) inputDoc.placeholder = 'Número de cédula del adulto acompañante';
+    } else {
+      // 8 años o más: puede correr solo o acompañado
+      modSolo.disabled = false;
+      if (modSoloWrapper) {
+        modSoloWrapper.classList.remove('opacity-50');
+        modSoloWrapper.title = '';
+      }
+      if (ageNum > 10) {
+        if (kidsNotice) {
+          kidsNotice.innerHTML = `<span class="badge bg-danger text-white p-2 w-100 text-start text-wrap"><i class="fas fa-times-circle me-1"></i>El menor tiene <strong>${ageNum} años</strong>: La categoría 3K KIDS es para niños de hasta 10 años. A partir de los 11 años debe inscribirse en <strong>DISTANCIA 5K - 10K</strong>.</span>`;
+        }
+      } else {
+        if (kidsNotice) {
+          kidsNotice.innerHTML = `<span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 p-2 w-100 text-start text-wrap"><i class="fas fa-check-circle me-1"></i>El menor tiene <strong>${ageNum} años</strong> (de 8 a 10 años): <strong>Puede correr solo o acompañado por un adulto</strong>. Elige tu opción abajo.</span>`;
+        }
+      }
+      
+      if (modSolo.checked) {
+        if (adultTitle) {
+          adultTitle.innerHTML = '<i class="fas fa-user-shield text-primary me-1"></i>Datos del Acudiente / Tutor que Autoriza *';
+        }
+        if (lblNombre) lblNombre.textContent = 'Nombre Completo del Acudiente / Tutor *';
+        if (lblDoc) lblDoc.textContent = 'Número de Documento del Acudiente / Tutor *';
+        if (inputNombre) inputNombre.placeholder = 'Nombre del padre, madre o tutor legal';
+        if (inputDoc) inputDoc.placeholder = 'Número de cédula del tutor';
+      } else {
+        if (adultTitle) {
+          adultTitle.innerHTML = '<i class="fas fa-user-friends text-primary me-1"></i>Datos del Adulto Acompañante en Carrera *';
+        }
+        if (lblNombre) lblNombre.textContent = 'Nombre Completo del Adulto Acompañante *';
+        if (lblDoc) lblDoc.textContent = 'Número de Documento del Adulto Acompañante *';
+        if (inputNombre) inputNombre.placeholder = 'Nombre del adulto que corre con el niño';
+        if (inputDoc) inputDoc.placeholder = 'Número de cédula del adulto acompañante';
+      }
+    }
+  }
+
+  // Escuchar cambios manuales en el selector de modalidad de niño
+  document.querySelectorAll('input[name="modalidad_nino"]').forEach(r => {
+    r.addEventListener('change', function() {
+      const edadInput = document.getElementById('edad');
+      updateKidsOptionsByAge(edadInput ? edadInput.value : 0);
+    });
+  });
+
   function updateBirthDateLimits() {
     const birthDateInput = document.getElementById('fecha_nacimiento');
     if (!birthDateInput) return;
@@ -2275,20 +2559,27 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
       // De 18 a 89 años (mayor de 18 y menos de 90)
       minDate.setFullYear(today.getFullYear() - 90);
       minDate.setDate(minDate.getDate() + 1);
-      
       maxDate.setFullYear(today.getFullYear() - 18);
     } else if (docType === 'tarjeta_identidad') {
-      // De 8 a 17 años (menor de 18 y al menos 8)
+      // De 7 a 17 años (menor de 18)
       minDate.setFullYear(today.getFullYear() - 18);
       minDate.setDate(minDate.getDate() + 1);
-      
       maxDate.setFullYear(today.getFullYear() - 6);
+    } else if (docType === 'registro_civil') {
+      // Menores de 18 años (incluye menores de 8 años)
+      minDate.setFullYear(today.getFullYear() - 18);
+      minDate.setDate(minDate.getDate() + 1);
+      maxDate.setFullYear(today.getFullYear() - 1);
     } else {
       // Pasaporte o vacío: usar reglas de categoría
       if (selectedCat === 'adulto') {
         minDate.setFullYear(today.getFullYear() - 90);
         minDate.setDate(minDate.getDate() + 1);
-        maxDate.setFullYear(today.getFullYear() - 18);
+        maxDate.setFullYear(today.getFullYear() - 11);
+      } else if (selectedCat === 'nino') {
+        minDate.setFullYear(today.getFullYear() - 11);
+        minDate.setDate(minDate.getDate() + 1);
+        maxDate.setFullYear(today.getFullYear() - 2);
       } else {
         minDate.setFullYear(today.getFullYear() - 100);
         maxDate.setFullYear(today.getFullYear() - 8);
@@ -2309,24 +2600,33 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
       let ageErrorMessage = '';
 
       if (selectedCat === 'adulto') {
-        if (edad < 18) {
+        if (edad < 11) {
           isAgeValid = false;
-          ageErrorMessage = 'Edad mínima para adulto: 18 años';
+          ageErrorMessage = 'Para participar en 5K y 10K debes tener al menos 11 años cumplidos';
         } else if (edad >= 90) {
           isAgeValid = false;
-          ageErrorMessage = 'Edad máxima para adulto: menos de 90 años';
+          ageErrorMessage = 'Edad máxima para participar: menos de 90 años';
         }
+      } else if (selectedCat === 'nino') {
+        if (edad > 10) {
+          isAgeValid = false;
+          ageErrorMessage = 'La categoría 3K KIDS es para niños de hasta 10 años. A partir de los 11 años deben inscribirse en 5K o 10K';
+        } else if (edad < 2) {
+          isAgeValid = false;
+          ageErrorMessage = 'Edad mínima sugerida para 3K KIDS: 2 años';
+        }
+        updateKidsOptionsByAge(edad);
       } else {
         if (edad < 8) {
           isAgeValid = false;
-          ageErrorMessage = 'Edad mínima: 8 años';
+          ageErrorMessage = 'Edad mínima para 3K PET: 8 años';
         }
       }
 
-      if (docType === 'tarjeta_identidad' && edad >= 18) {
+      if ((docType === 'tarjeta_identidad' || docType === 'registro_civil') && edad >= 18) {
         isAgeValid = false;
-        ageErrorMessage = 'Para Tarjeta de Identidad debes ser menor de 18 años.';
-        if (docTypeSelect) showValidationError(docTypeSelect, 'La Tarjeta de Identidad es para menores de 18 años.');
+        ageErrorMessage = 'El documento seleccionado es para menores de 18 años.';
+        if (docTypeSelect) showValidationError(docTypeSelect, 'El documento es para menores de 18 años.');
       } else if (docType === 'cedula_ciudadania' && edad < 18) {
         isAgeValid = false;
         ageErrorMessage = 'Para Cédula de Ciudadanía debes tener 18 años o más.';
@@ -2351,9 +2651,35 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
     const is3K = (selectedCat === 'mascota' || selectedCat === 'nino');
 
     // Secciones condicionales
-    if (petSection) petSection.classList.toggle('d-none', selectedCat !== 'mascota');
-    if (tutorSection) tutorSection.classList.toggle('d-none', selectedCat !== 'nino');
+    const isPet = (selectedCat === 'mascota');
+    if (petSection) petSection.classList.toggle('d-none', !isPet);
+    if (tutorSection) {
+      tutorSection.classList.toggle('d-none', selectedCat !== 'nino');
+      if (selectedCat === 'nino') {
+        const currentEdad = document.getElementById('edad') ? document.getElementById('edad').value : 0;
+        updateKidsOptionsByAge(currentEdad);
+      }
+    }
     if (addNotice) addNotice.classList.toggle('d-none', !is3K);
+
+    // Contenedor de pañoleta de mascota en fila de tallas
+    const scarfPetContainer = document.getElementById('scarfPetContainer');
+    if (scarfPetContainer) scarfPetContainer.classList.toggle('d-none', !isPet);
+
+    const scarfSelect = document.getElementById('talla_panolete_mascota');
+    const scarfMirror = document.getElementById('talla_panolete_mascota_mirror');
+    const petNameInput = document.getElementById('nombre_mascota');
+    if (scarfSelect) {
+      scarfSelect.required = isPet;
+      if (!isPet) {
+        scarfSelect.value = '';
+        if (scarfMirror) scarfMirror.value = '';
+      }
+    }
+    if (petNameInput) {
+      petNameInput.required = isPet;
+      if (!isPet) petNameInput.value = '';
+    }
 
     // Manejo de Tallas de Camiseta
     if (shirtChildContainer && shirtChildSelect) {
@@ -2367,6 +2693,7 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
     }
 
     // Filtrar etapas visibles por categoría
+    let autoSelected3K = false;
     stageItems.forEach(item => {
       const type = item.getAttribute('data-cat-type');
       const chk = item.querySelector('.stage-checkbox');
@@ -2375,11 +2702,13 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
 
       if (shouldShow) {
         item.style.display = 'block';
-        if (type === selectedCat && chk && !is3K) {
-          // Mantener o seleccionar por defecto
-        }
         if (type === selectedCat && is3K && chk && !chk.disabled) {
-          chk.checked = true; // Auto-seleccionar la etapa principal 3K al elegir la categoría
+          if (!autoSelected3K) {
+            chk.checked = true; // Auto-seleccionar ÚNICAMENTE una etapa principal de 3K
+            autoSelected3K = true;
+          } else {
+            chk.checked = false;
+          }
         }
       } else {
         item.style.display = 'none';
@@ -2423,21 +2752,13 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
   catRadios.forEach(r => r.addEventListener('change', updateCategoryAndStages));
   stageCheckboxes.forEach(chk => {
     chk.addEventListener('change', function() {
-      let selectedCat = 'adulto';
-      catRadios.forEach(r => { if (r.checked) selectedCat = r.value; });
-      
-      if (selectedCat === 'adulto' && chk.checked) {
-        const cardItem = chk.closest('.stage-card-item');
-        if (cardItem && cardItem.getAttribute('data-cat-type') === 'adulto') {
-          stageCheckboxes.forEach(otherChk => {
-            if (otherChk !== chk) {
-              const otherCardItem = otherChk.closest('.stage-card-item');
-              if (otherCardItem && otherCardItem.getAttribute('data-cat-type') === 'adulto') {
-                otherChk.checked = false;
-              }
-            }
-          });
-        }
+      // Solo se puede seleccionar una etapa a la vez en cualquier categoría
+      if (chk.checked) {
+        stageCheckboxes.forEach(otherChk => {
+          if (otherChk !== chk) {
+            otherChk.checked = false;
+          }
+        });
       }
       
       const container = document.getElementById('stagesContainer');
@@ -2458,6 +2779,25 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
   if (docTypeSelect) {
     docTypeSelect.addEventListener('change', function() {
       updateBirthDateLimits();
+    });
+  }
+
+  const scarfMain = document.getElementById('talla_panolete_mascota');
+  const scarfMirror = document.getElementById('talla_panolete_mascota_mirror');
+  if (scarfMain && scarfMirror) {
+    scarfMain.addEventListener('change', function() {
+      scarfMirror.value = this.value;
+      if (this.value) {
+        clearValidationErrors(this);
+        clearValidationErrors(scarfMirror);
+      }
+    });
+    scarfMirror.addEventListener('change', function() {
+      scarfMain.value = this.value;
+      if (this.value) {
+        clearValidationErrors(this);
+        clearValidationErrors(scarfMain);
+      }
     });
   }
 

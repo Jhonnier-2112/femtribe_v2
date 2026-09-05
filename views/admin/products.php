@@ -71,7 +71,14 @@ require __DIR__ . '/../layouts/header.php';
                                         <td class="fw-bold font-monospace small"><?= htmlspecialchars($p['sku']) ?></td>
                                         <!-- Nombre -->
                                         <td>
-                                            <div class="fw-bold text-dark"><?= htmlspecialchars($p['name']) ?></div>
+                                            <div class="fw-bold text-dark d-flex align-items-center gap-1 flex-wrap">
+                                                <?= htmlspecialchars($p['name']) ?>
+                                                <?php if (!empty($p['is_upcoming'])): ?>
+                                                    <span class="badge bg-warning text-dark border border-warning" style="font-size: 0.72rem;">
+                                                        <i class="fas fa-clock me-1"></i>- Próximamente
+                                                    </span>
+                                                <?php endif; ?>
+                                            </div>
                                             <span class="text-muted small font-monospace" style="font-size: 0.75rem;">/producto?slug=<?= htmlspecialchars($p['slug']) ?></span>
                                         </td>
                                         <!-- Categoría -->
@@ -84,6 +91,9 @@ require __DIR__ . '/../layouts/header.php';
                                         <td>
                                             <span class="badge bg-light text-muted border text-uppercase me-1" style="font-size: 0.7rem;"><?= htmlspecialchars($p['gender']) ?></span>
                                             <span class="badge bg-light text-muted border text-uppercase" style="font-size: 0.7rem;"><?= htmlspecialchars($p['type']) ?></span>
+                                            <?php if (!empty($p['is_upcoming'])): ?>
+                                                <span class="badge bg-warning text-dark border border-warning ms-1" style="font-size: 0.7rem;">Próximo</span>
+                                            <?php endif; ?>
                                             <?php if ($p['is_new']): ?>
                                                 <span class="badge bg-success-subtle text-success ms-1" style="font-size: 0.7rem;">Nuevo</span>
                                             <?php endif; ?>
@@ -93,22 +103,31 @@ require __DIR__ . '/../layouts/header.php';
                                         </td>
                                         <!-- Precio y Envío -->
                                         <td class="fw-bold text-dark">
-                                            $<?= number_format($p['price'], 0, ',', '.') ?>
-                                            <div class="mt-1">
-                                                <?php if (!isset($p['is_free_shipping']) || (int)$p['is_free_shipping'] === 1): ?>
-                                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 0.68rem;">
-                                                        <i class="fas fa-truck me-1"></i> Envío Gratis
-                                                    </span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-light text-dark border rounded-pill px-2 py-0.5" style="font-size: 0.68rem;">
-                                                        <i class="fas fa-truck me-1 text-muted"></i> Envío $<?= number_format((float)($p['shipping_cost'] ?? 0), 0, ',', '.') ?>
-                                                    </span>
-                                                <?php endif; ?>
-                                            </div>
+                                            <?php if (!empty($p['is_upcoming'])): ?>
+                                                <span class="badge bg-warning text-dark px-2.5 py-1 fw-bold" style="font-size:0.75rem;">
+                                                    <i class="fas fa-clock me-1"></i>- Próximamente
+                                                </span>
+                                                <div class="small text-muted mt-1" style="font-size: 0.72rem;">Exhibición previa</div>
+                                            <?php else: ?>
+                                                $<?= number_format($p['price'], 0, ',', '.') ?>
+                                                <div class="mt-1">
+                                                    <?php if (!isset($p['is_free_shipping']) || (int)$p['is_free_shipping'] === 1): ?>
+                                                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2 py-0.5" style="font-size: 0.68rem;">
+                                                            <i class="fas fa-truck me-1"></i> Envío Gratis
+                                                        </span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-light text-dark border rounded-pill px-2 py-0.5" style="font-size: 0.68rem;">
+                                                            <i class="fas fa-truck me-1 text-muted"></i> Envío $<?= number_format((float)($p['shipping_cost'] ?? 0), 0, ',', '.') ?>
+                                                        </span>
+                                                    <?php endif; ?>
+                                                </div>
+                                            <?php endif; ?>
                                         </td>
                                         <!-- Stock -->
                                         <td>
-                                            <?php if ($p['stock'] <= 0): ?>
+                                            <?php if (!empty($p['is_upcoming'])): ?>
+                                                <span class="badge bg-secondary-subtle text-secondary-emphasis border">Sin stock (Próximo)</span>
+                                            <?php elseif ($p['stock'] <= 0): ?>
                                                 <span class="badge bg-danger">Agotado (0)</span>
                                             <?php elseif ($p['stock'] < 10): ?>
                                                 <span class="badge bg-warning text-dark fw-bold border border-warning" style="background-color: #ffc107 !important;">

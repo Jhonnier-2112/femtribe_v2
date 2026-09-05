@@ -14,9 +14,11 @@ $pGender      = $product['gender'] ?? 'mujer';
 $pType        = $product['type'] ?? 'camisetas';
 $pColors      = $product['colors'] ?? '';
 $pSizes       = $product['sizes']  ?? '';
+$pSizeStock   = $product['size_stock'] ?? '';
 $pDescription = $product['description'] ?? '';
 $pIsNew          = isset($product['is_new'])  && $product['is_new']  == 1;
 $pIsOffer        = isset($product['is_offer']) && $product['is_offer'] == 1;
+$pIsUpcoming     = isset($product['is_upcoming']) && (int)$product['is_upcoming'] === 1;
 $pIsFreeShipping = !isset($product['is_free_shipping']) || (int)$product['is_free_shipping'] === 1;
 $pShippingCost   = isset($product['shipping_cost']) ? (float)$product['shipping_cost'] : 0.00;
 
@@ -24,6 +26,11 @@ $pShippingCost   = isset($product['shipping_cost']) ? (float)$product['shipping_
 $rawSelectedColors   = array_values(array_filter(array_map('trim', explode(',', (string)$pColors))));
 $selectedColorsLower = array_map('strtolower', $rawSelectedColors);
 $selectedSizes       = array_map('strtoupper', array_filter(array_map('trim', explode(',', (string)$pSizes))));
+
+$pSizeStockData = [];
+if (!empty($pSizeStock)) {
+    $pSizeStockData = is_array($pSizeStock) ? $pSizeStock : (json_decode((string)$pSizeStock, true) ?: []);
+}
 
 // Capturar mensajes de sesión antes de renderizar
 $sessionError   = $_SESSION['admin_error']   ?? '';
@@ -234,21 +241,55 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
                          value="<?= htmlspecialchars($pSku) ?>" required>
                 </div>
 
-                <!-- Precio -->
-                <div class="col-6 col-md-6">
-                  <label class="form-label fw-bold small text-muted text-uppercase">Precio ($ COP)</label>
-                  <div class="input-group">
-                    <span class="input-group-text bg-light">$</span>
-                    <input type="number" name="price" class="form-control bg-light py-2"
-                           value="<?= (float)$pPrice ?>" step="1000" min="0" required>
+                <!-- Switch Destacado: Producto Próximo / Próximamente -->
+                <div class="col-12">
+                  <div class="p-3 rounded-4 border d-flex align-items-center justify-content-between flex-wrap gap-2" 
+                       id="upcomingBanner"
+                       style="<?= $pIsUpcoming ? 'background: #fffbeb; border-color: #f59e0b !important;' : 'background: #f8fafc; border-color: #e2e8f0 !important;' ?> transition: all .2s ease;">
+                    <div class="d-flex align-items-center gap-3">
+                      <div class="rounded-circle d-flex align-items-center justify-content-center <?= $pIsUpcoming ? 'bg-warning text-dark' : 'bg-light text-muted border' ?> shadow-sm" 
+                           id="upcomingIconBox" style="width:42px; height:42px; min-width:42px;">
+                        <i class="fas fa-clock fs-5"></i>
+                      </div>
+                      <div>
+                        <label class="form-check-label fw-bold text-dark mb-0 cursor-pointer d-flex align-items-center gap-2" for="isUpcomingSwitch">
+                          ¿Producto Próximo / Próximamente a la venta?
+                          <span class="badge bg-warning text-dark border border-warning" id="upcomingActiveBadge" style="<?= $pIsUpcoming ? '' : 'display:none;' ?> font-size:0.7rem;">Activo</span>
+                        </label>
+                        <span class="text-muted small" id="upcomingHelperText">
+                          <?= $pIsUpcoming ? 'Modo Próximamente activo: el producto se mostrará en catálogo con etiqueta "- Próximamente" sin requerir valor ni stock para venta inmediata.' : 'Marca este check para subir un producto que próximamente va a estar a la venta sin valor ni stock, para que los usuarios lo vean.' ?>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="form-check form-switch fs-4 m-0">
+                      <input class="form-check-input" type="checkbox" name="is_upcoming" id="isUpcomingSwitch" <?= $pIsUpcoming ? 'checked' : '' ?> style="cursor:pointer;">
+                    </div>
                   </div>
                 </div>
 
+                <!-- Precio -->
+                <div class="col-6 col-md-6" id="priceContainer">
+                  <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between">
+                    <span>Precio ($ COP) <span class="text-danger required-asterisk" id="priceAsterisk" style="<?= $pIsUpcoming ? 'display:none;' : '' ?>">*</span></span>
+                    <span class="badge bg-warning-subtle text-dark border border-warning" id="priceUpcomingBadge" style="<?= $pIsUpcoming ? '' : 'display:none;' ?> font-size:0.68rem;">Opcional (Próximo)</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light">$</span>
+                    <input type="number" name="price" id="productPrice" class="form-control bg-light py-2"
+                           value="<?= (float)$pPrice ?>" step="1000" min="0" <?= $pIsUpcoming ? '' : 'required' ?>>
+                  </div>
+                  <small class="text-muted" id="priceHint" style="font-size: 0.78rem; <?= $pIsUpcoming ? '' : 'display:none;' ?>">No se mostrará precio al público mientras esté marcado como Próximamente.</small>
+                </div>
+
                 <!-- Stock -->
-                <div class="col-6 col-md-6">
-                  <label class="form-label fw-bold small text-muted text-uppercase">Stock Disponible</label>
-                  <input type="number" name="stock" class="form-control bg-light py-2"
-                         value="<?= (int)$pStock ?>" min="0" required>
+                <div class="col-6 col-md-6" id="stockContainer">
+                  <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center justify-content-between">
+                    <span>Stock Disponible <span class="text-danger required-asterisk" id="stockAsterisk" style="<?= $pIsUpcoming ? 'display:none;' : '' ?>">*</span></span>
+                    <span class="badge bg-warning-subtle text-dark border border-warning" id="stockUpcomingBadge" style="<?= $pIsUpcoming ? '' : 'display:none;' ?> font-size:0.68rem;">Opcional (Próximo)</span>
+                  </label>
+                  <input type="number" name="stock" id="productStock" class="form-control bg-light py-2"
+                         value="<?= (int)$pStock ?>" min="0" <?= $pIsUpcoming ? '' : 'required' ?>>
+                  <small class="text-muted" id="stockHint" style="font-size: 0.78rem; <?= $pIsUpcoming ? '' : 'display:none;' ?>">No se requiere stock para venta inmediata.</small>
                 </div>
 
                 <!-- Configuración de Envío -->
@@ -277,7 +318,7 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
                           <span class="input-group-text bg-white border-end-0 text-muted"><i class="fas fa-dollar-sign"></i></span>
                           <input type="number" name="shipping_cost" id="shippingCostInput" class="form-control py-2" 
                                  placeholder="Costo de envío (ej: 12000)" 
-                                 value="<?= (float)$pShippingCost ?>" step="500" min="0">
+                                 value="<?= (float)$pShippingCost ?>" step="any" min="0">
                           <span class="input-group-text bg-white text-muted small">COP</span>
                         </div>
                         <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">Valor del flete a cobrar en el checkout por este producto.</small>
@@ -325,7 +366,7 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
 
                 <!-- SECCIÓN: COLORES Y TALLAS -->
                 <!-- Colores disponibles -->
-                <div class="col-12 col-md-6">
+                <div class="col-12">
                   <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center gap-1">
                     <i class="fas fa-palette text-primary me-1"></i> Colores Disponibles
                   </label>
@@ -358,20 +399,79 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
                          value="<?= htmlspecialchars(implode(', ', $customColorsList)) ?>">
                 </div>
 
-                <!-- Tallas Disponibles (dinámicas según Género y Tipo) -->
-                <div class="col-12 col-md-6" id="sizesSection">
-                  <label class="form-label fw-bold small text-muted text-uppercase d-flex align-items-center gap-1">
-                    <i class="fas fa-ruler-horizontal text-warning me-1"></i> Tallas Disponibles
-                    <span class="badge bg-success ms-1" id="sizesBadge">Ropa</span>
-                  </label>
+                <!-- SECCIÓN: INVENTARIO Y CANTIDADES POR TALLA Y GÉNERO -->
+                <div class="col-12" id="sizesSection">
+                  <div class="p-3.5 rounded-4 border" style="background:#f8fafc; border-color:#e2e8f0 !important;">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                      <div class="d-flex align-items-center gap-2">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center bg-dark text-white shadow-xs" style="width:38px; height:38px; min-width:38px;">
+                          <i class="fas fa-layer-group"></i>
+                        </div>
+                        <div>
+                          <label class="form-label fw-bold text-dark mb-0 text-uppercase small d-flex align-items-center gap-1">
+                            <i class="fas fa-ruler-horizontal text-warning me-1"></i> Cantidades de Stock por Talla y Género
+                            <span class="badge bg-success ms-1" id="sizesBadge">Ropa</span>
+                          </label>
+                          <small class="text-muted d-block" style="font-size:0.78rem;">Ingresa la cantidad disponible por separado para cada talla en Hombre, Mujer y Niños.</small>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="badge bg-white text-dark border px-3 py-2 fw-semibold shadow-xs rounded-pill" id="totalSizeStockCounter" style="font-size:0.85rem;">
+                          <i class="fas fa-calculator text-success me-1"></i> Stock Total: <strong id="calculatedStockNumber" class="text-dark fs-6">0</strong> unidades
+                        </span>
+                      </div>
+                    </div>
 
-                  <div id="noSizesNotice" class="alert alert-light border rounded-3 p-2 small text-muted mb-0" style="display:none;">
-                    <i class="fas fa-info-circle text-primary me-1"></i>
-                    Este tipo de producto (termo / accesorio) no requiere tallas, únicamente color.
-                  </div>
+                    <div id="noSizesNotice" class="alert alert-light border rounded-3 p-3 small text-muted mb-0" style="display:none;">
+                      <i class="fas fa-info-circle text-primary me-2"></i>
+                      Este tipo de producto (termo / accesorio) no requiere desglose por tallas. Ingresa la cantidad directamente en el campo <strong>Stock Disponible</strong> arriba.
+                    </div>
 
-                  <div id="sizesContainer" class="d-flex flex-wrap gap-2">
-                    <!-- Se renderiza dinámicamente mediante JS -->
+                    <div id="sizesStockContainer">
+                      <!-- Pestañas de Género -->
+                      <ul class="nav nav-pills gap-2 mb-3" id="genderSizesTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active rounded-pill px-3 py-1.5 fw-bold d-flex align-items-center gap-2 border" id="tab-mujer-btn" data-bs-toggle="pill" data-bs-target="#tab-mujer" type="button" role="tab">
+                            <i class="fas fa-female text-danger"></i> Mujer
+                            <span class="badge bg-dark-subtle text-dark rounded-pill px-2 py-0.5" id="badge-count-mujer">0</span>
+                          </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link rounded-pill px-3 py-1.5 fw-bold d-flex align-items-center gap-2 border" id="tab-hombre-btn" data-bs-toggle="pill" data-bs-target="#tab-hombre" type="button" role="tab">
+                            <i class="fas fa-male text-primary"></i> Hombre
+                            <span class="badge bg-dark-subtle text-dark rounded-pill px-2 py-0.5" id="badge-count-hombre">0</span>
+                          </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link rounded-pill px-3 py-1.5 fw-bold d-flex align-items-center gap-2 border" id="tab-kids-btn" data-bs-toggle="pill" data-bs-target="#tab-kids" type="button" role="tab">
+                            <i class="fas fa-child text-warning"></i> Niños / Kids
+                            <span class="badge bg-dark-subtle text-dark rounded-pill px-2 py-0.5" id="badge-count-kids">0</span>
+                          </button>
+                        </li>
+                      </ul>
+
+                      <!-- Paneles de Tallas -->
+                      <div class="tab-content" id="genderSizesTabContent">
+                        <!-- Mujer -->
+                        <div class="tab-pane fade show active" id="tab-mujer" role="tabpanel">
+                          <div class="row g-2" id="grid-sizes-mujer"></div>
+                        </div>
+                        <!-- Hombre -->
+                        <div class="tab-pane fade" id="tab-hombre" role="tabpanel">
+                          <div class="row g-2" id="grid-sizes-hombre"></div>
+                        </div>
+                        <!-- Kids -->
+                        <div class="tab-pane fade" id="tab-kids" role="tabpanel">
+                          <div class="row g-2" id="grid-sizes-kids"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Contenedor dinámico de inputs ocultos sizes[] -->
+                    <div id="hiddenSizesInputs" style="display:none;"></div>
+
+                    <!-- Campo oculto serializado JSON size_stock -->
+                    <input type="hidden" name="size_stock" id="sizeStockJsonInput" value="<?= htmlspecialchars(is_string($pSizeStock) ? $pSizeStock : json_encode($pSizeStockData ?: [])) ?>">
                   </div>
                 </div>
 
@@ -440,7 +540,7 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
 
                 <!-- Flags -->
                 <div class="col-12">
-                  <div class="d-flex gap-4 mt-2">
+                  <div class="d-flex flex-wrap gap-4 mt-2">
                     <div class="form-check form-switch">
                       <input class="form-check-input" type="checkbox" name="is_new"
                              id="isNewSwitch" <?= $pIsNew ? 'checked' : '' ?>>
@@ -798,7 +898,7 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
     }
 
     /* ══════════════════════════════════════
-       MANEJO DINÁMICO DE TALLAS POR GÉNERO Y TIPO
+       MANEJO DINÁMICO DE TALLAS Y CANTIDADES POR GÉNERO
     ══════════════════════════════════════ */
     var genderSelect = document.getElementById('genderSelect');
     var typeSelect   = document.getElementById('typeSelect');
@@ -806,66 +906,256 @@ $existingMediaJson = json_encode($existingMedia, JSON_UNESCAPED_UNICODE | JSON_U
     var sizeSets = {
         mujer:  ['XS', 'S', 'M', 'L', 'XL'],
         hombre: ['S', 'M', 'L', 'XL', 'XXL'],
-        ninos:  ['4', '6', '8', '10', '12', '14', '16'],
-        kids:   ['4', '6', '8', '10', '12', '14', '16'],
-        unisex: ['XS', 'S', 'M', 'L', 'XL', 'XXL']
+        kids:   ['4', '6', '8', '10', '12', '14', '16']
     };
 
-    var serverSizes = <?= json_encode(array_values($selectedSizes)) ?>;
+    var initialSizeStock = <?= json_encode(!empty($pSizeStockData) ? $pSizeStockData : (object)[]) ?>;
+    var serverSizes      = <?= json_encode(array_values($selectedSizes)) ?>;
     var nonClothingTypes = ['botella_plegable', 'accesorios'];
 
-    function updateSizesUI() {
+    var gridMujer   = document.getElementById('grid-sizes-mujer');
+    var gridHombre  = document.getElementById('grid-sizes-hombre');
+    var gridKids    = document.getElementById('grid-sizes-kids');
+    var sizeStockJsonInput = document.getElementById('sizeStockJsonInput');
+    var hiddenSizesInputs  = document.getElementById('hiddenSizesInputs');
+    var calculatedStockNumber = document.getElementById('calculatedStockNumber');
+    var badgeCountMujer = document.getElementById('badge-count-mujer');
+    var badgeCountHombre = document.getElementById('badge-count-hombre');
+    var badgeCountKids = document.getElementById('badge-count-kids');
+    var sizesBadge = document.getElementById('sizesBadge');
+    var noSizesNotice = document.getElementById('noSizesNotice');
+    var sizesStockContainer = document.getElementById('sizesStockContainer');
+
+    function initSizeGrids() {
+        renderGenderGrid('mujer', sizeSets.mujer, gridMujer);
+        renderGenderGrid('hombre', sizeSets.hombre, gridHombre);
+        renderGenderGrid('kids', sizeSets.kids, gridKids);
+        recalcStock();
+    }
+
+    function renderGenderGrid(gKey, sizesArr, container) {
+        if (!container) return;
+        container.innerHTML = '';
+        var currentGenderData = initialSizeStock[gKey] || {};
+
+        sizesArr.forEach(function(s) {
+            var qtyVal = '';
+            if (currentGenderData[s] !== undefined && currentGenderData[s] !== null) {
+                qtyVal = currentGenderData[s];
+            }
+
+            var col = document.createElement('div');
+            col.className = 'col-6 col-sm-4 col-md-3 col-lg-2';
+            col.innerHTML = `
+                <div class="p-2.5 rounded-3 border bg-white text-center size-stock-card shadow-xs" style="transition: all .15s ease;">
+                    <span class="badge bg-dark text-white rounded-pill px-2.5 py-1 mb-2 d-inline-block fw-bold" style="font-size: 0.82rem;">
+                        Talla ${s}
+                    </span>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light text-muted px-2" title="Cantidad disponible">
+                            <i class="fas fa-boxes-stacked" style="font-size:0.75rem;"></i>
+                        </span>
+                        <input type="number" min="0" step="1" 
+                               class="form-control text-center fw-bold size-qty-input" 
+                               data-gender="${gKey}" data-size="${s}" 
+                               value="${qtyVal !== '' ? qtyVal : ''}" 
+                               placeholder="0"
+                               style="font-size:0.95rem;">
+                    </div>
+                    <div class="small text-muted mt-1" style="font-size: 0.72rem;">unidades</div>
+                </div>
+            `;
+            container.appendChild(col);
+        });
+    }
+
+    function recalcStock() {
+        var allInputs = document.querySelectorAll('.size-qty-input');
+        var stockData = { mujer: {}, hombre: {}, kids: {} };
+        var sumMujer = 0, sumHombre = 0, sumKids = 0;
+        var activeSizes = [];
+
+        allInputs.forEach(function(inp) {
+            var g = inp.dataset.gender;
+            var s = inp.dataset.size;
+            var raw = inp.value.trim();
+            if (raw !== '') {
+                var val = parseInt(raw, 10);
+                if (!isNaN(val) && val >= 0) {
+                    stockData[g][s] = val;
+                    if (g === 'mujer') sumMujer += val;
+                    else if (g === 'hombre') sumHombre += val;
+                    else if (g === 'kids') sumKids += val;
+
+                    if (val > 0 && !activeSizes.includes(s)) {
+                        activeSizes.push(s);
+                    }
+                }
+            }
+        });
+
+        if (badgeCountMujer) badgeCountMujer.textContent = sumMujer;
+        if (badgeCountHombre) badgeCountHombre.textContent = sumHombre;
+        if (badgeCountKids) badgeCountKids.textContent = sumKids;
+
+        var totalCalculated = sumMujer + sumHombre + sumKids;
+        if (calculatedStockNumber) calculatedStockNumber.textContent = totalCalculated;
+
+        var hasAnySizeInput = false;
+        allInputs.forEach(function(i){ if(i.value.trim() !== '') hasAnySizeInput = true; });
+
+        if (hasAnySizeInput && productStock) {
+            productStock.value = totalCalculated;
+        }
+
+        var cleanStockToSave = {};
+        ['mujer', 'hombre', 'kids'].forEach(function(g) {
+            if (Object.keys(stockData[g]).length > 0) {
+                cleanStockToSave[g] = stockData[g];
+            }
+        });
+        if (sizeStockJsonInput) {
+            sizeStockJsonInput.value = Object.keys(cleanStockToSave).length > 0 ? JSON.stringify(cleanStockToSave) : '';
+        }
+
+        if (hiddenSizesInputs) {
+            hiddenSizesInputs.innerHTML = '';
+            activeSizes.forEach(function(s) {
+                var h = document.createElement('input');
+                h.type = 'hidden';
+                h.name = 'sizes[]';
+                h.value = s;
+                hiddenSizesInputs.appendChild(h);
+            });
+        }
+    }
+
+    document.addEventListener('input', function(e) {
+        if (e.target && e.target.classList.contains('size-qty-input')) {
+            recalcStock();
+        }
+    });
+
+    document.querySelectorAll('#genderSizesTabs button').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('#genderSizesTabs button').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('#genderSizesTabContent .tab-pane').forEach(function(p) { p.classList.remove('show', 'active'); });
+            this.classList.add('active');
+            var targetId = this.getAttribute('data-bs-target');
+            var targetPane = document.querySelector(targetId);
+            if (targetPane) {
+                targetPane.classList.add('show', 'active');
+            }
+        });
+    });
+
+    function updateTypeAndGenderView() {
         var gender = genderSelect ? genderSelect.value : 'mujer';
         var type   = typeSelect ? typeSelect.value : 'camisetas';
         var isClothing = !nonClothingTypes.includes(type);
 
-        var sizesContainer = document.getElementById('sizesContainer');
-        var noSizesNotice  = document.getElementById('noSizesNotice');
-        var sizesBadge     = document.getElementById('sizesBadge');
-
-        if (!sizesContainer) return;
-
         if (!isClothing) {
-            sizesContainer.style.display = 'none';
-            noSizesNotice.style.display = 'block';
-            sizesBadge.textContent = 'Sin Talla';
-            sizesBadge.className = 'badge bg-secondary ms-1';
-            return;
+            if (sizesStockContainer) sizesStockContainer.style.display = 'none';
+            if (noSizesNotice) noSizesNotice.style.display = 'block';
+            if (sizesBadge) {
+                sizesBadge.textContent = 'Sin Talla';
+                sizesBadge.className = 'badge bg-secondary ms-1';
+            }
+        } else {
+            if (sizesStockContainer) sizesStockContainer.style.display = 'block';
+            if (noSizesNotice) noSizesNotice.style.display = 'none';
+            if (sizesBadge) {
+                sizesBadge.textContent = 'Ropa';
+                sizesBadge.className = 'badge bg-success ms-1';
+            }
+
+            if (gender === 'hombre') {
+                var hBtn = document.getElementById('tab-hombre-btn');
+                if (hBtn) hBtn.click();
+            } else if (gender === 'ninos' || gender === 'kids') {
+                var kBtn = document.getElementById('tab-kids-btn');
+                if (kBtn) kBtn.click();
+            } else if (gender === 'mujer') {
+                var mBtn = document.getElementById('tab-mujer-btn');
+                if (mBtn) mBtn.click();
+            }
         }
-
-        sizesContainer.style.display = 'flex';
-        noSizesNotice.style.display  = 'none';
-
-        var audienceName = 'Mujeres';
-        if (gender === 'hombre') audienceName = 'Hombres';
-        else if (gender === 'ninos' || gender === 'kids') audienceName = 'Niños';
-        else if (gender === 'unisex') audienceName = 'Unisex';
-
-        sizesBadge.textContent = 'Ropa ' + audienceName;
-        sizesBadge.className   = 'badge bg-success ms-1';
-
-        var availableSizes = sizeSets[gender] || sizeSets['unisex'];
-
-        var checkedValues = Array.from(document.querySelectorAll('input[name="sizes[]"]:checked')).map(function(cb){ return cb.value.toUpperCase(); });
-        var activeSelected = Array.from(new Set(serverSizes.concat(checkedValues)));
-
-        sizesContainer.innerHTML = '';
-        availableSizes.forEach(function (size) {
-            var isChecked = activeSelected.includes(size.toUpperCase());
-            var div = document.createElement('div');
-            div.innerHTML = `
-                <input type="checkbox" name="sizes[]" value="${size}" id="size_${size}" class="chip-check" ${isChecked ? 'checked' : ''}>
-                <label for="size_${size}" class="chip-label btn btn-sm btn-outline-dark fw-bold rounded-3 px-3 py-1 me-1">
-                    ${size}
-                </label>
-            `;
-            sizesContainer.appendChild(div);
-        });
     }
 
-    if (genderSelect) genderSelect.addEventListener('change', updateSizesUI);
-    if (typeSelect) typeSelect.addEventListener('change', updateSizesUI);
-    updateSizesUI();
+    if (genderSelect) genderSelect.addEventListener('change', updateTypeAndGenderView);
+    if (typeSelect) typeSelect.addEventListener('change', updateTypeAndGenderView);
+
+    initSizeGrids();
+    updateTypeAndGenderView();
+
+    /* ══════════════════════════════════════
+       TOGGLE PRODUCTO PRÓXIMO / PRÓXIMAMENTE
+    ══════════════════════════════════════ */
+    const isUpcomingSwitch   = document.getElementById('isUpcomingSwitch');
+    const productPrice       = document.getElementById('productPrice');
+    const productStock       = document.getElementById('productStock');
+    const priceAsterisk      = document.getElementById('priceAsterisk');
+    const stockAsterisk      = document.getElementById('stockAsterisk');
+    const priceUpcomingBadge = document.getElementById('priceUpcomingBadge');
+    const stockUpcomingBadge = document.getElementById('stockUpcomingBadge');
+    const priceHint          = document.getElementById('priceHint');
+    const stockHint          = document.getElementById('stockHint');
+    const upcomingHelperText = document.getElementById('upcomingHelperText');
+    const upcomingBanner     = document.getElementById('upcomingBanner');
+    const upcomingIconBox    = document.getElementById('upcomingIconBox');
+    const upcomingActiveBadge = document.getElementById('upcomingActiveBadge');
+
+    function updateUpcomingState() {
+        if (!isUpcomingSwitch) return;
+        const isUpcoming = isUpcomingSwitch.checked;
+        if (isUpcoming) {
+            if (productPrice) productPrice.removeAttribute('required');
+            if (productStock) productStock.removeAttribute('required');
+            if (priceAsterisk) priceAsterisk.style.display = 'none';
+            if (stockAsterisk) stockAsterisk.style.display = 'none';
+            if (priceUpcomingBadge) priceUpcomingBadge.style.display = 'inline-block';
+            if (stockUpcomingBadge) stockUpcomingBadge.style.display = 'inline-block';
+            if (priceHint) priceHint.style.display = 'block';
+            if (stockHint) stockHint.style.display = 'block';
+            if (upcomingActiveBadge) upcomingActiveBadge.style.display = 'inline-block';
+            if (upcomingBanner) {
+                upcomingBanner.style.background = '#fffbeb';
+                upcomingBanner.style.borderColor = '#f59e0b';
+            }
+            if (upcomingIconBox) {
+                upcomingIconBox.className = 'rounded-circle d-flex align-items-center justify-content-center bg-warning text-dark shadow-sm';
+            }
+            if (upcomingHelperText) {
+                upcomingHelperText.textContent = 'Modo Próximamente activo: el producto se mostrará en catálogo con etiqueta "- Próximamente" sin requerir valor ni stock para venta inmediata.';
+            }
+        } else {
+            if (productPrice) productPrice.setAttribute('required', 'required');
+            if (productStock) productStock.setAttribute('required', 'required');
+            if (priceAsterisk) priceAsterisk.style.display = 'inline';
+            if (stockAsterisk) stockAsterisk.style.display = 'inline';
+            if (priceUpcomingBadge) priceUpcomingBadge.style.display = 'none';
+            if (stockUpcomingBadge) stockUpcomingBadge.style.display = 'none';
+            if (priceHint) priceHint.style.display = 'none';
+            if (stockHint) stockHint.style.display = 'none';
+            if (upcomingActiveBadge) upcomingActiveBadge.style.display = 'none';
+            if (upcomingBanner) {
+                upcomingBanner.style.background = '#f8fafc';
+                upcomingBanner.style.borderColor = '#e2e8f0';
+            }
+            if (upcomingIconBox) {
+                upcomingIconBox.className = 'rounded-circle d-flex align-items-center justify-content-center bg-light text-muted border shadow-sm';
+            }
+            if (upcomingHelperText) {
+                upcomingHelperText.textContent = 'Marca este check para subir un producto que próximamente va a estar a la venta sin valor ni stock, para que los usuarios lo vean.';
+            }
+        }
+    }
+
+    if (isUpcomingSwitch) {
+        isUpcomingSwitch.addEventListener('change', updateUpcomingState);
+        updateUpcomingState();
+    }
 
     /* ══════════════════════════════════════
        SUBMIT CON VALIDACIÓN BOOTSTRAP

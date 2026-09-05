@@ -75,9 +75,11 @@ class RegistrationController extends Controller {
             $data = [
                 'user_id' => $user_id,
                 'categoria_participante' => $categoria,
+                'modalidad_nino' => trim($_POST['modalidad_nino'] ?? ''),
                 'etapas_seleccionadas' => $etapas,
                 'nombre_mascota' => $_POST['nombre_mascota'] ?? '',
                 'raza_mascota' => $_POST['raza_mascota'] ?? '',
+                'talla_panolete_mascota' => trim($_POST['talla_panolete_mascota'] ?? ''),
                 'acudiente_nombre' => $_POST['acudiente_nombre'] ?? '',
                 'acudiente_documento' => $_POST['acudiente_documento'] ?? '',
                 'nombres' => trim($_POST['nombres'] ?? ''),

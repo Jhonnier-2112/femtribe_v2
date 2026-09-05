@@ -135,11 +135,63 @@
     <!-- =========================================================================
          GRID 3 TARJETAS DE DISTANCIAS (3K / 5K / 10K) · IMAGEN 100% CUADRO
          ========================================================================= -->
+    <?php
+    // Obtener estado de preventa por distancia para las tarjetas
+    $homeStages = class_exists('App\Models\Event') ? \App\Models\Event::getStages(1) : [];
+    $presaleStatus = [
+        '3k' => ['active' => false, 'slots_left' => 0, 'price' => null, 'presale_price' => null],
+        '5k' => ['active' => false, 'slots_left' => 0, 'price' => null, 'presale_price' => null],
+        '10k' => ['active' => false, 'slots_left' => 0, 'price' => null, 'presale_price' => null]
+    ];
+
+    foreach ($homeStages as $stg) {
+        if (($stg['category_type'] ?? '') === 'adicional') continue;
+        $dist = strtoupper(trim($stg['distance'] ?? ''));
+        $key = null;
+        if (strpos($dist, '10') !== false) {
+            $key = '10k';
+        } elseif (strpos($dist, '5') !== false) {
+            $key = '5k';
+        } elseif (strpos($dist, '3') !== false) {
+            $key = '3k';
+        }
+
+        if ($key) {
+            $isActive = !empty($stg['is_stage_presale_active']);
+            $slotsLeft = (int)($stg['presale_slots_left'] ?? 0);
+            if ($isActive && $slotsLeft > 0) {
+                $presaleStatus[$key]['active'] = true;
+                $presaleStatus[$key]['slots_left'] += $slotsLeft;
+                if ($presaleStatus[$key]['presale_price'] === null || (float)$stg['presale_price'] < $presaleStatus[$key]['presale_price']) {
+                    $presaleStatus[$key]['presale_price'] = (float)$stg['presale_price'];
+                }
+                if ($presaleStatus[$key]['price'] === null || (float)$stg['price'] > $presaleStatus[$key]['price']) {
+                    $presaleStatus[$key]['price'] = (float)$stg['price'];
+                }
+            }
+        }
+    }
+    $p3k = $presaleStatus['3k'];
+    $p5k = $presaleStatus['5k'];
+    $p10k = $presaleStatus['10k'];
+    ?>
     <div class="row g-4 justify-content-center align-items-stretch" id="distancias" style="margin-bottom: 0.4rem;">
 
       <!-- ============ TARJETA 3K · TARJETA ÚNICA CONTINUA (imagen + info fusionados) ============ -->
       <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
         <div class="distance-card">
+          <?php if (!empty($p3k['active']) && $p3k['slots_left'] > 0): ?>
+            <div class="distance-card-presale-badge">
+              <span class="distance-card-presale-badge__pill">
+                <span class="distance-card-presale-badge__dot"></span>
+                <i class="fas fa-bolt me-1"></i>PREVENTA
+              </span>
+              <span class="distance-card-presale-badge__cupos">
+                <i class="fas fa-ticket-alt me-1"></i>¡Últimos <?= $p3k['slots_left'] ?> cupos!
+              </span>
+            </div>
+          <?php endif; ?>
+
           <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
             <img src="assets/img/CorreconFemtribe2.0/tarjeta3k.png" alt="3K Niños y Mascotas Corre Con FemTribe 2.0"
               class="distance-image-card__img" loading="lazy"
@@ -156,6 +208,16 @@
             <p class="distance-info-block__desc">
               La distancia perfecta para los más pequeños y sus mejores amigos.
             </p>
+            <?php if (!empty($p3k['active']) && $p3k['slots_left'] > 0 && !empty($p3k['presale_price'])): ?>
+              <div class="distance-card-pricing-badge">
+                <span class="badge-presale-price">
+                  <span class="badge-presale-label">Preventa:</span> $<?= number_format($p3k['presale_price'], 0, ',', '.') ?>
+                  <?php if (!empty($p3k['price']) && $p3k['price'] > $p3k['presale_price']): ?>
+                    <span class="badge-regular-price">$<?= number_format($p3k['price'], 0, ',', '.') ?></span>
+                  <?php endif; ?>
+                </span>
+              </div>
+            <?php endif; ?>
             <a href="<?= $inscribeteUrl ?>" class="distance-info-block__btn inscribete-btn-link">
               INSCRÍBETE AQUÍ
             </a>
@@ -166,6 +228,18 @@
       <!-- ============ TARJETA 5K · TARJETA ÚNICA CONTINUA ============ -->
       <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
         <div class="distance-card">
+          <?php if (!empty($p5k['active']) && $p5k['slots_left'] > 0): ?>
+            <div class="distance-card-presale-badge">
+              <span class="distance-card-presale-badge__pill">
+                <span class="distance-card-presale-badge__dot"></span>
+                <i class="fas fa-bolt me-1"></i>PREVENTA
+              </span>
+              <span class="distance-card-presale-badge__cupos">
+                <i class="fas fa-ticket-alt me-1"></i>¡Últimos <?= $p5k['slots_left'] ?> cupos!
+              </span>
+            </div>
+          <?php endif; ?>
+
           <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
             <img src="assets/img/CorreconFemtribe2.0/tarjeta5k.png" alt="5K Para Todos Corre Con FemTribe 2.0"
               class="distance-image-card__img" loading="lazy"
@@ -182,6 +256,16 @@
             <p class="distance-info-block__desc">
               La distancia perfecta para los que buscan un reto accesible, emocionante y lleno de energía.
             </p>
+            <?php if (!empty($p5k['active']) && $p5k['slots_left'] > 0 && !empty($p5k['presale_price'])): ?>
+              <div class="distance-card-pricing-badge">
+                <span class="badge-presale-price">
+                  <span class="badge-presale-label">Preventa:</span> $<?= number_format($p5k['presale_price'], 0, ',', '.') ?>
+                  <?php if (!empty($p5k['price']) && $p5k['price'] > $p5k['presale_price']): ?>
+                    <span class="badge-regular-price">$<?= number_format($p5k['price'], 0, ',', '.') ?></span>
+                  <?php endif; ?>
+                </span>
+              </div>
+            <?php endif; ?>
             <a href="<?= $inscribeteUrl ?>" class="distance-info-block__btn inscribete-btn-link">
               INSCRÍBETE AQUÍ
             </a>
@@ -192,6 +276,18 @@
       <!-- ============ TARJETA 10K · TARJETA ÚNICA CONTINUA ============ -->
       <div class="col-12 col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
         <div class="distance-card">
+          <?php if (!empty($p10k['active']) && $p10k['slots_left'] > 0): ?>
+            <div class="distance-card-presale-badge">
+              <span class="distance-card-presale-badge__pill">
+                <span class="distance-card-presale-badge__dot"></span>
+                <i class="fas fa-bolt me-1"></i>PREVENTA
+              </span>
+              <span class="distance-card-presale-badge__cupos">
+                <i class="fas fa-ticket-alt me-1"></i>¡Últimos <?= $p10k['slots_left'] ?> cupos!
+              </span>
+            </div>
+          <?php endif; ?>
+
           <a href="<?= $inscribeteUrl ?>" class="distance-image-card distance-image-card--with-btn inscribete-btn-link">
             <img src="assets/img/CorreconFemtribe2.0/tarjeta10k.png" alt="10K Superación Corre Con FemTribe 2.0"
               class="distance-image-card__img" loading="lazy"
@@ -208,6 +304,16 @@
             <p class="distance-info-block__desc">
               La distancia para los que buscan superarse, desafiar sus límites y sentir el poder de cada kilómetro.
             </p>
+            <?php if (!empty($p10k['active']) && $p10k['slots_left'] > 0 && !empty($p10k['presale_price'])): ?>
+              <div class="distance-card-pricing-badge">
+                <span class="badge-presale-price">
+                  <span class="badge-presale-label">Preventa:</span> $<?= number_format($p10k['presale_price'], 0, ',', '.') ?>
+                  <?php if (!empty($p10k['price']) && $p10k['price'] > $p10k['presale_price']): ?>
+                    <span class="badge-regular-price">$<?= number_format($p10k['price'], 0, ',', '.') ?></span>
+                  <?php endif; ?>
+                </span>
+              </div>
+            <?php endif; ?>
             <a href="<?= $inscribeteUrl ?>" class="distance-info-block__btn inscribete-btn-link">
               INSCRÍBETE AQUÍ
             </a>
@@ -965,6 +1071,117 @@
     box-shadow:
       0 24px 54px rgba(0, 0, 0, 0.30),
       0 10px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  /* Badge Flotante de Preventa en las tarjetas de distancia */
+  .distance-card-presale-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+  }
+
+  .distance-card:hover .distance-card-presale-badge {
+    transform: translateY(-2px);
+  }
+
+  .distance-card-presale-badge__pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #003A77 0%, #00224a 100%);
+    color: #41CEB3;
+    border: 1.5px solid #41CEB3;
+    border-radius: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 14px rgba(0, 58, 119, 0.45);
+    backdrop-filter: blur(4px);
+  }
+
+  .distance-card-presale-badge__dot {
+    width: 7px;
+    height: 7px;
+    background-color: #B2D81F;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #B2D81F;
+    animation: presaleDotPulse 1.6s infinite ease-in-out;
+  }
+
+  @keyframes presaleDotPulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.4);
+      opacity: 0.5;
+    }
+  }
+
+  .distance-card-presale-badge__cupos {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 11px;
+    background: rgba(255, 255, 255, 0.96);
+    color: #d63384;
+    border: 1px solid rgba(214, 51, 132, 0.28);
+    border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.70rem;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  }
+
+  /* Badge de precios dentro del bloque de texto */
+  .distance-card-pricing-badge {
+    margin-top: -0.2rem;
+    margin-bottom: 0.85rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .badge-presale-price {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  .badge-presale-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .badge-regular-price {
+    text-decoration: line-through;
+    color: #9ca3af;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-left: 4px;
   }
 
   /* La tarjeta de imagen AHORA NO tiene radio/sombra propios → lo hereda el padre */

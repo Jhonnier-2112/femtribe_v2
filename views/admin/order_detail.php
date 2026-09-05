@@ -39,6 +39,17 @@ require __DIR__ . '/../layouts/header.php';
                                         <tr>
                                             <td>
                                                 <div class="fw-bold text-dark"><?= htmlspecialchars($item['product_name']) ?></div>
+                                                <?php
+                                                    $itemMeta = [];
+                                                    if (!empty($item['color'])) $itemMeta[] = 'Color: ' . htmlspecialchars($item['color']);
+                                                    if (!empty($item['gender'])) $itemMeta[] = 'Género: ' . ucfirst(htmlspecialchars($item['gender']));
+                                                    if (!empty($item['size'])) $itemMeta[] = 'Talla: ' . htmlspecialchars($item['size']);
+                                                ?>
+                                                <?php if (!empty($itemMeta)): ?>
+                                                    <div class="small text-muted mt-1" style="font-size: 0.8rem;">
+                                                        <span class="badge bg-light text-dark border me-1"><?= implode('</span> <span class="badge bg-light text-dark border me-1">', $itemMeta) ?></span>
+                                                    </div>
+                                                <?php endif; ?>
                                             </td>
                                             <td>$<?= number_format($item['price'], 0, ',', '.') ?> COP</td>
                                             <td class="fw-bold"><?= $item['quantity'] ?></td>

@@ -77,7 +77,7 @@ class Registration {
             }
 
             $sql = "INSERT INTO registrations (
-                user_id, categoria_participante, etapas_seleccionadas, etapas_preventa, nombre_mascota, raza_mascota,
+                user_id, categoria_participante, modalidad_nino, etapas_seleccionadas, etapas_preventa, nombre_mascota, raza_mascota, talla_panolete_mascota,
                 acudiente_nombre, acudiente_documento, nombres, apellidos, tipo_documento, numero_documento, 
                 fecha_nacimiento, edad, genero, eps, grupo_sanguineo, rh, talla_camiseta_adulto, talla_camiseta_nino,
                 direccion, municipio, departamento, email, telefono, 
@@ -85,7 +85,7 @@ class Registration {
                 nombre_emergencia_alt, celular_emergencia, acepta_autorizacion, created_at,
                 payment_status, payment_amount, order_number
             ) VALUES (
-                :user_id, :categoria_participante, :etapas_seleccionadas, :etapas_preventa, :nombre_mascota, :raza_mascota,
+                :user_id, :categoria_participante, :modalidad_nino, :etapas_seleccionadas, :etapas_preventa, :nombre_mascota, :raza_mascota, :talla_panolete_mascota,
                 :acudiente_nombre, :acudiente_documento, :nombres, :apellidos, :tipo_documento, :numero_documento, 
                 :fecha_nacimiento, :edad, :genero, :eps, :grupo_sanguineo, :rh, :talla_camiseta_adulto, :talla_camiseta_nino,
                 :direccion, :municipio, :departamento, :email, :telefono, 
@@ -119,10 +119,12 @@ class Registration {
             $insertData = [
                 ':user_id' => $userId,
                 ':categoria_participante' => $data['categoria_participante'] ?? 'adulto',
+                ':modalidad_nino' => !empty($data['modalidad_nino']) ? substr($data['modalidad_nino'], 0, 30) : (($data['categoria_participante'] ?? '') === 'nino' ? (!empty($data['edad']) && (int)$data['edad'] < 8 ? 'acompanado' : 'solo') : null),
                 ':etapas_seleccionadas' => $etapas,
                 ':etapas_preventa' => $etapasPreventa,
                 ':nombre_mascota' => !empty($data['nombre_mascota']) ? $data['nombre_mascota'] : null,
                 ':raza_mascota' => !empty($data['raza_mascota']) ? $data['raza_mascota'] : null,
+                ':talla_panolete_mascota' => !empty($data['talla_panolete_mascota']) ? substr($data['talla_panolete_mascota'], 0, 20) : null,
                 ':acudiente_nombre' => !empty($data['acudiente_nombre']) ? $data['acudiente_nombre'] : null,
                 ':acudiente_documento' => !empty($data['acudiente_documento']) ? $data['acudiente_documento'] : null,
                 ':nombres' => $data['nombres'] ?? '',
@@ -282,6 +284,12 @@ class Registration {
                 } elseif ($selectedAdultCount > 1) {
                     $errors[] = 'Un adulto solo se puede inscribir a 10K o 5K, pero no a los dos';
                 }
+            } else {
+                if (count($selectedStages) === 0) {
+                    $errors[] = 'Debe seleccionar una etapa para la categoría 3K';
+                } elseif (count($selectedStages) > 1) {
+                    $errors[] = 'Solo puedes seleccionar una carrera o etapa para tu inscripción en 3K';
+                }
             }
 
             // Validar si los cupos de las etapas seleccionadas están agotados
@@ -377,21 +385,32 @@ class Registration {
                 $age = $today->diff($birthDate)->y;
 
                 if ($categoria === 'adulto') {
-                    if ($age < 18) {
-                        $errors[] = 'Como adulto debes ser mayor de 18 años';
+                    if ($age < 11) {
+                        $errors[] = 'La edad mínima para participar en 5K y 10K es de 11 años';
                     } elseif ($age >= 90) {
-                        $errors[] = 'La edad para adulto debe ser menor a 90 años';
+                        $errors[] = 'La edad debe ser menor a 90 años';
+                    }
+                } elseif ($categoria === 'nino') {
+                    if ($age > 10) {
+                        $errors[] = 'La categoría 3K KIDS es para niños de hasta 10 años. A partir de los 11 años deben inscribirse en 5K o 10K';
+                    } elseif ($age < 2) {
+                        $errors[] = 'La edad mínima sugerida para participar en 3K KIDS es de 2 años';
+                    }
+
+                    $modalidad = $data['modalidad_nino'] ?? ($age < 8 ? 'acompanado' : 'solo');
+                    if ($age < 8 && $modalidad === 'solo') {
+                        $errors[] = 'Los niños menores de 8 años deben correr acompañados obligatoriamente por un adulto';
                     }
                 } else {
                     if ($age < 8) {
-                        $errors[] = 'Debes tener al menos 8 años para participar';
+                        $errors[] = 'El guía o participante de 3K Pet debe tener al menos 8 años';
                     }
                 }
 
                 // Validar consistencia de tipo de documento y edad
                 $docType = $data['tipo_documento'] ?? '';
-                if ($docType === 'tarjeta_identidad' && $age >= 18) {
-                    $errors[] = 'La Tarjeta de Identidad es para menores de 18 años';
+                if (($docType === 'tarjeta_identidad' || $docType === 'registro_civil') && $age >= 18) {
+                    $errors[] = 'El tipo de documento seleccionado es solo para menores de 18 años';
                 } elseif ($docType === 'cedula_ciudadania' && $age < 18) {
                     $errors[] = 'La Cédula de Ciudadanía es para mayores de 18 años';
                 }
@@ -402,8 +421,16 @@ class Registration {
             $errors[] = 'La fecha de nacimiento es requerida';
         }
 
-        if ($categoria === 'nino' && empty($data['acudiente_nombre'])) {
-            $errors[] = 'El nombre del acudiente es obligatorio para la inscripción infantil';
+        if ($categoria === 'nino') {
+            $modalidad = $data['modalidad_nino'] ?? '';
+            $childAge = !empty($data['edad']) ? (int)$data['edad'] : 0;
+            if (empty($data['acudiente_nombre'])) {
+                if ($childAge < 8 || $modalidad === 'acompanado') {
+                    $errors[] = 'El nombre del adulto acompañante es obligatorio para 3K KIDS';
+                } else {
+                    $errors[] = 'El nombre del acudiente o tutor responsable que autoriza es obligatorio';
+                }
+            }
         }
         if ($categoria === 'nino' && empty($data['talla_camiseta_nino'])) {
             $errors[] = 'La talla de camiseta para el niño es obligatoria';
@@ -411,8 +438,13 @@ class Registration {
         if ($categoria !== 'nino' && empty($data['talla_camiseta_adulto'])) {
             $errors[] = 'La talla de camiseta de adulto es obligatoria';
         }
-        if ($categoria === 'mascota' && empty($data['nombre_mascota'])) {
-            $errors[] = 'El nombre de la mascota es obligatorio para la categoría Pet Run';
+        if ($categoria === 'mascota') {
+            if (empty($data['nombre_mascota'])) {
+                $errors[] = 'El nombre de la mascota es obligatorio para la categoría Pet Run';
+            }
+            if (empty($data['talla_panolete_mascota'])) {
+                $errors[] = 'La talla de la pañoleta de la mascota es obligatoria';
+            }
         }
 
         if (($data['acepta_autorizacion'] ?? '') !== 'si') {
@@ -445,10 +477,12 @@ class Registration {
             try { $db->exec("ALTER TABLE registrations ADD COLUMN etapas_seleccionadas TEXT DEFAULT NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations ADD COLUMN nombre_mascota VARCHAR(100) DEFAULT NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations ADD COLUMN raza_mascota VARCHAR(100) DEFAULT NULL"); } catch (\Throwable $t) {}
+            try { $db->exec("ALTER TABLE registrations ADD COLUMN talla_panolete_mascota VARCHAR(20) DEFAULT NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations ADD COLUMN acudiente_nombre VARCHAR(150) DEFAULT NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations ADD COLUMN acudiente_documento VARCHAR(30) DEFAULT NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations ADD COLUMN talla_camiseta_adulto VARCHAR(20) DEFAULT NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations ADD COLUMN talla_camiseta_nino VARCHAR(20) DEFAULT NULL"); } catch (\Throwable $t) {}
+            try { $db->exec("ALTER TABLE registrations ADD COLUMN modalidad_nino VARCHAR(30) DEFAULT NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations ADD COLUMN etapas_preventa TEXT DEFAULT NULL"); } catch (\Throwable $t) {}
 
             // Asegurar longitud adecuada de columnas críticas para evitar truncamientos

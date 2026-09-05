@@ -314,6 +314,7 @@ class AdminController extends Controller {
         $description = trim($_POST['description'] ?? '');
         $isNew          = isset($_POST['is_new']) ? 1 : 0;
         $isOffer        = isset($_POST['is_offer']) ? 1 : 0;
+        $isUpcoming     = isset($_POST['is_upcoming']) ? 1 : 0;
         $isFreeShipping = isset($_POST['is_free_shipping']) ? (int)$_POST['is_free_shipping'] : 1;
         $shippingCost   = ($isFreeShipping === 1) ? 0.00 : max(0.0, floatval($_POST['shipping_cost'] ?? 0));
 
@@ -344,6 +345,46 @@ class AdminController extends Controller {
         $rawSizes    = $_POST['sizes'] ?? [];
         $sizesStr    = is_array($rawSizes) ? implode(', ', array_filter(array_map('trim', $rawSizes))) : trim((string)$rawSizes);
 
+        // Procesar desglose de inventario por talla y por género (Hombre, Mujer, Niños)
+        $rawSizeStockJson = trim($_POST['size_stock'] ?? '');
+        $sizeStockData = [];
+        if ($rawSizeStockJson !== '') {
+            $decoded = json_decode($rawSizeStockJson, true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $gKey => $sizeMap) {
+                    if (is_array($sizeMap)) {
+                        foreach ($sizeMap as $sKey => $qtyVal) {
+                            $cleanQty = max(0, intval($qtyVal));
+                            $cleanSize = trim((string)$sKey);
+                            if ($cleanSize !== '') {
+                                $sizeStockData[$gKey][$cleanSize] = $cleanQty;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Si hay desglose de inventario por tallas, calcular el stock total como la suma
+        if (!empty($sizeStockData)) {
+            $calculatedTotalStock = 0;
+            $activeSizesList = [];
+            foreach ($sizeStockData as $gKey => $sizeMap) {
+                foreach ($sizeMap as $sKey => $qtyVal) {
+                    $calculatedTotalStock += $qtyVal;
+                    if ($qtyVal > 0 && !in_array($sKey, $activeSizesList, true)) {
+                        $activeSizesList[] = $sKey;
+                    }
+                }
+            }
+            // Asignar la suma total de las tallas al stock general del producto
+            $stock = $calculatedTotalStock;
+            if (!empty($activeSizesList)) {
+                $sizesStr = implode(', ', $activeSizesList);
+            }
+        }
+        $sizeStockJsonToSave = !empty($sizeStockData) ? json_encode($sizeStockData, JSON_UNESCAPED_UNICODE) : null;
+
         // Medios: leer JSON del campo oculto
         $mediaJson = trim($_POST['media_json'] ?? '[]');
         $mediaList = json_decode($mediaJson, true) ?: [];
@@ -359,9 +400,11 @@ class AdminController extends Controller {
             'type'             => $type,
             'colors'           => $colorsStr,
             'sizes'            => $sizesStr,
+            'size_stock'       => $sizeStockJsonToSave,
             'description'      => $description,
             'is_new'           => $isNew,
             'is_offer'         => $isOffer,
+            'is_upcoming'      => $isUpcoming,
             'is_free_shipping' => $isFreeShipping,
             'shipping_cost'    => $shippingCost,
             'media'            => $mediaList
@@ -414,9 +457,9 @@ class AdminController extends Controller {
             }
 
             $sql = "INSERT INTO products 
-                        (sku, name, slug, description, price, stock, category, category_id, gender, type, colors, sizes, image, video, images, is_new, is_offer, is_free_shipping, shipping_cost, is_active, created_at)
+                        (sku, name, slug, description, price, stock, category, category_id, gender, type, colors, sizes, size_stock, image, video, images, is_new, is_offer, is_upcoming, is_free_shipping, shipping_cost, is_active, created_at)
                     VALUES 
-                        (:sku, :name, :slug, :description, :price, :stock, :category, :category_id, :gender, :type, :colors, :sizes, :image, :video, :images, :is_new, :is_offer, :is_free_shipping, :shipping_cost, 1, NOW())";
+                        (:sku, :name, :slug, :description, :price, :stock, :category, :category_id, :gender, :type, :colors, :sizes, :size_stock, :image, :video, :images, :is_new, :is_offer, :is_upcoming, :is_free_shipping, :shipping_cost, 1, NOW())";
 
             $stmt = $this->db->prepare($sql);
             $ok = $stmt->execute([
@@ -432,11 +475,13 @@ class AdminController extends Controller {
                 ':type'             => $type,
                 ':colors'           => $colorsStr !== '' ? $colorsStr : null,
                 ':sizes'            => $sizesStr !== '' ? $sizesStr : null,
+                ':size_stock'       => $sizeStockJsonToSave,
                 ':image'            => $firstImage,
                 ':video'            => $firstVideo,
                 ':images'           => $imagesStr !== '' ? $imagesStr : null,
                 ':is_new'           => $isNew,
                 ':is_offer'         => $isOffer,
+                ':is_upcoming'      => $isUpcoming,
                 ':is_free_shipping' => $isFreeShipping,
                 ':shipping_cost'    => $shippingCost,
             ]);
@@ -487,6 +532,7 @@ class AdminController extends Controller {
         $description = trim($_POST['description'] ?? '');
         $isNew          = isset($_POST['is_new']) ? 1 : 0;
         $isOffer        = isset($_POST['is_offer']) ? 1 : 0;
+        $isUpcoming     = isset($_POST['is_upcoming']) ? 1 : 0;
         $isFreeShipping = isset($_POST['is_free_shipping']) ? (int)$_POST['is_free_shipping'] : 1;
         $shippingCost   = ($isFreeShipping === 1) ? 0.00 : max(0.0, floatval($_POST['shipping_cost'] ?? 0));
 
@@ -516,6 +562,46 @@ class AdminController extends Controller {
         // Procesar tallas (array o string)
         $rawSizes    = $_POST['sizes'] ?? [];
         $sizesStr    = is_array($rawSizes) ? implode(', ', array_filter(array_map('trim', $rawSizes))) : trim((string)$rawSizes);
+
+        // Procesar desglose de inventario por talla y por género (Hombre, Mujer, Niños)
+        $rawSizeStockJson = trim($_POST['size_stock'] ?? '');
+        $sizeStockData = [];
+        if ($rawSizeStockJson !== '') {
+            $decoded = json_decode($rawSizeStockJson, true);
+            if (is_array($decoded)) {
+                foreach ($decoded as $gKey => $sizeMap) {
+                    if (is_array($sizeMap)) {
+                        foreach ($sizeMap as $sKey => $qtyVal) {
+                            $cleanQty = max(0, intval($qtyVal));
+                            $cleanSize = trim((string)$sKey);
+                            if ($cleanSize !== '') {
+                                $sizeStockData[$gKey][$cleanSize] = $cleanQty;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Si hay desglose de inventario por tallas, calcular el stock total como la suma
+        if (!empty($sizeStockData)) {
+            $calculatedTotalStock = 0;
+            $activeSizesList = [];
+            foreach ($sizeStockData as $gKey => $sizeMap) {
+                foreach ($sizeMap as $sKey => $qtyVal) {
+                    $calculatedTotalStock += $qtyVal;
+                    if ($qtyVal > 0 && !in_array($sKey, $activeSizesList, true)) {
+                        $activeSizesList[] = $sKey;
+                    }
+                }
+            }
+            // Asignar la suma total de las tallas al stock general del producto
+            $stock = $calculatedTotalStock;
+            if (!empty($activeSizesList)) {
+                $sizesStr = implode(', ', $activeSizesList);
+            }
+        }
+        $sizeStockJsonToSave = !empty($sizeStockData) ? json_encode($sizeStockData, JSON_UNESCAPED_UNICODE) : null;
 
         // Medios: leer JSON del campo oculto
         $mediaJson = trim($_POST['media_json'] ?? '[]');
@@ -566,11 +652,13 @@ class AdminController extends Controller {
                         type = :type, 
                         colors = :colors, 
                         sizes = :sizes, 
+                        size_stock = :size_stock, 
                         image = :image, 
                         video = :video, 
                         images = :images, 
                         is_new = :is_new, 
                         is_offer = :is_offer,
+                        is_upcoming = :is_upcoming,
                         is_free_shipping = :is_free_shipping,
                         shipping_cost = :shipping_cost
                     WHERE id = :id";
@@ -589,11 +677,13 @@ class AdminController extends Controller {
                 ':type'             => $type,
                 ':colors'           => $colorsStr !== '' ? $colorsStr : null,
                 ':sizes'            => $sizesStr !== '' ? $sizesStr : null,
+                ':size_stock'       => $sizeStockJsonToSave,
                 ':image'            => $firstImage,
                 ':video'            => $firstVideo,
                 ':images'           => $imagesStr !== '' ? $imagesStr : null,
                 ':is_new'           => $isNew,
                 ':is_offer'         => $isOffer,
+                ':is_upcoming'      => $isUpcoming,
                 ':is_free_shipping' => $isFreeShipping,
                 ':shipping_cost'    => $shippingCost,
                 ':id'               => $id
@@ -1243,6 +1333,7 @@ class AdminController extends Controller {
             'Etapas / Kilometraje',
             'Talla Camiseta Adulto',
             'Talla Camiseta Niño',
+            'Talla Pañoleta Mascota',
             'Estado Pago',
             'Número Orden',
             'Total Pago',
@@ -1282,6 +1373,7 @@ class AdminController extends Controller {
                 $etapasStr,
                 $reg['talla_camiseta_adulto'] ?? 'N/A',
                 $reg['talla_camiseta_nino'] ?? 'N/A',
+                $reg['talla_panolete_mascota'] ?? 'N/A',
                 $reg['payment_status'] ?? 'pending',
                 $reg['order_number'] ?? '',
                 $reg['payment_amount'] ?? 0.00,
