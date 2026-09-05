@@ -21,10 +21,14 @@ class ChatbotService {
     // ─── Carga rápida de productos activos ─────────────────────────────────
     private function loadProducts(): void {
         try {
-            $db   = (new Database())->getConnection();
+            $db = (new Database())->getConnection();
+            if (!$db) {
+                $this->products = [];
+                return;
+            }
             $stmt = $db->query("SELECT name, type, price, sizes, gender FROM products WHERE is_active = 1 ORDER BY name ASC LIMIT 20");
             $this->products = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $this->products = [];
         }
     }

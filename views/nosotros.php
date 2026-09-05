@@ -470,9 +470,10 @@ if (!empty($_SESSION['user_nombres'])) {
     </div>
 
   </div>
+</section>
 
-  <!-- Modal para Agregar Testimonio y Calificar -->
-  <div class="modal fade" id="modalNuevoTestimonio" tabindex="-1" aria-labelledby="modalTestimonioLabel" aria-hidden="true">
+  <!-- Modal para Agregar Testimonio y Calificar (fuera de section para evitar stacking context conflict) -->
+  <div class="modal fade" id="modalNuevoTestimonio" tabindex="-1" aria-labelledby="modalTestimonioLabel" aria-hidden="true" style="z-index: 1060;">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
         
@@ -490,18 +491,35 @@ if (!empty($_SESSION['user_nombres'])) {
           <input type="hidden" name="rating" id="ratingScoreInput" value="5">
 
           <!-- Selector Interactivo de Estrellas -->
-          <div class="mb-4 text-center p-3 rounded-4" style="background-color: #f8fafc; border: 1px dashed #e2e8f0;">
-            <label class="form-label fw-bold d-block text-dark mb-2">Tu Calificación de la Página y Experiencia</label>
+          <div class="mb-4 text-center p-3 rounded-4" style="background-color: #f8fafc; border: 1px dashed #cbd5e1;">
+            <label class="form-label fw-bold d-block text-dark mb-1">Tu Calificación de la Página y Experiencia</label>
+            <small class="text-muted d-block mb-3">Toca o haz clic en las estrellas para calificar</small>
             
-            <div class="interactive-stars-box d-flex justify-content-center gap-2 mb-2" id="starRatingContainer">
-              <i class="fas fa-star star-rate-item active" data-value="1" title="1 estrella"></i>
-              <i class="fas fa-star star-rate-item active" data-value="2" title="2 estrellas"></i>
-              <i class="fas fa-star star-rate-item active" data-value="3" title="3 estrellas"></i>
-              <i class="fas fa-star star-rate-item active" data-value="4" title="4 estrellas"></i>
-              <i class="fas fa-star star-rate-item active" data-value="5" title="5 estrellas"></i>
+            <div class="interactive-stars-box d-flex justify-content-center align-items-center gap-2 mb-3" id="starRatingContainer" role="radiogroup" aria-label="Calificación de 1 a 5 estrellas">
+              <button type="button" class="star-btn-wrapper p-2 border-0 bg-transparent" data-value="1" title="1 estrella - Regular" aria-label="1 estrella">
+                <i class="fas fa-star star-rate-item star-active" data-value="1"></i>
+              </button>
+              <button type="button" class="star-btn-wrapper p-2 border-0 bg-transparent" data-value="2" title="2 estrellas - Aceptable" aria-label="2 estrellas">
+                <i class="fas fa-star star-rate-item star-active" data-value="2"></i>
+              </button>
+              <button type="button" class="star-btn-wrapper p-2 border-0 bg-transparent" data-value="3" title="3 estrellas - Buena" aria-label="3 estrellas">
+                <i class="fas fa-star star-rate-item star-active" data-value="3"></i>
+              </button>
+              <button type="button" class="star-btn-wrapper p-2 border-0 bg-transparent" data-value="4" title="4 estrellas - Muy buena" aria-label="4 estrellas">
+                <i class="fas fa-star star-rate-item star-active" data-value="4"></i>
+              </button>
+              <button type="button" class="star-btn-wrapper p-2 border-0 bg-transparent" data-value="5" title="5 estrellas - ¡Excelente!" aria-label="5 estrellas">
+                <i class="fas fa-star star-rate-item star-active" data-value="5"></i>
+              </button>
             </div>
-            <div class="fw-semibold small" id="ratingTextDesc" style="color: #65a30d;">
-              ⭐⭐⭐⭐⭐ ¡Excelente! Me encanta la comunidad y la página
+
+            <div class="d-flex flex-wrap justify-content-center align-items-center gap-2 mt-2">
+              <span class="badge rounded-pill px-3 py-2 fw-bold shadow-sm" id="ratingBadge" style="background-color: #B2D81F; color: #1a1a1a; font-size: 0.95rem;">
+                5 / 5 ★
+              </span>
+              <span class="fw-bold small" id="ratingTextDesc" style="color: #166534;">
+                ¡Excelente! Me encanta la comunidad y la página
+              </span>
             </div>
           </div>
 
@@ -641,18 +659,41 @@ if (!empty($_SESSION['user_nombres'])) {
     }
 
     /* Estrellas interactivas en el modal */
-    .star-rate-item {
-      font-size: 2rem;
-      color: #d1d5db;
+    .star-btn-wrapper {
       cursor: pointer;
-      transition: transform 0.15s ease, color 0.15s ease;
+      line-height: 1;
+      padding: 6px;
+      border-radius: 12px;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      touch-action: manipulation;
     }
-    .star-rate-item:hover,
-    .star-rate-item.active {
-      color: #B2D81F;
+    .star-btn-wrapper:hover,
+    .star-btn-wrapper:focus-visible {
+      transform: scale(1.22);
+      background-color: rgba(0, 0, 0, 0.04);
+      outline: none;
     }
-    .star-rate-item:hover {
-      transform: scale(1.25);
+    .star-rate-item {
+      font-size: 2.35rem;
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.2s ease, filter 0.2s ease;
+      pointer-events: none;
+      display: inline-block;
+    }
+    .star-rate-item.star-active {
+      color: #f59e0b !important;
+      filter: drop-shadow(0 2px 6px rgba(245, 158, 11, 0.4));
+    }
+    .star-rate-item.star-inactive {
+      color: #cbd5e1 !important;
+      filter: none;
+    }
+    .star-bump {
+      animation: starBumpAnim 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes starBumpAnim {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.4); }
+      100% { transform: scale(1); }
     }
 
     @media (min-width: 768px) {
@@ -665,8 +706,10 @@ if (!empty($_SESSION['user_nombres'])) {
   <!-- Script Interactivo para Testimonios y Calificación -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const starItems = document.querySelectorAll('.star-rate-item');
+      const starRatingContainer = document.getElementById('starRatingContainer');
+      const starWrappers = document.querySelectorAll('.star-btn-wrapper');
       const ratingScoreInput = document.getElementById('ratingScoreInput');
+      const ratingBadge = document.getElementById('ratingBadge');
       const ratingTextDesc = document.getElementById('ratingTextDesc');
       const formTestimonio = document.getElementById('formTestimonio');
       const inputCommentText = document.getElementById('inputCommentText');
@@ -675,49 +718,78 @@ if (!empty($_SESSION['user_nombres'])) {
       const modalErrorAlert = document.getElementById('modalErrorAlert');
       const testimonialsGrid = document.getElementById('testimonials-grid');
 
-      const ratingDescriptions = {
-        1: "⭐ Regular - Hay cosas por mejorar",
-        2: "⭐⭐ Aceptable - Cumple con lo básico",
-        3: "⭐⭐⭐ Buena - Experiencia positiva",
-        4: "⭐⭐⭐⭐ Muy buena - Me gusta mucho",
-        5: "⭐⭐⭐⭐⭐ ¡Excelente! Me encanta la comunidad y la página"
+      const ratingDetails = {
+        1: { text: "Regular - Hay cosas por mejorar", badge: "1 / 5 ★", color: "#dc2626", bg: "#fee2e2", textColor: "#991b1b" },
+        2: { text: "Aceptable - Cumple con lo básico", badge: "2 / 5 ★", color: "#ea580c", bg: "#ffedd5", textColor: "#9a3412" },
+        3: { text: "Buena - Experiencia positiva", badge: "3 / 5 ★", color: "#b45309", bg: "#fef9c3", textColor: "#854d0e" },
+        4: { text: "Muy buena - Me gusta mucho", badge: "4 / 5 ★", color: "#4d7c0f", bg: "#ecfccb", textColor: "#365314" },
+        5: { text: "¡Excelente! Me encanta la comunidad y la página", badge: "5 / 5 ★", color: "#166534", bg: "#B2D81F", textColor: "#1a1a1a" }
       };
 
       let currentRating = 5;
 
-      // Manejo de hover y selección en estrellas
-      starItems.forEach(star => {
-        star.addEventListener('mouseenter', function() {
+      function renderStars(count, isHover = false) {
+        starWrappers.forEach(btn => {
+          const val = parseInt(btn.getAttribute('data-value'));
+          const icon = btn.querySelector('.star-rate-item');
+          if (!icon) return;
+
+          if (val <= count) {
+            // Estrella activa: rellena y dorada
+            icon.classList.remove('far', 'star-inactive');
+            icon.classList.add('fas', 'star-active');
+          } else {
+            // Estrella inactiva: contorno y gris claro
+            icon.classList.remove('fas', 'star-active');
+            icon.classList.add('far', 'star-inactive');
+          }
+        });
+
+        const detail = ratingDetails[count] || ratingDetails[5];
+        if (ratingBadge) {
+          ratingBadge.textContent = detail.badge;
+          ratingBadge.style.backgroundColor = detail.bg;
+          ratingBadge.style.color = detail.textColor;
+        }
+        if (ratingTextDesc) {
+          ratingTextDesc.textContent = detail.text;
+          ratingTextDesc.style.color = detail.color;
+        }
+      }
+
+      // Interacción con cada botón de estrella (hover y clic)
+      starWrappers.forEach(btn => {
+        btn.addEventListener('mouseenter', function() {
           const val = parseInt(this.getAttribute('data-value'));
-          highlightStars(val);
-          ratingTextDesc.textContent = ratingDescriptions[val] || '';
+          renderStars(val, true);
         });
 
-        star.addEventListener('mouseleave', function() {
-          highlightStars(currentRating);
-          ratingTextDesc.textContent = ratingDescriptions[currentRating] || '';
-        });
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          const val = parseInt(this.getAttribute('data-value'));
+          currentRating = val;
+          if (ratingScoreInput) ratingScoreInput.value = currentRating;
+          renderStars(currentRating);
 
-        star.addEventListener('click', function() {
-          currentRating = parseInt(this.getAttribute('data-value'));
-          ratingScoreInput.value = currentRating;
-          highlightStars(currentRating);
-          ratingTextDesc.textContent = ratingDescriptions[currentRating] || '';
+          // Efecto visual de rebote (bump) al pulsar
+          const icon = this.querySelector('.star-rate-item');
+          if (icon) {
+            icon.classList.remove('star-bump');
+            void icon.offsetWidth;
+            icon.classList.add('star-bump');
+          }
         });
       });
 
-      function highlightStars(count) {
-        starItems.forEach(s => {
-          const val = parseInt(s.getAttribute('data-value'));
-          if (val <= count) {
-            s.classList.add('active');
-            s.style.color = '#B2D81F';
-          } else {
-            s.classList.remove('active');
-            s.style.color = '#d1d5db';
-          }
+      // Restaurar calificación elegida únicamente al sacar el cursor de todo el contenedor
+      if (starRatingContainer) {
+        starRatingContainer.addEventListener('mouseleave', function() {
+          renderStars(currentRating);
         });
       }
+
+      // Inicializar en 5 estrellas por defecto
+      renderStars(5);
 
       // Contador de caracteres
       if (inputCommentText && charCountLabel) {
@@ -769,19 +841,32 @@ if (!empty($_SESSION['user_nombres'])) {
               }
             });
 
-            const data = await response.json();
+            const rawText = await response.text();
+            let data = null;
+            try {
+              const startIdx = rawText.indexOf('{');
+              const endIdx = rawText.lastIndexOf('}');
+              if (startIdx !== -1 && endIdx !== -1) {
+                data = JSON.parse(rawText.substring(startIdx, endIdx + 1));
+              } else {
+                data = JSON.parse(rawText);
+              }
+            } catch (parseErr) {
+              console.error('Respuesta no JSON del servidor:', rawText);
+              showError('Error al procesar la respuesta del servidor. Inténtalo de nuevo.');
+              setLoading(false);
+              return;
+            }
 
-            if (data.success) {
-              // Cerrar modal
-              const modalEl = document.getElementById('modalNuevoTestimonio');
-              const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-              modalInstance.hide();
+            if (data && data.success) {
+              // Cerrar modal de forma limpia y garantizada
+              cerrarModalSeguro();
 
               // Resetear formulario
-              inputCommentText.value = '';
+              if (inputCommentText) inputCommentText.value = '';
               if (charCountLabel) charCountLabel.textContent = '0 / 1000';
 
-              // Notificación Toast / Alert
+              // Notificación Toast de éxito
               mostrarToastExito(data.message || '¡Testimonio publicado con éxito!');
 
               // Actualizar Estadísticas en pantalla
@@ -801,24 +886,70 @@ if (!empty($_SESSION['user_nombres'])) {
                 tempDiv.innerHTML = newCardHtml;
                 const newCardEl = tempDiv.firstElementChild;
                 
-                testimonialsGrid.insertAdjacentElement('afterbegin', newCardEl);
-                
-                // Efecto de iluminación sutil
-                newCardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                newCardEl.querySelector('.testimonial-card').style.borderColor = '#B2D81F';
-                newCardEl.querySelector('.testimonial-card').style.boxShadow = '0 0 25px rgba(178, 216, 31, 0.35)';
+                if (newCardEl) {
+                  testimonialsGrid.insertAdjacentElement('afterbegin', newCardEl);
+                  try {
+                    newCardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    const card = newCardEl.querySelector('.testimonial-card');
+                    if (card) {
+                      card.style.borderColor = '#B2D81F';
+                      card.style.boxShadow = '0 0 25px rgba(178, 216, 31, 0.35)';
+                    }
+                  } catch(_) {}
+                }
               }
 
             } else {
-              showError(data.message || 'Error al guardar el testimonio.');
+              showError((data && data.message) ? data.message : 'Error al guardar el testimonio.');
             }
           } catch (err) {
             console.error('Error enviando testimonio:', err);
-            // Si la llamada AJAX falla, enviar por el flujo clásico del formulario
-            formTestimonio.submit();
+            showError('Hubo un inconveniente al enviar tu comentario. Por favor verifica tus datos e inténtalo de nuevo.');
           } finally {
             setLoading(false);
           }
+        });
+      }
+
+      function cerrarModalSeguro() {
+        const modalEl = document.getElementById('modalNuevoTestimonio');
+        if (!modalEl) return;
+
+        // 1. Simular clic en el botón de cerrar nativo de Bootstrap
+        const closeBtn = modalEl.querySelector('[data-bs-dismiss="modal"]');
+        if (closeBtn) {
+          closeBtn.click();
+        } else if (window.bootstrap && bootstrap.Modal) {
+          const inst = bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl);
+          if (inst) inst.hide();
+        }
+
+        // 2. Limpieza exhaustiva para que la pantalla NUNCA quede oscura ni bloqueada
+        const cleanup = () => {
+          document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+          document.body.classList.remove('modal-open');
+          document.body.style.removeProperty('overflow');
+          document.body.style.removeProperty('padding-right');
+          if (modalEl) {
+            modalEl.classList.remove('show');
+            modalEl.style.display = 'none';
+            modalEl.setAttribute('aria-hidden', 'true');
+            modalEl.removeAttribute('aria-modal');
+          }
+        };
+
+        modalEl.addEventListener('hidden.bs.modal', cleanup, { once: true });
+        setTimeout(cleanup, 200);
+      }
+
+      // Evento de respaldo: si el usuario cierra la modal manualmente, asegurar que no queden backdrops colgados
+      const modalEl = document.getElementById('modalNuevoTestimonio');
+      if (modalEl) {
+        modalEl.addEventListener('hidden.bs.modal', function() {
+          document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+          document.body.classList.remove('modal-open');
+          document.body.style.removeProperty('overflow');
+          document.body.style.removeProperty('padding-right');
         });
       }
 
@@ -923,7 +1054,6 @@ if (!empty($_SESSION['user_nombres'])) {
       }
     });
   </script>
-</section>
 
 <!-- Call to Action -->
 <!-- 

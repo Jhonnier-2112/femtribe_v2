@@ -60,6 +60,17 @@ class RegistrationController extends Controller {
                 $etapas = json_decode($etapas, true) ?: [$etapas];
             }
 
+            // Normalizar RH
+            $rawRh = trim($_POST['rh'] ?? '');
+            $rh = '+';
+            if (stripos($rawRh, '-') !== false || stripos($rawRh, 'neg') !== false) {
+                $rh = '-';
+            } elseif (stripos($rawRh, '+') !== false || stripos($rawRh, 'pos') !== false) {
+                $rh = '+';
+            } elseif (!empty($rawRh)) {
+                $rh = $rawRh;
+            }
+
             // Recopilar todos los datos del formulario
             $data = [
                 'user_id' => $user_id,
@@ -69,29 +80,29 @@ class RegistrationController extends Controller {
                 'raza_mascota' => $_POST['raza_mascota'] ?? '',
                 'acudiente_nombre' => $_POST['acudiente_nombre'] ?? '',
                 'acudiente_documento' => $_POST['acudiente_documento'] ?? '',
-                'nombres' => $_POST['nombres'] ?? '',
-                'apellidos' => $_POST['apellidos'] ?? '',
-                'tipo_documento' => $_POST['tipo_documento'] ?? '',
-                'numero_documento' => $_POST['numero_documento'] ?? '',
-                'fecha_nacimiento' => $_POST['fecha_nacimiento'] ?? '',
-                'edad' => $_POST['edad'] ?? '',
-                'genero' => $_POST['genero'] ?? '',
-                'eps' => $_POST['eps'] ?? '',
-                'grupo_sanguineo' => $_POST['grupo_sanguineo'] ?? '',
-                'rh' => $_POST['rh'] ?? '',
-                'talla_camiseta_adulto' => $_POST['talla_camiseta_adulto'] ?? '',
-                'talla_camiseta_nino' => $_POST['talla_camiseta_nino'] ?? '',
-                'direccion' => $_POST['direccion'] ?? '',
-                'municipio' => $_POST['municipio'] ?? '',
-                'departamento' => $_POST['departamento'] ?? '',
-                'email' => $_POST['email'] ?? '',
-                'telefono' => $_POST['telefono'] ?? '',
-                'parentesco_emergencia' => $_POST['parentesco_emergencia'] ?? '',
-                'otro_parentesco' => $_POST['otro_parentesco'] ?? '',
-                'nombre_emergencia' => $_POST['nombre_emergencia'] ?? '',
-                'nombre_emergencia_alt' => $_POST['nombre_emergencia_alt'] ?? '',
-                'celular_emergencia' => $_POST['celular_emergencia'] ?? '',
-                'acepta_autorizacion' => $_POST['acepta_autorizacion'] ?? ''
+                'nombres' => trim($_POST['nombres'] ?? ''),
+                'apellidos' => trim($_POST['apellidos'] ?? ''),
+                'tipo_documento' => trim($_POST['tipo_documento'] ?? 'CC'),
+                'numero_documento' => trim($_POST['numero_documento'] ?? ''),
+                'fecha_nacimiento' => trim($_POST['fecha_nacimiento'] ?? ''),
+                'edad' => trim($_POST['edad'] ?? ''),
+                'genero' => trim($_POST['genero'] ?? ''),
+                'eps' => trim($_POST['eps'] ?? ''),
+                'grupo_sanguineo' => trim($_POST['grupo_sanguineo'] ?? ''),
+                'rh' => $rh,
+                'talla_camiseta_adulto' => trim($_POST['talla_camiseta_adulto'] ?? ''),
+                'talla_camiseta_nino' => trim($_POST['talla_camiseta_nino'] ?? ''),
+                'direccion' => trim($_POST['direccion'] ?? ''),
+                'municipio' => trim($_POST['municipio'] ?? 'Cali'),
+                'departamento' => trim($_POST['departamento'] ?? 'Valle del Cauca'),
+                'email' => trim($_POST['email'] ?? ''),
+                'telefono' => trim($_POST['telefono'] ?? ''),
+                'parentesco_emergencia' => trim($_POST['parentesco_emergencia'] ?? 'familiar'),
+                'otro_parentesco' => trim($_POST['otro_parentesco'] ?? ''),
+                'nombre_emergencia' => trim($_POST['nombre_emergencia'] ?? ''),
+                'nombre_emergencia_alt' => trim($_POST['nombre_emergencia_alt'] ?? ''),
+                'celular_emergencia' => trim($_POST['celular_emergencia'] ?? ''),
+                'acepta_autorizacion' => trim($_POST['acepta_autorizacion'] ?? 'si')
             ];
             
             // Validar datos
@@ -136,9 +147,9 @@ class RegistrationController extends Controller {
                     'customer_email' => $data['email'],
                     'customer_phone' => $data['telefono'],
                     'customer_document' => $data['numero_documento'],
-                    'shipping_address' => $data['direccion'],
-                    'city' => $data['municipio'],
-                    'department' => $data['departamento'],
+                    'shipping_address' => !empty($data['direccion']) ? $data['direccion'] : ($data['municipio'] ?: 'Cali'),
+                    'city' => !empty($data['municipio']) ? $data['municipio'] : 'Cali',
+                    'department' => !empty($data['departamento']) ? $data['departamento'] : 'Valle del Cauca',
                     'subtotal' => $total,
                     'total' => $total,
                     'payment_method' => 'bancolombia_wompi'
@@ -191,7 +202,9 @@ class RegistrationController extends Controller {
                     exit;
                 }
             } else {
-                return $this->showError(['Error al crear la inscripción. Por favor, inténtalo de nuevo.']);
+                $lastErr = \App\Models\Registration::$lastErrorMessage;
+                $msg = $lastErr ? "Error al crear la inscripción: {$lastErr}" : "Error al crear la inscripción. Por favor, inténtalo de nuevo.";
+                return $this->showError([$msg]);
             }
             
         } catch (Exception $e) {
@@ -219,8 +232,12 @@ class RegistrationController extends Controller {
             
             echo json_encode(['success' => false, 'message' => $errorMessage]);
             exit;
+        } else {
             $errors = is_array($errors) ? $errors : [$errors];
-            $this->view('error', ['title' => $title, 'errors' => $errors]);
+            $stages = Registration::getRaceStages();
+            $event = Event::getPrimaryEvent();
+            $this->view('registration_form', ['formErrors' => $errors, 'stages' => $stages, 'event' => $event]);
+            exit;
         }
     }
 

@@ -376,17 +376,87 @@
           <?php endif; ?>
 
           <form action="/inscribirse/guardar" method="POST" class="needs-validation" novalidate id="raceRegistrationForm">
+            <?php 
+            $stagesList = !empty($stages) ? $stages : [
+              ['id' => 1, 'name' => '3K Perro y Adulto (Pet Run)', 'category_type' => 'mascota', 'price' => 55000, 'presale_price' => 45000, 'active_price' => 45000, 'distance' => '3K', 'presale_slots_limit' => 20, 'presale_registered_count' => 0, 'is_stage_presale_active' => true],
+              ['id' => 2, 'name' => '3K Niño y Adulto (Infantil)', 'category_type' => 'nino', 'price' => 50000, 'presale_price' => 40000, 'active_price' => 40000, 'distance' => '3K', 'presale_slots_limit' => 20, 'presale_registered_count' => 0, 'is_stage_presale_active' => true],
+              ['id' => 3, 'name' => '5K Adulto', 'category_type' => 'adulto', 'price' => 65000, 'presale_price' => 55000, 'active_price' => 55000, 'distance' => '5K', 'presale_slots_limit' => 100, 'presale_registered_count' => 0, 'is_stage_presale_active' => true],
+              ['id' => 4, 'name' => '10K Adulto', 'category_type' => 'adulto', 'price' => 85000, 'presale_price' => 75000, 'active_price' => 75000, 'distance' => '10K', 'presale_slots_limit' => 100, 'presale_registered_count' => 0, 'is_stage_presale_active' => true],
+              ['id' => 5, 'name' => 'Adicional 5K (Adulto 3K)', 'category_type' => 'adicional', 'price' => 30000, 'presale_price' => 25000, 'active_price' => 25000, 'distance' => '5K', 'presale_slots_limit' => null, 'presale_registered_count' => 0, 'is_stage_presale_active' => true],
+              ['id' => 6, 'name' => 'Adicional 10K (Adulto 3K)', 'category_type' => 'adicional', 'price' => 40000, 'presale_price' => 35000, 'active_price' => 35000, 'distance' => '10K', 'presale_slots_limit' => null, 'presale_registered_count' => 0, 'is_stage_presale_active' => true]
+            ];
 
-            <?php if (!empty($event['is_presale_active'])): ?>
-              <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center justify-content-between p-3" style="background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%); color: white;">
-                <div>
-                  <h6 class="fw-bold mb-0"><i class="fas fa-fire me-2"></i>¡Tarifas de Preventa Activas!</h6>
-<small>
-    Aprovecha los precios de preventa por tiempo limitado hasta el
-    <?= !empty($event['presale_end_date']) ? date('d/m/Y g:i A', strtotime($event['presale_end_date'])) : '' ?>
-    o hasta agotar existencias de cupos.
-</small>                </div>
-                <span class="badge bg-white text-success fw-bold px-3 py-2 rounded-pill">PREVENTA</span>
+            $totalPresaleSlots = 0;
+            $totalPresaleLeft = 0;
+            $anyStagePresaleActive = false;
+            $anyStagePresaleSoldOut = false;
+
+            foreach ($stagesList as $checkStg) {
+                $pLimit = isset($checkStg['presale_slots_limit']) ? (int)$checkStg['presale_slots_limit'] : 0;
+                $pReg   = isset($checkStg['presale_registered_count']) ? (int)$checkStg['presale_registered_count'] : 0;
+                $hasP   = !empty($checkStg['has_presale_configured']) || ($pLimit > 0 && !empty($checkStg['presale_price']) && (float)$checkStg['presale_price'] < (float)$checkStg['price']);
+                
+                if ($hasP) {
+                    $totalPresaleSlots += $pLimit;
+                    $pLeft = max(0, $pLimit - $pReg);
+                    $totalPresaleLeft += $pLeft;
+                    if (!empty($checkStg['is_stage_presale_active']) && $pLeft > 0) {
+                        $anyStagePresaleActive = true;
+                    }
+                    if ($pLeft === 0) {
+                        $anyStagePresaleSoldOut = true;
+                    }
+                }
+            }
+            ?>
+
+            <!-- Banner General de Estado de Preventa -->
+            <?php if ($anyStagePresaleActive && $totalPresaleLeft > 0): ?>
+              <div class="alert border-0 rounded-4 shadow-sm mb-4 p-3 d-flex flex-wrap align-items-center justify-content-between gap-3 text-white" style="background: linear-gradient(135deg, #15803d 0%, #166534 100%);">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="p-2 bg-white bg-opacity-20 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 46px; height: 46px;">
+                    <i class="fas fa-fire fs-4 text-warning"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold mb-1 d-flex align-items-center gap-2 flex-wrap">
+                      <span>¡Tarifas de Preventa Activas!</span>
+                      <span class="badge bg-warning text-dark fw-bold rounded-pill" style="font-size: 0.7rem;">DESCUENTO ESPECIAL</span>
+                    </h6>
+                    <div class="small text-white-50">
+                      Inscríbete hoy y aprovecha la tarifa reducida. 
+                      <strong class="text-white">¡Quedan <?= $totalPresaleLeft ?> cupos de preventa disponibles!</strong>
+                      <span class="d-block d-sm-inline">Cuando los cupos de preventa lleguen a 0, el precio cambiará a la tarifa regular.</span>
+                      <?php if (!empty($event['presale_end_date'])): ?>
+                        <span class="d-block mt-1 text-white-50"><i class="fas fa-clock me-1"></i>Válido hasta el <?= date('d/m/Y g:i A', strtotime($event['presale_end_date'])) ?> o hasta agotar existencias.</span>
+                      <?php endif; ?>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-end flex-shrink-0">
+                  <span class="badge bg-white text-success fw-bold px-3 py-2 rounded-pill fs-6 shadow-sm">
+                    <i class="fas fa-ticket-alt me-1"></i> <?= $totalPresaleLeft ?> Cupos Preventa
+                  </span>
+                </div>
+              </div>
+            <?php elseif ($anyStagePresaleSoldOut && !$anyStagePresaleActive): ?>
+              <div class="alert border-0 rounded-4 shadow-sm mb-4 p-3 d-flex flex-wrap align-items-center justify-content-between gap-3 text-dark" style="background-color: #fffbeb; border: 1px solid #fde68a; border-left: 5px solid #f59e0b !important;">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="p-2 bg-warning bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 46px; height: 46px;">
+                    <i class="fas fa-exclamation-triangle fs-4 text-warning"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold mb-1 text-dark d-flex align-items-center gap-2 flex-wrap">
+                      <span>Cupos de Preventa Agotados (0 cupos disponibles)</span>
+                      <span class="badge bg-secondary text-white fw-bold rounded-pill" style="font-size: 0.7rem;">TARIFA REGULAR</span>
+                    </h6>
+                    <div class="small text-muted">
+                      Los cupos de preventa han llegado a 0. A partir de este momento aplican las <strong>tarifas de venta regular</strong>. ¡Asegura tu cupo antes de que se agoten las inscripciones generales!
+                    </div>
+                  </div>
+                </div>
+                <span class="badge bg-dark text-white fw-bold px-3 py-2 rounded-pill fs-6 flex-shrink-0">
+                  PRECIO REGULAR
+                </span>
               </div>
             <?php endif; ?>
 
@@ -422,49 +492,79 @@
               <label class="form-label-sport fw-bold mb-2">Etapas y Kilometrajes Disponibles *</label>
               <div class="row g-3" id="stagesContainer">
                 <?php 
-                $stagesList = !empty($stages) ? $stages : [
-                  ['id' => 1, 'name' => '3K Perro y Adulto (Pet Run)', 'category_type' => 'mascota', 'price' => 55000, 'presale_price' => 45000, 'active_price' => 45000, 'distance' => '3K'],
-                  ['id' => 2, 'name' => '3K Niño y Adulto (Infantil)', 'category_type' => 'nino', 'price' => 50000, 'presale_price' => 40000, 'active_price' => 40000, 'distance' => '3K'],
-                  ['id' => 3, 'name' => '5K Adulto', 'category_type' => 'adulto', 'price' => 65000, 'presale_price' => 55000, 'active_price' => 55000, 'distance' => '5K'],
-                  ['id' => 4, 'name' => '10K Adulto', 'category_type' => 'adulto', 'price' => 85000, 'presale_price' => 75000, 'active_price' => 75000, 'distance' => '10K'],
-                  ['id' => 5, 'name' => 'Adicional 5K (Adulto 3K)', 'category_type' => 'adicional', 'price' => 30000, 'presale_price' => 25000, 'active_price' => 25000, 'distance' => '5K'],
-                  ['id' => 6, 'name' => 'Adicional 10K (Adulto 3K)', 'category_type' => 'adicional', 'price' => 40000, 'presale_price' => 35000, 'active_price' => 35000, 'distance' => '10K']
-                ];
                 foreach ($stagesList as $stg): 
                   $activePrice = $stg['active_price'] ?? $stg['price'];
-                  $isPresale = !empty($event['is_presale_active']);
+                  $isSoldOut = !empty($stg['is_sold_out']);
+                  $isStagePresaleActive = !empty($stg['is_stage_presale_active']);
+                  $presaleLimit = (int)($stg['presale_slots_limit'] ?? 0);
+                  $presaleReg = (int)($stg['presale_registered_count'] ?? 0);
+                  $leftPresale = max(0, $presaleLimit - $presaleReg);
+                  $hasPresaleConfig = !empty($stg['has_presale_configured']) || ($presaleLimit > 0 && !empty($stg['presale_price']) && (float)$stg['presale_price'] < (float)$stg['price']);
+                  $isPresaleSoldOut = ($hasPresaleConfig && $leftPresale === 0);
+                  $leftNormal = max(0, ((int)($stg['slots_limit'] ?? 0) + $presaleLimit) - (int)($stg['registered_count'] ?? 0));
                 ?>
                   <div class="col-md-6 stage-card-item" data-cat-type="<?= htmlspecialchars($stg['category_type']) ?>">
-                    <div class="card h-100 border p-3 rounded-3 shadow-sm bg-white">
+                    <div class="card h-100 border p-3 rounded-3 shadow-sm bg-white position-relative">
                       <div class="form-check d-flex justify-content-between align-items-center mb-0">
-                        <div>
+                        <div class="me-2">
                           <input class="form-check-input stage-checkbox" type="checkbox" name="etapas_seleccionadas[]" 
                                  value="<?= htmlspecialchars($stg['id']) ?>" id="stage_<?= $stg['id'] ?>" data-price="<?= $activePrice ?>"
-                                 data-presale="<?= !empty($stg['is_stage_presale_active']) ? '1' : '0' ?>"
-                                 <?= !empty($stg['is_sold_out']) ? 'disabled' : '' ?>>
-                          <label class="form-check-label fw-bold me-2 text-dark" for="stage_<?= $stg['id'] ?>">
+                                 data-presale="<?= $isStagePresaleActive ? '1' : '0' ?>"
+                                 <?= $isSoldOut ? 'disabled' : '' ?>>
+                          <label class="form-check-label fw-bold me-1 text-dark" for="stage_<?= $stg['id'] ?>">
                             <?= htmlspecialchars($stg['name']) ?>
                           </label>
                           <span class="badge bg-success bg-opacity-10 text-success ms-1"><?= htmlspecialchars($stg['distance']) ?></span>
                           
-                          <!-- Indicadores de Cupos -->
-                          <?php if (!empty($stg['is_sold_out'])): ?>
-                            <span class="badge bg-secondary text-white ms-1" style="font-size: 0.65rem;">AGOTADO</span>
-                          <?php else: ?>
-                            <?php if (!empty($stg['is_stage_presale_active']) && !empty($stg['presale_slots_limit'])): ?>
-                              <?php $leftPresale = max(0, (int)$stg['presale_slots_limit'] - (int)$stg['presale_registered_count']); ?>
-                              <span class="badge bg-danger text-white ms-1" style="font-size: 0.65rem;">Quedan <?= $leftPresale ?> preventa</span>
-                            <?php elseif (empty($stg['is_stage_presale_active']) && !empty($stg['slots_limit'])): ?>
-                              <?php $leftNormal = max(0, ((int)$stg['slots_limit'] + (int)($stg['presale_slots_limit'] ?? 0)) - (int)$stg['registered_count']); ?>
-                              <span class="badge bg-warning text-dark ms-1" style="font-size: 0.65rem;">Quedan <?= $leftNormal ?> cupos</span>
+                          <!-- Indicadores de Cupos y Preventa -->
+                          <div class="mt-1 d-flex flex-wrap align-items-center gap-1">
+                            <?php if ($isSoldOut): ?>
+                              <span class="badge bg-secondary text-white px-2 py-1 shadow-sm" style="font-size: 0.68rem;">AGOTADO</span>
+                            <?php elseif ($isStagePresaleActive && $leftPresale > 0): ?>
+                              <span class="badge bg-danger text-white px-2 py-1 shadow-sm" style="font-size: 0.68rem;">
+                                <i class="fas fa-fire me-1"></i>Quedan <?= $leftPresale ?> preventa
+                              </span>
+                            <?php elseif ($isPresaleSoldOut): ?>
+                              <span class="badge bg-dark text-warning border border-warning border-opacity-50 px-2 py-1 shadow-sm" style="font-size: 0.68rem;">
+                                <i class="fas fa-lock me-1"></i>Preventa agotada (0 cupos)
+                              </span>
+                              <?php if (!empty($stg['slots_limit'])): ?>
+                                <span class="badge bg-warning text-dark px-2 py-1 shadow-sm" style="font-size: 0.68rem;">
+                                  Quedan <?= $leftNormal ?> cupos regulares
+                                </span>
+                              <?php endif; ?>
+                            <?php elseif (!empty($stg['slots_limit'])): ?>
+                              <span class="badge bg-warning text-dark px-2 py-1 shadow-sm" style="font-size: 0.68rem;">
+                                Quedan <?= $leftNormal ?> cupos
+                              </span>
                             <?php endif; ?>
+                          </div>
+
+                          <!-- Mensajes Claros sobre la Preventa y el Cambio de Precio -->
+                          <?php if ($isStagePresaleActive && $leftPresale > 0): ?>
+                            <div class="text-danger small mt-2 fw-semibold" style="font-size: 0.72rem; line-height: 1.25;">
+                              <i class="fas fa-bolt me-1"></i>¡Quedan <strong><?= $leftPresale ?></strong> cupos en preventa! Al llegar a 0, el precio sube a <strong>$<?= number_format($stg['price'], 0, ',', '.') ?></strong>.
+                            </div>
+                          <?php elseif ($isPresaleSoldOut): ?>
+                            <div class="text-muted small mt-2 fw-medium" style="font-size: 0.72rem; line-height: 1.25;">
+                              <i class="fas fa-info-circle text-warning me-1"></i>Cupos de preventa agotados. Aplica precio regular: <strong class="text-dark">$<?= number_format($stg['price'], 0, ',', '.') ?></strong>.
+                            </div>
                           <?php endif; ?>
                         </div>
-                        <div class="text-end">
-                          <span class="fw-bold text-success fs-6">$<?= number_format($activePrice, 0, ',', '.') ?></span>
-                          <?php if (!empty($stg['is_stage_presale_active']) && !empty($stg['presale_price']) && $stg['presale_price'] < $stg['price']): ?>
+
+                        <div class="text-end flex-shrink-0">
+                          <span class="fw-bold <?= $isStagePresaleActive ? 'text-success' : 'text-dark' ?> fs-5">
+                            $<?= number_format($activePrice, 0, ',', '.') ?>
+                          </span>
+                          <?php if ($isStagePresaleActive && !empty($stg['presale_price']) && (float)$stg['presale_price'] < (float)$stg['price']): ?>
                             <br><small class="text-muted text-decoration-line-through me-1" style="font-size: 0.75rem;">$<?= number_format($stg['price'], 0, ',', '.') ?></small>
                             <span class="badge bg-danger text-white" style="font-size: 0.65rem;">PREVENTA</span>
+                            <?php $savings = max(0, (float)$stg['price'] - (float)$activePrice); ?>
+                            <?php if ($savings > 0): ?>
+                              <small class="text-success d-block fw-bold" style="font-size: 0.68rem;">Ahorras $<?= number_format($savings, 0, ',', '.') ?></small>
+                            <?php endif; ?>
+                          <?php elseif ($isPresaleSoldOut): ?>
+                            <br><span class="badge bg-secondary text-white" style="font-size: 0.65rem;">PRECIO REGULAR</span>
                           <?php endif; ?>
                         </div>
                       </div>
@@ -580,7 +680,7 @@
                   Número de documento *
                 </label>
                 <input type="text" class="form-control form-control-sport" name="numero_documento" id="numero_documento" required 
-                       value="<?= htmlspecialchars($currentUser['numero_documento'] ?? '') ?>"
+                       value=""
                        placeholder="Número de documento" pattern="[0-9]+" title="Solo se permiten números">
                 <div class="invalid-feedback">
                   Por favor ingresa tu número de documento.
@@ -1218,7 +1318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                      isAgeValid = false;
                      ageErrorMessage = 'Para Tarjeta de Identidad debes ser menor de 18 años.';
                      showValidationError(docTypeSelect, 'La Tarjeta de Identidad es para menores de 18 años.');
-                   } else if (docType === 'cedula_ciudadania' && edad <= 18) {
+                   } else if (docType === 'cedula_ciudadania' && edad < 18) {
                      isAgeValid = false;
                      ageErrorMessage = 'Para Cédula de Ciudadanía debes tener 18 años o más.';
                      showValidationError(docTypeSelect, 'La Cédula de Ciudadanía es para mayores de 18 años.');
@@ -1565,8 +1665,7 @@ function performAdditionalValidation(form) {
           { name: 'telefono', message: 'El teléfono es obligatorio' },
           { name: 'email', message: 'El email es obligatorio' },
           { name: 'parentesco_emergencia', message: 'Selecciona el parentesco' },
-          { name: 'celular_emergencia', message: 'El celular de emergencia es obligatorio' },
-          { name: 'talla_camiseta', message: 'Selecciona tu talla de camiseta' }
+          { name: 'celular_emergencia', message: 'El celular de emergencia es obligatorio' }
         ];
         
         let errors = [];
@@ -1587,6 +1686,31 @@ function performAdditionalValidation(form) {
             }
           }
         });
+
+        // Validar talla de camiseta según categoría
+        const catRadiosEarly = form.querySelectorAll('input[name="categoria_participante"]');
+        let currentCat = 'adulto';
+        catRadiosEarly.forEach(r => { if (r.checked) currentCat = r.value; });
+
+        if (currentCat === 'nino') {
+          const shirtChild = form.querySelector('[name="talla_camiseta_nino"]');
+          if (shirtChild && (!shirtChild.value || shirtChild.value.trim() === '')) {
+            errors.push('Selecciona la talla de camiseta de niño');
+            showValidationError(shirtChild, 'Selecciona la talla de camiseta de niño');
+            hasErrors = true;
+          } else if (shirtChild) {
+            clearValidationErrors(shirtChild);
+          }
+        } else {
+          const shirtAdult = form.querySelector('[name="talla_camiseta_adulto"]');
+          if (shirtAdult && (!shirtAdult.value || shirtAdult.value.trim() === '')) {
+            errors.push('Selecciona la talla de camiseta de adulto');
+            showValidationError(shirtAdult, 'Selecciona la talla de camiseta de adulto');
+            hasErrors = true;
+          } else if (shirtAdult) {
+            clearValidationErrors(shirtAdult);
+          }
+        }
         
         // Validación especial para campos condicionales
         const parentesco = form.querySelector('[name="parentesco_emergencia"]').value;

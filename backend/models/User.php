@@ -48,7 +48,7 @@ class User {
                 ':nombres'          => $data['nombres'],
                 ':apellidos'        => $data['apellidos'] ?? '',
                 ':tipo_documento'   => $data['tipo_documento'] ?? 'CC',
-                ':numero_documento' => $data['numero_documento'] ?? ('GOOG-' . substr(uniqid(), -6)),
+                ':numero_documento' => $data['numero_documento'] ?? '',
                 ':email'            => strtolower(trim($data['email'])),
                 ':password'         => $hashedPassword,
                 ':telefono'         => $data['telefono'] ?? '',
@@ -80,11 +80,12 @@ class User {
      * Busca usuario por email
      */
     public function findByEmail(string $email) {
+        if (!$this->conn) return false;
         try {
             $stmt = $this->conn->prepare("SELECT * FROM users WHERE email = :email AND status = 1 LIMIT 1");
             $stmt->execute([':email' => strtolower(trim($email))]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: false;
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -93,11 +94,12 @@ class User {
      * Busca usuario por Google ID
      */
     public function findByGoogleId(string $googleId) {
+        if (!$this->conn) return false;
         try {
             $stmt = $this->conn->prepare("SELECT * FROM users WHERE google_id = :google_id AND status = 1 LIMIT 1");
             $stmt->execute([':google_id' => trim($googleId)]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: false;
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -106,6 +108,7 @@ class User {
      * Busca o crea un usuario autenticado con Google OAuth
      */
     public function findOrCreateFromGoogle(array $googleProfile) {
+        if (!$this->conn) return false;
         $googleId = $googleProfile['google_id'] ?? '';
         $email = strtolower(trim($googleProfile['email'] ?? ''));
 
@@ -118,11 +121,15 @@ class User {
         // 2. Buscar por Email y vincular Google ID
         $existingEmail = $this->findByEmail($email);
         if ($existingEmail) {
-            $stmt = $this->conn->prepare("UPDATE users SET google_id = :gid, avatar = :avatar WHERE id = :id");
-            $stmt->execute([':gid' => $googleId, ':avatar' => $googleProfile['picture'] ?? null, ':id' => $existingEmail['id']]);
-            $existingEmail['google_id'] = $googleId;
-            $existingEmail['avatar'] = $googleProfile['picture'] ?? null;
-            return $existingEmail;
+            try {
+                $stmt = $this->conn->prepare("UPDATE users SET google_id = :gid, avatar = :avatar WHERE id = :id");
+                $stmt->execute([':gid' => $googleId, ':avatar' => $googleProfile['picture'] ?? null, ':id' => $existingEmail['id']]);
+                $existingEmail['google_id'] = $googleId;
+                $existingEmail['avatar'] = $googleProfile['picture'] ?? null;
+                return $existingEmail;
+            } catch (\Throwable $t) {
+                return $existingEmail;
+            }
         }
 
         // 3. Crear nuevo usuario desde Google
@@ -147,11 +154,12 @@ class User {
      * Busca usuario por número de documento
      */
     public function findByDocument(string $numeroDocumento) {
+        if (!$this->conn) return false;
         try {
             $stmt = $this->conn->prepare("SELECT * FROM users WHERE numero_documento = :numero_documento AND status = 1 LIMIT 1");
             $stmt->execute([':numero_documento' => trim($numeroDocumento)]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: false;
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -160,6 +168,7 @@ class User {
      * Busca usuario por ID
      */
     public function findById(int $id) {
+        if (!$this->conn) return false;
         try {
             $stmt = $this->conn->prepare(
                 "SELECT id, nombres, apellidos, tipo_documento, numero_documento, email,
@@ -169,7 +178,7 @@ class User {
             );
             $stmt->execute([':id' => $id]);
             return $stmt->fetch(PDO::FETCH_ASSOC) ?: false;
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }
@@ -178,18 +187,23 @@ class User {
      * Autentica usuario por email o número de documento y contraseña
      */
     public function authenticate(string $loginInput, string $password) {
+        if (!$this->conn) return false;
         $loginInput = trim($loginInput);
         
-        // Buscar por email o documento
-        $stmt = $this->conn->prepare("SELECT * FROM users WHERE (email = :input OR numero_documento = :input) AND status = 1 LIMIT 1");
-        $stmt->execute([':input' => $loginInput]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        try {
+            // Buscar por email o documento
+            $stmt = $this->conn->prepare("SELECT * FROM users WHERE (email = :input OR numero_documento = :input) AND status = 1 LIMIT 1");
+            $stmt->execute([':input' => $loginInput]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && password_verify($password, $user['password'])) {
-            unset($user['password']);
-            return $user;
+            if ($user && password_verify($password, $user['password'])) {
+                unset($user['password']);
+                return $user;
+            }
+            return false;
+        } catch (\Throwable $e) {
+            return false;
         }
-        return false;
     }
 
     /**

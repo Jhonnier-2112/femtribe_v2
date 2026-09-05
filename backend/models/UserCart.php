@@ -17,11 +17,12 @@ class UserCart {
      * Obtiene los productos en el carrito guardados en la BD para un usuario
      */
     public function getCart(int $userId): array {
+        if (!$this->conn) return [];
         try {
             $stmt = $this->conn->prepare("SELECT product_id, product_slug as slug, product_name as name, price, quantity as qty, color, gender, size FROM user_cart_items WHERE user_id = :user_id ORDER BY id ASC");
             $stmt->execute([':user_id' => $userId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }
@@ -30,6 +31,7 @@ class UserCart {
      * Sincroniza el listado completo de ítems del carrito en la base de datos
      */
     public function syncCart(int $userId, array $items): bool {
+        if (!$this->conn) return false;
         try {
             $this->conn->beginTransaction();
 
@@ -58,8 +60,10 @@ class UserCart {
 
             $this->conn->commit();
             return true;
-        } catch (PDOException $e) {
-            $this->conn->rollBack();
+        } catch (\Throwable $e) {
+            if ($this->conn && $this->conn->inTransaction()) {
+                $this->conn->rollBack();
+            }
             error_log("UserCart::syncCart Error: " . $e->getMessage());
             return false;
         }
@@ -69,10 +73,11 @@ class UserCart {
      * Vacía el carrito del usuario
      */
     public function clearCart(int $userId): bool {
+        if (!$this->conn) return false;
         try {
             $stmt = $this->conn->prepare("DELETE FROM user_cart_items WHERE user_id = :user_id");
             return $stmt->execute([':user_id' => $userId]);
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

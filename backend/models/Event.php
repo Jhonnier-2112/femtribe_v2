@@ -47,15 +47,32 @@ class Event {
      * Comprueba si la preventa está activa según las fechas configuradas
      */
     public static function isPresaleActive(?array $event): bool {
-        if (!$event || empty($event['presale_start_date']) || empty($event['presale_end_date'])) {
+        if (!$event) {
             return false;
         }
 
         $now = time();
-        $start = strtotime($event['presale_start_date']);
-        $end = strtotime($event['presale_end_date']);
+        $hasStart = !empty($event['presale_start_date']);
+        $hasEnd = !empty($event['presale_end_date']);
 
-        return ($now >= $start && $now <= $end);
+        if ($hasStart && $hasEnd) {
+            $start = strtotime($event['presale_start_date']);
+            $end = strtotime($event['presale_end_date']);
+            if ($now < $start || $now > $end) {
+                return false;
+            }
+        } elseif ($hasEnd) {
+            if ($now > strtotime($event['presale_end_date'])) {
+                return false;
+            }
+        } elseif ($hasStart) {
+            if ($now < strtotime($event['presale_start_date'])) {
+                return false;
+            }
+        }
+
+        // Si no se configuraron fechas específicas, la preventa está abierta por fechas
+        return true;
     }
 
     /**
@@ -93,6 +110,9 @@ class Event {
         try {
             $database = new Database();
             $db = $database->getConnection();
+            if (!$db) {
+                return ['total' => 0, 'presale' => 0, 'normal' => 0];
+            }
             
             // Solo contar las inscripciones que estén confirmadas (pagadas)
             $stmt = $db->query("SELECT etapas_seleccionadas, etapas_preventa FROM registrations WHERE payment_status = 'paid'");
@@ -131,7 +151,7 @@ class Event {
                 'presale' => $presaleCount,
                 'normal' => max(0, $totalCount - $presaleCount)
             ];
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             return ['total' => 0, 'presale' => 0, 'normal' => 0];
         }
     }
@@ -141,17 +161,27 @@ class Event {
             $event = self::getPrimaryEvent();
         }
 
-        $datePresaleActive = self::isPresaleActive($event);
-        if (!$datePresaleActive) {
+        // 1. Validar fechas de preventa
+        if (!self::isPresaleActive($event)) {
             return false;
         }
 
-        if (empty($stage['presale_slots_limit'])) {
+        $presalePrice = isset($stage['presale_price']) ? (float)$stage['presale_price'] : 0.0;
+        $normalPrice = isset($stage['price']) ? (float)$stage['price'] : 0.0;
+
+        // Debe tener precio de preventa menor al precio normal
+        if ($presalePrice <= 0 || ($normalPrice > 0 && $presalePrice >= $normalPrice)) {
+            return false;
+        }
+
+        // 2. Si no tiene límite de cupos de preventa configurado (o es null), aplica por fechas
+        if (!isset($stage['presale_slots_limit']) || $stage['presale_slots_limit'] === null || (int)$stage['presale_slots_limit'] <= 0) {
             return true;
         }
 
+        // 3. Validar si quedan cupos de preventa (cuando llega a 0 se agota)
         $counts = self::getStageRegistrationCounts((int)$stage['id']);
-        return ($counts['presale'] < (int)$stage['presale_slots_limit']);
+        return ((int)$counts['presale'] < (int)$stage['presale_slots_limit']);
     }
 
     /**
@@ -161,6 +191,9 @@ class Event {
         try {
             $database = new Database();
             $db = $database->getConnection();
+            if (!$db) {
+                return [];
+            }
 
             // Auto-migración para agregar columnas necesarias en race_stages si no existen
             try { $db->exec("ALTER TABLE race_stages ADD COLUMN event_id INT(11) DEFAULT 1"); } catch (PDOException $e) {}
@@ -178,20 +211,43 @@ class Event {
                 $counts = self::getStageRegistrationCounts((int)$stg['id']);
                 $stg['registered_count'] = $counts['total'];
                 $stg['presale_registered_count'] = $counts['presale'];
+                $stg['normal_registered_count'] = $counts['normal'];
                 
-                $stgPresaleLimit = isset($stg['presale_slots_limit']) ? (int)$stg['presale_slots_limit'] : 0;
-                $stgNormalLimit = isset($stg['slots_limit']) ? (int)$stg['slots_limit'] : 0;
+                $stgPresaleLimit = (isset($stg['presale_slots_limit']) && $stg['presale_slots_limit'] !== null) ? (int)$stg['presale_slots_limit'] : 0;
+                $stgNormalLimit = (isset($stg['slots_limit']) && $stg['slots_limit'] !== null) ? (int)$stg['slots_limit'] : 0;
                 $stgTotalLimit = $stgPresaleLimit + $stgNormalLimit;
                 
-                $stg['is_stage_presale_active'] = self::isStageInPresale($stg, $event);
-                $stg['active_price'] = $stg['is_stage_presale_active'] ? (float)$stg['presale_price'] : (float)$stg['price'];
+                $stg['presale_slots_limit'] = $stgPresaleLimit;
+                $stg['slots_limit'] = $stgNormalLimit;
+                $stg['total_slots_limit'] = $stgTotalLimit;
+
+                // Cupos de preventa restantes:
+                $presaleLeft = $stgPresaleLimit > 0 ? max(0, $stgPresaleLimit - $counts['presale']) : null;
+                $stg['presale_slots_left'] = $presaleLeft;
+
+                // ¿Tiene preventa configurada esta etapa?
+                $hasPresaleConfig = ($stgPresaleLimit > 0 && (float)$stg['presale_price'] > 0 && (float)$stg['presale_price'] < (float)$stg['price']);
+                $stg['has_presale_configured'] = $hasPresaleConfig;
+
+                // ¿Preventa activa en este momento?
+                $isStagePresaleActive = self::isStageInPresale($stg, $event);
+                $stg['is_stage_presale_active'] = $isStagePresaleActive;
+
+                // ¿Preventa agotada específicamente por cupos? (Llegó a 0 cupos de preventa)
+                $stg['is_presale_sold_out'] = ($hasPresaleConfig && $presaleLeft === 0);
+
+                // Precio que aplica actualmente
+                $stg['active_price'] = $isStagePresaleActive ? (float)$stg['presale_price'] : (float)$stg['price'];
+                $stg['savings_amount'] = max(0, (float)$stg['price'] - (float)$stg['presale_price']);
                 
+                // Cupos totales disponibles
                 $stg['is_sold_out'] = ($stgTotalLimit > 0 && $counts['total'] >= $stgTotalLimit);
                 $stg['available_slots'] = $stgTotalLimit > 0 ? max(0, $stgTotalLimit - $counts['total']) : 9999;
+                $stg['normal_slots_left'] = $stgTotalLimit > 0 ? max(0, $stgTotalLimit - $counts['total']) : 9999;
             }
 
             return $stages;
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             error_log("Event::getStages() Error: " . $e->getMessage());
             return [];
         }

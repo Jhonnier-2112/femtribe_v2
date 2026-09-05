@@ -46,7 +46,7 @@ $u = $user ?? [];
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Número de Documento *</label>
                                 <input type="text" class="form-control bg-light" name="customer_document" 
-                                       value="<?= htmlspecialchars($u['numero_documento'] ?? '') ?>" required>
+                                       value="<?= (!empty($u['numero_documento']) && ctype_digit($u['numero_documento'])) ? htmlspecialchars($u['numero_documento']) : '' ?>" required>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold">Dirección de Entrega *</label>
