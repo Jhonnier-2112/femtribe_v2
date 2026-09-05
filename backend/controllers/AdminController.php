@@ -924,6 +924,117 @@ class AdminController extends Controller {
     }
 
     /**
+     * Aprueba manualmente una orden y envía el correo de confirmación oficial
+     */
+    public function manualApproveOrder() {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/compras');
+        }
+
+        $orderId = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $orderNumber = trim($_POST['order_number'] ?? '');
+        $wompiTxId = trim($_POST['wompi_transaction_id'] ?? '');
+
+        $orderModel = new Order();
+        $order = null;
+        if ($orderId) {
+            $stmt = $this->db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
+            $stmt->execute([':id' => $orderId]);
+            $order = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+        if (!$order && !empty($orderNumber)) {
+            $order = $orderModel->findByOrderNumber($orderNumber);
+        }
+
+        if (!$order) {
+            $_SESSION['admin_error'] = 'Orden no encontrada en el sistema.';
+            $this->redirect('/admin/compras');
+        }
+
+        $currentUser = $this->currentUser();
+        $adminEmail = $currentUser['email'] ?? 'administrador';
+
+        $result = PaymentController::processApprovedPayment(
+            $order['order_number'],
+            'APPROVED',
+            !empty($wompiTxId) ? $wompiTxId : null,
+            ['approved_manually_by' => $adminEmail, 'notes' => $_POST['notes'] ?? 'Aprobación manual desde panel de administración']
+        );
+
+        if ($result['success']) {
+            $msg = "¡Orden #" . $order['order_number'] . " aprobada exitosamente!";
+            if ($result['email_sent']) {
+                $msg .= " Se envió el correo de confirmación al participante.";
+            } elseif ($result['registration_updated']) {
+                $msg .= " La inscripción fue confirmada (alerta: no se pudo enviar el correo: " . ($result['email_error'] ?? 'desconocido') . ").";
+            }
+            $_SESSION['admin_success'] = $msg;
+        } else {
+            $_SESSION['admin_error'] = 'Error al procesar la aprobación: ' . ($result['message'] ?? 'Error desconocido');
+        }
+
+        $this->redirect('/admin/compras/detalle?id=' . $order['id']);
+    }
+
+    /**
+     * Consulta el estado de una orden directamente en la API oficial de Wompi y la actualiza
+     */
+    public function verifyOrderWithWompi() {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/compras');
+        }
+
+        $orderId = isset($_POST['order_id']) ? intval($_POST['order_id']) : 0;
+        $wompiTxId = trim($_POST['wompi_transaction_id'] ?? '');
+
+        $order = null;
+        if ($orderId) {
+            $stmt = $this->db->prepare("SELECT * FROM orders WHERE id = :id LIMIT 1");
+            $stmt->execute([':id' => $orderId]);
+            $order = $stmt->fetch(PDO::FETCH_ASSOC);
+        }
+
+        if (!$order) {
+            $_SESSION['admin_error'] = 'Orden no encontrada.';
+            $this->redirect('/admin/compras');
+        }
+
+        // Si no se pasó el ID de Wompi, buscar si existe en la tabla payments
+        if (empty($wompiTxId)) {
+            $pStmt = $this->db->prepare("SELECT gateway_transaction_id FROM payments WHERE order_id = :oid AND gateway_transaction_id IS NOT NULL ORDER BY id DESC LIMIT 1");
+            $pStmt->execute([':oid' => $order['id']]);
+            $wompiTxId = $pStmt->fetchColumn() ?: '';
+        }
+
+        if (empty($wompiTxId)) {
+            $_SESSION['admin_error'] = 'Para verificar con Wompi debes ingresar el ID de la transacción proporcionado por Wompi en el campo de texto.';
+            $this->redirect('/admin/compras/detalle?id=' . $order['id']);
+        }
+
+        $bancolombiaService = new \App\Services\BancolombiaPaymentService();
+        $txData = $bancolombiaService->getTransactionStatus($wompiTxId);
+
+        if (!$txData) {
+            $_SESSION['admin_error'] = "No se pudo consultar la transacción con ID '{$wompiTxId}' en los servidores de Wompi. Por favor verifica el ID o apruébala manualmente.";
+            $this->redirect('/admin/compras/detalle?id=' . $order['id']);
+        }
+
+        $status = strtoupper($txData['status'] ?? 'PENDING');
+        if ($status === 'APPROVED') {
+            PaymentController::processApprovedPayment($order['order_number'], 'APPROVED', $wompiTxId, $txData);
+            $_SESSION['admin_success'] = "¡Transacción verificada en Wompi como APROBADA! La orden y la inscripción fueron confirmadas exitosamente y se envió el correo de bienvenida.";
+        } else {
+            $_SESSION['admin_error'] = "Wompi informa que la transacción tiene estado: {$status}.";
+        }
+
+        $this->redirect('/admin/compras/detalle?id=' . $order['id']);
+    }
+
+    /**
      * Bitácora de accesos y visitas
      */
     public function accessLogs() {

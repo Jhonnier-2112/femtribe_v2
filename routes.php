@@ -66,6 +66,8 @@ $router->get('/checkout', 'PaymentController@checkout');
 $router->get('/payment/pay', 'PaymentController@pay');
 $router->post('/payment/process', 'PaymentController@processPayment');
 $router->get('/payment/response', 'PaymentController@response');
+$router->get('/payment/check-status', 'PaymentController@checkStatus');
+$router->get('/payment/webhook', 'PaymentController@webhook');
 $router->post('/payment/webhook', 'PaymentController@webhook');
 
 // Rutas de Autenticación de Usuario (Corredores y Google Sign-In)
@@ -115,6 +117,8 @@ $router->post('/admin/categorias/actualizar', 'AdminController@updateCategory');
 // Gestión de Compras / Pedidos
 $router->get('/admin/compras', 'AdminController@orders');
 $router->get('/admin/compras/detalle', 'AdminController@orderDetail');
+$router->post('/admin/compras/aprobar', 'AdminController@manualApproveOrder');
+$router->post('/admin/compras/verificar-wompi', 'AdminController@verifyOrderWithWompi');
 
 
 $router->get('/admin/run-db', 'AdminController@runDb');

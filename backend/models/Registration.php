@@ -116,11 +116,25 @@ class Registration {
             }
             $etapasPreventa = json_encode($etapasPreventaIds);
 
+            $nomEmergencia = !empty($data['nombre_emergencia']) 
+                ? trim((string)$data['nombre_emergencia']) 
+                : (!empty($data['nombre_emergencia_alt']) 
+                    ? trim((string)$data['nombre_emergencia_alt']) 
+                    : (!empty($data['acudiente_nombre']) ? trim((string)$data['acudiente_nombre']) : 'Contacto de Emergencia'));
+
+            $nomEmergenciaAlt = !empty($data['nombre_emergencia_alt']) 
+                ? trim((string)$data['nombre_emergencia_alt']) 
+                : $nomEmergencia;
+
+            $celEmergencia = !empty($data['celular_emergencia']) 
+                ? trim((string)$data['celular_emergencia']) 
+                : (!empty($data['telefono']) ? trim((string)$data['telefono']) : '0000000000');
+
             $insertData = [
                 ':user_id' => $userId,
                 ':categoria_participante' => $data['categoria_participante'] ?? 'adulto',
                 ':modalidad_nino' => !empty($data['modalidad_nino']) ? substr($data['modalidad_nino'], 0, 30) : (($data['categoria_participante'] ?? '') === 'nino' ? (!empty($data['edad']) && (int)$data['edad'] < 8 ? 'acompanado' : 'solo') : null),
-                ':etapas_seleccionadas' => $etapas,
+                ':etapas_seleccionadas' => is_array($data['etapas_seleccionadas'] ?? null) ? json_encode($data['etapas_seleccionadas']) : ($data['etapas_seleccionadas'] ?? '[]'),
                 ':etapas_preventa' => $etapasPreventa,
                 ':nombre_mascota' => !empty($data['nombre_mascota']) ? $data['nombre_mascota'] : null,
                 ':raza_mascota' => !empty($data['raza_mascota']) ? $data['raza_mascota'] : null,
@@ -146,9 +160,9 @@ class Registration {
                 ':telefono' => $data['telefono'] ?? '',
                 ':parentesco_emergencia' => !empty($data['parentesco_emergencia']) ? substr($data['parentesco_emergencia'], 0, 80) : 'familiar',
                 ':otro_parentesco' => !empty($data['otro_parentesco']) ? substr($data['otro_parentesco'], 0, 80) : null,
-                ':nombre_emergencia' => !empty($data['nombre_emergencia']) ? substr($data['nombre_emergencia'], 0, 150) : null,
-                ':nombre_emergencia_alt' => !empty($data['nombre_emergencia_alt']) ? substr($data['nombre_emergencia_alt'], 0, 150) : null,
-                ':celular_emergencia' => !empty($data['celular_emergencia']) ? substr($data['celular_emergencia'], 0, 30) : null,
+                ':nombre_emergencia' => substr($nomEmergencia, 0, 150),
+                ':nombre_emergencia_alt' => substr($nomEmergenciaAlt, 0, 150),
+                ':celular_emergencia' => substr($celEmergencia, 0, 30),
                 ':acepta_autorizacion' => $data['acepta_autorizacion'] ?? 'si',
                 ':payment_status' => $data['payment_status'] ?? 'pending',
                 ':payment_amount' => $data['payment_amount'] ?? 0.00,
@@ -489,6 +503,10 @@ class Registration {
             try { $db->exec("ALTER TABLE registrations MODIFY COLUMN rh VARCHAR(20) NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations MODIFY COLUMN grupo_sanguineo VARCHAR(20) NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE registrations MODIFY COLUMN tipo_documento VARCHAR(50) NOT NULL DEFAULT 'CC'"); } catch (\Throwable $t) {}
+            try { $db->exec("ALTER TABLE registrations MODIFY COLUMN nombre_emergencia VARCHAR(150) NULL"); } catch (\Throwable $t) {}
+            try { $db->exec("ALTER TABLE registrations MODIFY COLUMN nombre_emergencia_alt VARCHAR(150) NULL"); } catch (\Throwable $t) {}
+            try { $db->exec("ALTER TABLE registrations MODIFY COLUMN celular_emergencia VARCHAR(50) NULL"); } catch (\Throwable $t) {}
+            try { $db->exec("ALTER TABLE registrations MODIFY COLUMN parentesco_emergencia VARCHAR(80) NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE users MODIFY COLUMN rh VARCHAR(20) NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE users MODIFY COLUMN grupo_sanguineo VARCHAR(20) NULL"); } catch (\Throwable $t) {}
             try { $db->exec("ALTER TABLE users MODIFY COLUMN tipo_documento VARCHAR(50) NOT NULL DEFAULT 'CC'"); } catch (\Throwable $t) {}

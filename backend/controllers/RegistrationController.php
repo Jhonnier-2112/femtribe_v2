@@ -71,17 +71,32 @@ class RegistrationController extends Controller {
                 $rh = $rawRh;
             }
 
+            // Consolidar contacto de emergencia para evitar valores vacíos o nulos
+            $rawNombreEmergencia    = trim($_POST['nombre_emergencia'] ?? '');
+            $rawNombreEmergenciaAlt = trim($_POST['nombre_emergencia_alt'] ?? '');
+            $rawAcudienteNombre     = trim($_POST['acudiente_nombre'] ?? '');
+            
+            $finalNombreEmergencia = $rawNombreEmergencia !== '' 
+                ? $rawNombreEmergencia 
+                : ($rawNombreEmergenciaAlt !== '' ? $rawNombreEmergenciaAlt : ($rawAcudienteNombre !== '' ? $rawAcudienteNombre : 'Contacto de Emergencia'));
+
+            $finalNombreEmergenciaAlt = $rawNombreEmergenciaAlt !== '' 
+                ? $rawNombreEmergenciaAlt 
+                : $finalNombreEmergencia;
+
             // Recopilar todos los datos del formulario
             $data = [
                 'user_id' => $user_id,
                 'categoria_participante' => $categoria,
                 'modalidad_nino' => trim($_POST['modalidad_nino'] ?? ''),
+                'etapas' => $etapas,
                 'etapas_seleccionadas' => $etapas,
+                'etapas_preventa' => $etapasPreventa,
                 'nombre_mascota' => $_POST['nombre_mascota'] ?? '',
                 'raza_mascota' => $_POST['raza_mascota'] ?? '',
                 'talla_panolete_mascota' => trim($_POST['talla_panolete_mascota'] ?? ''),
-                'acudiente_nombre' => $_POST['acudiente_nombre'] ?? '',
-                'acudiente_documento' => $_POST['acudiente_documento'] ?? '',
+                'acudiente_nombre' => $rawAcudienteNombre,
+                'acudiente_documento' => trim($_POST['acudiente_documento'] ?? ''),
                 'nombres' => trim($_POST['nombres'] ?? ''),
                 'apellidos' => trim($_POST['apellidos'] ?? ''),
                 'tipo_documento' => trim($_POST['tipo_documento'] ?? 'CC'),
@@ -101,8 +116,8 @@ class RegistrationController extends Controller {
                 'telefono' => trim($_POST['telefono'] ?? ''),
                 'parentesco_emergencia' => trim($_POST['parentesco_emergencia'] ?? 'familiar'),
                 'otro_parentesco' => trim($_POST['otro_parentesco'] ?? ''),
-                'nombre_emergencia' => trim($_POST['nombre_emergencia'] ?? ''),
-                'nombre_emergencia_alt' => trim($_POST['nombre_emergencia_alt'] ?? ''),
+                'nombre_emergencia' => $finalNombreEmergencia,
+                'nombre_emergencia_alt' => $finalNombreEmergenciaAlt,
                 'celular_emergencia' => trim($_POST['celular_emergencia'] ?? ''),
                 'acepta_autorizacion' => trim($_POST['acepta_autorizacion'] ?? 'si')
             ];

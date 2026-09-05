@@ -496,10 +496,9 @@
   </div>
 </section>
 
-<?php if (!empty($slides)) : ?>
 <script>
   (function(){
-    const slides = <?php echo json_encode(array_map(function($s){ return ['src' => '/' . ltrim($s['src'], '/'), 'label' => $s['label'], 'type' => $s['type'] ?? 'image']; }, $slides), JSON_UNESCAPED_SLASHES); ?>;
+    const slides = <?php echo json_encode(!empty($slides) ? array_map(function($s){ return ['src' => '/' . ltrim($s['src'], '/'), 'label' => $s['label'], 'type' => $s['type'] ?? 'image']; }, $slides) : [], JSON_UNESCAPED_SLASHES); ?>;
     const productName = <?php echo json_encode($name); ?>;
     let current = 0;
     const mainImg = document.getElementById('product-main-image');
@@ -705,8 +704,24 @@
 
     const isAccessory = <?php echo json_encode((bool)$isAccessory); ?>;
     let selectedGender = isAccessory ? '' : (document.querySelector('input[name="gender"]:checked')?.value || '');
+    if (!isAccessory && !selectedGender) {
+      const defaultR = document.getElementById('genderWomen') || document.getElementById('genderMen') || document.getElementById('genderKids');
+      if (defaultR) {
+        defaultR.checked = true;
+        selectedGender = defaultR.value;
+      } else {
+        selectedGender = 'hombre';
+      }
+    }
     let selectedSize = '';
     let selectedSizeStock = currentStock;
+
+    function hasValidSizeStock() {
+      if (!productSizeStock || typeof productSizeStock !== 'object' || Array.isArray(productSizeStock)) return false;
+      return Object.keys(productSizeStock).some(g => {
+        return productSizeStock[g] && typeof productSizeStock[g] === 'object' && Object.keys(productSizeStock[g]).length > 0;
+      });
+    }
 
     function getActiveGrid() {
       if (selectedGender === 'kids') return sizesKids;
@@ -715,27 +730,43 @@
     }
 
     function refreshSizesStockState() {
-      if (isAccessory || !productSizeStock) return;
-      const genderStock = productSizeStock[selectedGender] || {};
+      if (isAccessory) return;
       const activeGrid = getActiveGrid();
       if (!activeGrid) return;
 
+      if (!hasValidSizeStock()) {
+        activeGrid.querySelectorAll('.size-chip').forEach(btn => {
+          btn.dataset.stock = currentStock;
+          btn.classList.remove('out-of-stock');
+          btn.removeAttribute('title');
+        });
+        return;
+      }
+
+      const genderStock = (productSizeStock && productSizeStock[selectedGender]) ? productSizeStock[selectedGender] : null;
+
       activeGrid.querySelectorAll('.size-chip').forEach(btn => {
         const sz = btn.dataset.size;
-        if (genderStock[sz] !== undefined) {
-          const qty = parseInt(genderStock[sz], 10);
-          btn.dataset.stock = qty;
-          if (qty <= 0) {
-            btn.classList.add('out-of-stock');
-            btn.setAttribute('title', `Talla ${sz} agotada`);
+        if (genderStock && typeof genderStock === 'object' && Object.keys(genderStock).length > 0) {
+          if (genderStock[sz] !== undefined) {
+            const qty = parseInt(genderStock[sz], 10);
+            btn.dataset.stock = qty;
+            if (qty <= 0) {
+              btn.classList.add('out-of-stock');
+              btn.setAttribute('title', `Talla ${sz} agotada`);
+            } else {
+              btn.classList.remove('out-of-stock');
+              btn.setAttribute('title', `${qty} unidades disponibles`);
+            }
           } else {
-            btn.classList.remove('out-of-stock');
-            btn.setAttribute('title', `${qty} unidades disponibles`);
+            btn.dataset.stock = '0';
+            btn.classList.add('out-of-stock');
+            btn.setAttribute('title', `Talla ${sz} no disponible`);
           }
         } else {
-          btn.dataset.stock = '0';
-          btn.classList.add('out-of-stock');
-          btn.setAttribute('title', `Talla ${sz} no disponible`);
+          btn.dataset.stock = currentStock;
+          btn.classList.remove('out-of-stock');
+          btn.removeAttribute('title');
         }
       });
     }
@@ -770,8 +801,9 @@
       if (isOutOfStock) return false;
       if (!selectedColor && availableColors.length > 0) return false;
       if (isAccessory) return true;
-      if (!selectedGender || !selectedSize) return false;
-      if (productSizeStock && selectedSizeStock <= 0) return false;
+      if (!selectedSize) return false;
+      if (!selectedGender) return false;
+      if (hasValidSizeStock() && selectedSizeStock <= 0) return false;
       return true;
     }
 
@@ -787,7 +819,7 @@
           msg = 'Selecciona el género antes de agregar.';
         } else if (!selectedSize) {
           msg = 'Selecciona la talla antes de agregar.';
-        } else if (productSizeStock && selectedSizeStock <= 0) {
+        } else if (hasValidSizeStock() && selectedSizeStock <= 0) {
           msg = `La talla ${selectedSize} (${selectedGender}) se encuentra agotada. Por favor selecciona otra talla.`;
         }
         if (errorBox) { errorBox.textContent = msg; errorBox.classList.remove('d-none'); }
@@ -802,8 +834,9 @@
         const btn = document.getElementById('addToCart');
         const buyBtn = document.getElementById('buyNow');
         const valid = isValidSelection();
-        if (btn) btn.disabled = !valid || isOutOfStock;
-        if (buyBtn) buyBtn.disabled = !valid || isOutOfStock;
+        const shouldDisable = !valid || isOutOfStock;
+        if (btn) btn.disabled = shouldDisable;
+        if (buyBtn) buyBtn.disabled = shouldDisable;
       } catch(_){}
     }
 
@@ -831,7 +864,7 @@
           btn.classList.add('selected');
           selectedSize = btn.dataset.size || '';
           
-          if (productSizeStock) {
+          if (hasValidSizeStock()) {
             const szStock = btn.dataset.stock !== undefined ? parseInt(btn.dataset.stock, 10) : currentStock;
             selectedSizeStock = szStock;
             if (sizeStockBadge) {
@@ -843,6 +876,9 @@
                 sizeStockBadge.innerHTML = `<span class="badge bg-success-subtle text-success-emphasis border border-success-subtle"><i class="fas fa-check-circle me-1"></i>${szStock} disponibles</span>`;
               }
             }
+          } else {
+            selectedSizeStock = currentStock;
+            if (sizeStockBadge) sizeStockBadge.innerHTML = '';
           }
 
           updateQtyLimits();
@@ -965,7 +1001,6 @@
     });
   })();
 </script>
-<?php endif; ?>
 
 <!-- Sección de Calificación y Comentarios -->
 <section id="reviews-section" class="py-5 bg-white border-top text-dark mt-5">

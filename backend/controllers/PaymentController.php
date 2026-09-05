@@ -195,7 +195,7 @@ class PaymentController extends Controller {
      */
     public function response() {
         $transactionId = $_GET['id'] ?? null;
-        $reference = $_GET['reference'] ?? null;
+        $reference = $_GET['reference'] ?? ($_GET['ref'] ?? null);
 
         $orderModel = new Order();
         $bancolombiaService = new BancolombiaPaymentService();
@@ -205,59 +205,123 @@ class PaymentController extends Controller {
             $transactionData = $bancolombiaService->getTransactionStatus($transactionId);
         }
 
-        $ref = $reference ?? ($_GET['ref'] ?? null);
+        $ref = $reference;
+        if ($transactionData && !empty($transactionData['reference'])) {
+            $ref = $transactionData['reference'];
+        }
 
-        if ($transactionData) {
-            $status = strtoupper($transactionData['status'] ?? 'PENDING');
-            $ref = $transactionData['reference'] ?? $ref;
+        $status = 'PENDING';
+        if ($transactionData && !empty($transactionData['status'])) {
+            $status = strtoupper($transactionData['status']);
+        }
 
-            if ($ref) {
-                $order = $orderModel->findByOrderNumber($ref);
-                if ($order) {
-                    $isApproved = ($status === 'APPROVED');
-                    $orderStatus = $isApproved ? 'paid' : (($status === 'DECLINED' || $status === 'VOIDED' || $status === 'ERROR') ? 'failed' : 'pending');
-                    $orderModel->updateStatus($order['id'], $orderStatus, $ref);
-                    $orderModel->updatePaymentStatus($ref, $status, $transactionId, $transactionData);
-
-                    // Garantizar reducción de stock para compras aprobadas
-                    if ($isApproved) {
-                        $orderModel->reduceStockForOrder((int)$order['id']);
-                    }
-
-                    // Registrar log de auditoría
-                    \App\Services\AuditLogService::log('PAYMENT_RESPONSE_CALLBACK', 'Respuesta de pasarela recibida para orden ' . $ref . ' - Estado: ' . $status . ' - Transacción Wompi: ' . $transactionId, ['reference' => $ref, 'status' => $status, 'wompi_transaction_id' => $transactionId]);
-
-                    // Si es aprobado, actualizar estado en registrations y enviar correo de bienvenida
-                    if ($isApproved) {
-                        $registration = \App\Models\Registration::findByOrderNumber($ref);
-                        if ($registration && $registration['payment_status'] !== 'paid') {
-                            \App\Models\Registration::updatePaymentStatusByOrder($ref, 'paid');
-                            $registration['payment_status'] = 'paid';
-                            if (!empty($order['total'])) {
-                                $registration['payment_amount'] = $order['total'];
-                            }
-                            
-                            // Enviar email de confirmación y bienvenida al participante
-                            try {
-                                $emailService = new \App\Services\EmailService();
-                                $emailService->sendWelcomeEmail($registration);
-                            } catch (\Exception $e) {
-                                error_log("Error al enviar email en response(): " . $e->getMessage());
-                            }
-                        }
-                    }
-                }
+        // Buscar orden asociada
+        $order = null;
+        if (!empty($ref)) {
+            $order = $orderModel->findByOrderNumber($ref);
+        }
+        if (!$order && !empty($transactionId)) {
+            $order = $orderModel->findByTransactionId($transactionId);
+            if ($order) {
+                $ref = $order['order_number'];
             }
         }
 
-        $orderInfo = null;
-        if (!empty($ref)) {
-            $orderInfo = $orderModel->findByOrderNumber($ref);
+        // Si Wompi indica que la transacción está aprobada:
+        if ($status === 'APPROVED' && !empty($ref)) {
+            self::processApprovedPayment($ref, 'APPROVED', $transactionId, $transactionData);
+            if ($order) {
+                $order['status'] = 'paid';
+            }
+        } elseif (in_array($status, ['DECLINED', 'VOIDED', 'ERROR']) && $order) {
+            $orderModel->updateStatus((int)$order['id'], 'failed', $ref);
+            $orderModel->updatePaymentStatus($ref, $status, $transactionId, $transactionData);
+            $order['status'] = 'failed';
+        }
+
+        // Si la orden ya estaba registrada como 'paid' en la BD (ej. por webhook simultáneo):
+        if ($order && $order['status'] === 'paid') {
+            $status = 'APPROVED';
         }
 
         $this->view('payment_response', [
             'transaction' => $transactionData,
-            'order' => $orderInfo
+            'order' => $order,
+            'status' => $status,
+            'transactionId' => $transactionId,
+            'reference' => $ref
+        ]);
+    }
+
+    /**
+     * Endpoint AJAX para polling en tiempo real del estado del pago desde payment_response
+     */
+    public function checkStatus() {
+        header('Content-Type: application/json');
+
+        $transactionId = $_GET['id'] ?? null;
+        $reference = $_GET['reference'] ?? ($_GET['ref'] ?? null);
+
+        $orderModel = new Order();
+        $order = null;
+
+        if (!empty($reference)) {
+            $order = $orderModel->findByOrderNumber($reference);
+        }
+        if (!$order && !empty($transactionId)) {
+            $order = $orderModel->findByTransactionId($transactionId);
+            if ($order) {
+                $reference = $order['order_number'];
+            }
+        }
+
+        // Si ya está pagada en base de datos:
+        if ($order && $order['status'] === 'paid') {
+            echo json_encode([
+                'success' => true,
+                'status' => 'APPROVED',
+                'paid' => true,
+                'message' => 'Pago confirmado y aprobado.'
+            ]);
+            return;
+        }
+
+        // Si tenemos transactionId, consultar la API de Wompi
+        if (!empty($transactionId)) {
+            $bancolombiaService = new BancolombiaPaymentService();
+            $txData = $bancolombiaService->getTransactionStatus($transactionId);
+
+            if ($txData && !empty($txData['status'])) {
+                $status = strtoupper($txData['status']);
+                $ref = $txData['reference'] ?? $reference;
+
+                if ($status === 'APPROVED' && !empty($ref)) {
+                    self::processApprovedPayment($ref, 'APPROVED', $transactionId, $txData);
+                    echo json_encode([
+                        'success' => true,
+                        'status' => 'APPROVED',
+                        'paid' => true,
+                        'message' => 'Pago aprobado exitosamente.'
+                    ]);
+                    return;
+                }
+
+                echo json_encode([
+                    'success' => true,
+                    'status' => $status,
+                    'paid' => false,
+                    'message' => 'Estado actual: ' . $status
+                ]);
+                return;
+            }
+        }
+
+        $currentStatus = $order['status'] ?? 'pending';
+        echo json_encode([
+            'success' => true,
+            'status' => strtoupper($currentStatus),
+            'paid' => ($currentStatus === 'paid'),
+            'message' => 'Verificando transacción...'
         ]);
     }
 
@@ -300,69 +364,166 @@ class PaymentController extends Controller {
             $checksumHeader = $_SERVER['HTTP_X_EVENT_CHECKSUM'] ?? $eventData['signature']['checksum'] ?? '';
         }
 
-        // Validar la autenticidad de la notificación utilizando el servicio de pago
+        // Validar autenticidad de la firma
         $bancolombiaService = new BancolombiaPaymentService();
         $isValid = !empty($checksumHeader) && $bancolombiaService->isValidWebhookChecksum($eventData, $checksumHeader);
-        
-        // Registrar log de auditoría
+
+        $tx = $eventData['data']['transaction'];
+        $transactionId = $tx['id'] ?? null;
+        $reference = $tx['reference'] ?? null;
+        $status = strtoupper($tx['status'] ?? 'PENDING');
+
+        // FALLBACK DE SEGURIDAD CRÍTICO:
+        // Si el checksum falló (por ejemplo, secreto de eventos no configurado o erróneo en .env de producción),
+        // consultamos directamente la API oficial de Wompi mediante la llave privada/pública para verificar de forma segura.
+        if (!$isValid && !empty($transactionId)) {
+            $verifiedTx = $bancolombiaService->getTransactionStatus($transactionId);
+            if ($verifiedTx && !empty($verifiedTx['id']) && $verifiedTx['id'] === $transactionId) {
+                $isValid = true;
+                $status = strtoupper($verifiedTx['status'] ?? $status);
+                $reference = $verifiedTx['reference'] ?? $reference;
+                $eventData['data']['transaction'] = $verifiedTx;
+                \App\Services\AuditLogService::log(
+                    'PAYMENT_WEBHOOK_API_FALLBACK',
+                    'Firma de webhook verificada autoritativamente consultando API de Wompi para orden ' . $reference . ' - Estado: ' . $status,
+                    ['transaction_id' => $transactionId, 'status' => $status]
+                );
+            }
+        }
+
+        // Registrar log de auditoría del intento
         $orderModel = new Order();
         $orderModel->logWebhookAttempt([
             'ip_address' => $_SERVER['REMOTE_ADDR'] ?? '',
             'payload' => $eventData,
             'checksum_received' => $checksumHeader,
             'is_valid' => $isValid,
-            'error_message' => $isValid ? null : 'Firma checksum del webhook inválida o ausente'
+            'error_message' => $isValid ? null : 'Firma checksum del webhook inválida y no pudo verificarse por API oficial'
         ]);
 
         if (!$isValid) {
             http_response_code(401);
             header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'error' => 'Firma digital del webhook inválida o ausente']);
+            echo json_encode(['success' => false, 'error' => 'Firma digital del webhook inválida']);
             return;
         }
 
-        $tx = $eventData['data']['transaction'];
-        $reference = $tx['reference'] ?? null;
-        $status = strtoupper($tx['status'] ?? 'PENDING');
-        $transactionId = $tx['id'] ?? null;
-        $paymentMethodType = $tx['payment_method_type'] ?? null;
-
-        if ($reference) {
+        if ($reference && $status === 'APPROVED') {
+            self::processApprovedPayment($reference, 'APPROVED', $transactionId, $eventData);
+            \App\Services\AuditLogService::log(
+                'PAYMENT_WEBHOOK_RECEIVED',
+                'Notificación Webhook procesada exitosamente para orden ' . $reference . ' - Estado: ' . $status,
+                ['reference' => $reference, 'status' => $status, 'wompi_transaction_id' => $transactionId]
+            );
+        } elseif ($reference && in_array($status, ['DECLINED', 'VOIDED', 'ERROR'])) {
             $order = $orderModel->findByOrderNumber($reference);
-
             if ($order) {
-                $isApproved = ($status === 'APPROVED');
-                $orderStatus = $isApproved ? 'paid' : (($status === 'DECLINED' || $status === 'VOIDED' || $status === 'ERROR') ? 'failed' : 'pending');
-                $orderModel->updateStatus($order['id'], $orderStatus, $reference);
+                $orderModel->updateStatus((int)$order['id'], 'failed', $reference);
                 $orderModel->updatePaymentStatus($reference, $status, $transactionId, $eventData);
-
-                // Registrar log de auditoría
-                \App\Services\AuditLogService::log('PAYMENT_WEBHOOK_RECEIVED', 'Notificación Webhook de Wompi procesada para orden ' . $reference . ' - Estado: ' . $status . ' - Transacción Wompi: ' . $transactionId, ['reference' => $reference, 'status' => $status, 'wompi_transaction_id' => $transactionId]);
-
-                // Si es aprobado, actualizar estado en registrations y enviar correo de bienvenida
-                if ($isApproved) {
-                    $registration = \App\Models\Registration::findByOrderNumber($reference);
-                    if ($registration && $registration['payment_status'] !== 'paid') {
-                        \App\Models\Registration::updatePaymentStatusByOrder($reference, 'paid');
-                        $registration['payment_status'] = 'paid';
-                        if (!empty($order['total'])) {
-                            $registration['payment_amount'] = $order['total'];
-                        }
-                        
-                        // Enviar email de bienvenida asíncronamente
-                        try {
-                            $emailService = new \App\Services\EmailService();
-                            $emailService->sendWelcomeEmail($registration);
-                        } catch (\Exception $e) {
-                            error_log("Error al enviar email en webhook(): " . $e->getMessage());
-                        }
-                    }
-                }
             }
         }
 
         http_response_code(200);
         header('Content-Type: application/json');
         echo json_encode(['success' => true, 'message' => 'Evento de pago procesado exitosamente']);
+    }
+
+    /**
+     * Procesa de forma unificada e idempotente una orden aprobada:
+     * 1. Actualiza orden a 'paid'
+     * 2. Actualiza registro en tabla payments con ID de transacción
+     * 3. Reduce stock de productos
+     * 4. Actualiza registro de inscripción a 'paid'
+     * 5. Envía correo de confirmación y bienvenida
+     * 6. Registra log de auditoría
+     */
+    public static function processApprovedPayment(string $reference, string $status = 'APPROVED', ?string $transactionId = null, $rawData = null): array {
+        $orderModel = new Order();
+        $order = $orderModel->findByOrderNumber($reference);
+
+        if (!$order && !empty($transactionId)) {
+            $order = $orderModel->findByTransactionId($transactionId);
+            if ($order) {
+                $reference = $order['order_number'];
+            }
+        }
+
+        if (!$order) {
+            return [
+                'success' => false,
+                'message' => "Orden {$reference} no encontrada en la base de datos."
+            ];
+        }
+
+        $orderId = (int)$order['id'];
+        $wasAlreadyPaid = ($order['status'] === 'paid');
+
+        // 1. Actualizar orden a 'paid'
+        $orderModel->updateStatus($orderId, 'paid', $reference);
+
+        // 2. Actualizar registro en payments
+        $orderModel->updatePaymentStatus($reference, 'APPROVED', $transactionId, $rawData);
+
+        // 3. Reducir stock de productos adquiridos
+        $orderModel->reduceStockForOrder($orderId);
+
+        // 4. Actualizar inscripción asociada y enviar correo de confirmación
+        $registrationUpdated = false;
+        $emailSent = false;
+        $emailError = null;
+
+        $registration = \App\Models\Registration::findByOrderNumber($reference);
+        if ($registration) {
+            \App\Models\Registration::updatePaymentStatusByOrder($reference, 'paid');
+            $registration['payment_status'] = 'paid';
+            if (!empty($order['total'])) {
+                $registration['payment_amount'] = $order['total'];
+            }
+            $registrationUpdated = true;
+
+            // Enviar email oficial de confirmación y bienvenida al corredor
+            try {
+                $emailService = new \App\Services\EmailService();
+                $emailSent = (bool)$emailService->sendWelcomeEmail($registration);
+                \App\Services\AuditLogService::log(
+                    'PAYMENT_EMAIL_SENT',
+                    'Correo de confirmación de inscripción y pago enviado exitosamente a ' . ($registration['email'] ?? ''),
+                    ['order' => $reference, 'email' => $registration['email'] ?? '', 'success' => $emailSent]
+                );
+            } catch (\Throwable $e) {
+                $emailError = $e->getMessage();
+                error_log("Error al enviar email de confirmación para orden {$reference}: " . $emailError);
+                \App\Services\AuditLogService::log(
+                    'PAYMENT_EMAIL_FAILED',
+                    'Error al enviar correo de confirmación para orden ' . $reference . ': ' . $emailError,
+                    ['order' => $reference, 'error' => $emailError]
+                );
+            }
+        }
+
+        // 5. Registrar log de auditoría
+        \App\Services\AuditLogService::log(
+            'PAYMENT_APPROVED_PROCESSED',
+            "Pago aprobado procesado para orden {$reference} - Monto: $" . number_format((float)$order['total'], 0, ',', '.') . " COP",
+            [
+                'order_id' => $orderId,
+                'order_number' => $reference,
+                'wompi_transaction_id' => $transactionId,
+                'was_already_paid' => $wasAlreadyPaid,
+                'registration_updated' => $registrationUpdated,
+                'email_sent' => $emailSent,
+                'email_error' => $emailError
+            ]
+        );
+
+        return [
+            'success' => true,
+            'order_id' => $orderId,
+            'order_number' => $reference,
+            'was_already_paid' => $wasAlreadyPaid,
+            'registration_updated' => $registrationUpdated,
+            'email_sent' => $emailSent,
+            'email_error' => $emailError
+        ];
     }
 }

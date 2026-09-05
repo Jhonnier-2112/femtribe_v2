@@ -187,6 +187,37 @@ class Order {
     }
 
     /**
+     * Busca una orden mediante el ID de transacción de la pasarela o referencia de pago
+     */
+    public function findByTransactionId(string $transactionId): ?array {
+        try {
+            $cleanTxId = trim($transactionId);
+            $stmt = $this->conn->prepare("
+                SELECT o.* 
+                FROM orders o 
+                INNER JOIN payments p ON p.order_id = o.id 
+                WHERE p.gateway_transaction_id = :txid 
+                   OR p.transaction_reference = :txid 
+                ORDER BY p.id DESC 
+                LIMIT 1
+            ");
+            $stmt->execute([':txid' => $cleanTxId]);
+            $order = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($order) {
+                $itemStmt = $this->conn->prepare("SELECT * FROM order_items WHERE order_id = :order_id");
+                $itemStmt->execute([':order_id' => $order['id']]);
+                $order['items'] = $itemStmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+                return $order;
+            }
+
+            return null;
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
+
+    /**
      * Actualiza el estado de la orden y descuenta stock si pasa a paid
      */
     public function updateStatus(int $orderId, string $status, ?string $transactionRef = null): bool {

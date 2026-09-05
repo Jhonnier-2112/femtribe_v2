@@ -57,7 +57,13 @@ ADD COLUMN IF NOT EXISTS `raza_mascota` VARCHAR(100) DEFAULT NULL;
 ALTER TABLE `registrations` 
 ADD COLUMN IF NOT EXISTS `talla_panolete_mascota` VARCHAR(50) DEFAULT NULL;
 
--- 8. Límite de cupos preventa en etapas de carrera
+-- 8. Asegurar que las columnas de emergencia permitan NULL para evitar errores de integridad
+ALTER TABLE `registrations` MODIFY COLUMN `nombre_emergencia` VARCHAR(150) NULL;
+ALTER TABLE `registrations` MODIFY COLUMN `nombre_emergencia_alt` VARCHAR(150) NULL;
+ALTER TABLE `registrations` MODIFY COLUMN `celular_emergencia` VARCHAR(50) NULL;
+ALTER TABLE `registrations` MODIFY COLUMN `parentesco_emergencia` VARCHAR(80) NULL;
+
+-- 9. Límite de cupos preventa en etapas de carrera
 ALTER TABLE `race_stages` 
 ADD COLUMN IF NOT EXISTS `presale_slots_limit` INT(11) DEFAULT NULL;
 

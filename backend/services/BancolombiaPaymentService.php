@@ -14,17 +14,40 @@ class BancolombiaPaymentService {
             require_once __DIR__ . '/../config/config.php';
         }
 
-        $this->publicKey = BANCOLOMBIA_WOMPI_PUBLIC_KEY;
-        $this->privateKey = BANCOLOMBIA_WOMPI_PRIVATE_KEY;
-        $this->integritySecret = BANCOLOMBIA_WOMPI_INTEGRITY_SECRET;
-        $this->eventsSecret = BANCOLOMBIA_WOMPI_EVENTS_SECRET;
-        $this->environment = BANCOLOMBIA_WOMPI_ENV;
+        $this->publicKey = trim((string)(defined('BANCOLOMBIA_WOMPI_PUBLIC_KEY') ? BANCOLOMBIA_WOMPI_PUBLIC_KEY : ''));
+        $this->privateKey = trim((string)(defined('BANCOLOMBIA_WOMPI_PRIVATE_KEY') ? BANCOLOMBIA_WOMPI_PRIVATE_KEY : ''));
+        $this->integritySecret = trim((string)(defined('BANCOLOMBIA_WOMPI_INTEGRITY_SECRET') ? BANCOLOMBIA_WOMPI_INTEGRITY_SECRET : ''));
+        $this->eventsSecret = trim((string)(defined('BANCOLOMBIA_WOMPI_EVENTS_SECRET') ? BANCOLOMBIA_WOMPI_EVENTS_SECRET : ''));
 
-        if ($this->environment === 'production') {
-            $this->baseUrl = 'https://production.wompi.co/v1';
-        } else {
-            $this->baseUrl = 'https://sandbox.wompi.co/v1';
+        // Detección inteligente del entorno (Producción vs Sandbox)
+        $configuredEnv = defined('BANCOLOMBIA_WOMPI_ENV') ? strtolower(trim(BANCOLOMBIA_WOMPI_ENV)) : 'sandbox';
+        $isProd = false;
+
+        if ($configuredEnv === 'production' || $configuredEnv === 'prod') {
+            $isProd = true;
+        } elseif (str_starts_with($this->publicKey, 'pub_prod_') || str_starts_with($this->privateKey, 'prv_prod_')) {
+            // Si las llaves inician con pub_prod_ o prv_prod_, forzar producción independientemente de .env
+            $isProd = true;
+        } elseif (isset($_GET['env']) && $_GET['env'] === 'prod') {
+            $isProd = true;
         }
+
+        $this->environment = $isProd ? 'production' : 'sandbox';
+        $this->baseUrl = $isProd ? 'https://production.wompi.co/v1' : 'https://sandbox.wompi.co/v1';
+    }
+
+    /**
+     * Retorna el entorno activo ('production' o 'sandbox')
+     */
+    public function getEnvironment(): string {
+        return $this->environment;
+    }
+
+    /**
+     * Retorna la URL base activa de Wompi
+     */
+    public function getBaseUrl(): string {
+        return $this->baseUrl;
     }
 
     /**
@@ -50,11 +73,14 @@ class BancolombiaPaymentService {
         $host = $_SERVER['HTTP_HOST'] ?? '';
         $isLocal = (bool)preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?$/', $host);
         if ($isLocal && !empty($host)) {
-            $redirectUrl = 'http://' . $host . '/payment/response';
+            $redirectBase = 'http://' . $host . '/payment/response';
         } else {
             $baseUrl = defined('BASE_URL') ? BASE_URL : 'https://femtribe.com.co';
-            $redirectUrl = rtrim($baseUrl, '/') . '/payment/response';
+            $redirectBase = rtrim($baseUrl, '/') . '/payment/response';
         }
+
+        // Asegurar que la URL de retorno siempre conserve la referencia de la orden
+        $redirectUrl = $redirectBase . (strpos($redirectBase, '?') === false ? '?' : '&') . 'reference=' . urlencode($reference);
 
         return [
             'publicKey' => $this->publicKey,
@@ -76,49 +102,77 @@ class BancolombiaPaymentService {
     }
 
     /**
-     * Consulta el estado de una transacción mediante su ID en la API de Bancolombia / Wompi
+     * Consulta el estado de una transacción mediante su ID en la API de Bancolombia / Wompi.
+     * Incluye fallback automático entre entornos (producción <-> sandbox) y respaldo entre llave privada y pública.
      */
     public function getTransactionStatus(string $transactionId): ?array {
-        $url = $this->baseUrl . '/transactions/' . urlencode($transactionId);
-
-        // La API de Wompi requiere la llave privada (prv_...) para consultar detalles de transacciones
-        $authKey = !empty($this->privateKey) ? $this->privateKey : $this->publicKey;
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Authorization: Bearer ' . $authKey,
-            'Content-Type: application/json'
-        ]);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($httpCode === 200 && $response) {
-            $data = json_decode($response, true);
-            return $data['data'] ?? null;
+        $cleanId = trim($transactionId);
+        if (empty($cleanId)) {
+            return null;
         }
 
-        // Si falló con la llave privada, reintentar con la llave pública como respaldo
-        if ($httpCode !== 200 && $authKey !== $this->publicKey && !empty($this->publicKey)) {
+        // Definir orden de URLs a probar: primero el entorno detectado, luego el alternativo
+        $urlsToTry = [$this->baseUrl];
+        $altUrl = ($this->baseUrl === 'https://production.wompi.co/v1') 
+            ? 'https://sandbox.wompi.co/v1' 
+            : 'https://production.wompi.co/v1';
+        $urlsToTry[] = $altUrl;
+
+        // Llaves a probar en orden de prioridad
+        $keysToTry = array_filter([$this->privateKey, $this->publicKey]);
+
+        foreach ($urlsToTry as $baseUrl) {
+            $url = $baseUrl . '/transactions/' . urlencode($cleanId);
+
+            foreach ($keysToTry as $authKey) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Authorization: Bearer ' . $authKey,
+                    'Content-Type: application/json',
+                    'Accept: application/json'
+                ]);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 12);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 6);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                $curlErr = curl_error($ch);
+                curl_close($ch);
+
+                if ($httpCode === 200 && $response) {
+                    $json = json_decode($response, true);
+                    if (isset($json['data']) && is_array($json['data'])) {
+                        return $json['data'];
+                    }
+                }
+
+                if ($curlErr) {
+                    error_log("[BancolombiaPaymentService] cURL error consultando {$url}: {$curlErr}");
+                }
+            }
+
+            // Intento sin Bearer token (el endpoint público de transacciones de Wompi permite consultar el estado)
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Authorization: Bearer ' . $this->publicKey,
-                'Content-Type: application/json'
+                'Content-Type: application/json',
+                'Accept: application/json'
             ]);
             curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
 
             if ($httpCode === 200 && $response) {
-                $data = json_decode($response, true);
-                return $data['data'] ?? null;
+                $json = json_decode($response, true);
+                if (isset($json['data']) && is_array($json['data'])) {
+                    return $json['data'];
+                }
             }
         }
 
@@ -127,6 +181,7 @@ class BancolombiaPaymentService {
 
     /**
      * Valida la firma checksum recibida en el Webhook de eventos asíncronos
+     * Utiliza la lista dinámica de propiedades de Wompi ('signature.properties')
      */
     public function isValidWebhookChecksum(array $eventPayload, string $checksumHeader): bool {
         if (empty($eventPayload['data']['transaction']) || empty($eventPayload['timestamp'])) {
@@ -136,10 +191,36 @@ class BancolombiaPaymentService {
         $tx = $eventPayload['data']['transaction'];
         $timestamp = $eventPayload['timestamp'];
 
-        // Estructura: transaction.id + transaction.status + transaction.amount_in_cents + timestamp + events_secret
-        $concatenated = $tx['id'] . $tx['status'] . $tx['amount_in_cents'] . $timestamp . $this->eventsSecret;
+        // Si el payload especifica las propiedades que componen la firma, usarlas en el orden exacto
+        $properties = $eventPayload['signature']['properties'] ?? [
+            'transaction.id',
+            'transaction.status',
+            'transaction.amount_in_cents'
+        ];
+
+        $concatenated = '';
+        foreach ($properties as $prop) {
+            $parts = explode('.', $prop);
+            $val = $eventPayload['data'] ?? [];
+            foreach ($parts as $part) {
+                if (is_array($val) && array_key_exists($part, $val)) {
+                    $val = $val[$part];
+                } else {
+                    $val = '';
+                }
+            }
+            $concatenated .= (string)$val;
+        }
+
+        $concatenated .= (string)$timestamp . $this->eventsSecret;
         $calculatedHash = hash('sha256', $concatenated);
 
-        return hash_equals($calculatedHash, strtolower($checksumHeader));
+        $checksumToCompare = trim(strtolower($checksumHeader));
+        if (empty($checksumToCompare) && !empty($eventPayload['signature']['checksum'])) {
+            $checksumToCompare = trim(strtolower($eventPayload['signature']['checksum']));
+        }
+
+        return !empty($checksumToCompare) && hash_equals(strtolower($calculatedHash), $checksumToCompare);
     }
 }
+

@@ -2263,6 +2263,19 @@ function showConfirmationModal(form) {
           }
         });
         
+        // Sincronizar contacto de emergencia para garantizar que viaje completo
+        const inpEmerg = form.querySelector('[name="nombre_emergencia"]');
+        const inpEmergAlt = form.querySelector('[name="nombre_emergencia_alt"]');
+        const inpAcudiente = form.querySelector('[name="acudiente_nombre"]');
+        if (inpEmerg && !inpEmerg.value.trim() && inpEmergAlt && inpEmergAlt.value.trim()) {
+          inpEmerg.value = inpEmergAlt.value.trim();
+        } else if (inpEmergAlt && !inpEmergAlt.value.trim() && inpEmerg && inpEmerg.value.trim()) {
+          inpEmergAlt.value = inpEmerg.value.trim();
+        } else if (inpEmerg && !inpEmerg.value.trim() && inpAcudiente && inpAcudiente.value.trim()) {
+          inpEmerg.value = inpAcudiente.value.trim();
+          if (inpEmergAlt && !inpEmergAlt.value.trim()) inpEmergAlt.value = inpAcudiente.value.trim();
+        }
+
         // Enviar formulario usando XMLHttpRequest para máxima compatibilidad
         const formData = new FormData(form);
         formData.append('ajax', '1'); // Agregar indicador AJAX adicional
@@ -2838,29 +2851,48 @@ document.querySelectorAll('.form-control-sport, .form-select-sport').forEach(fun
 
 
 // Manejo del campo "otro parentesco"
-document.querySelector('select[name="parentesco_emergencia"]').addEventListener('change', function() {
-  const otroParentesco = document.getElementById('otro-parentesco');
-  const nombreEmergenciaFull = document.getElementById('nombre-emergencia-full');
-  const nombreEmergenciaHalf = document.getElementById('nombre-emergencia-half');
-  const otroParentescoInput = document.querySelector('input[name="otro_parentesco"]');
-  const nombreEmergenciaInput = document.querySelector('input[name="nombre_emergencia"]');
-  const nombreEmergenciaAltInput = document.querySelector('input[name="nombre_emergencia_alt"]');
-  
+// Manejo del campo "otro parentesco"
+const parentescoSelect = document.querySelector('select[name="parentesco_emergencia"]');
+const otroParentesco = document.getElementById('otro-parentesco');
+const nombreEmergenciaFull = document.getElementById('nombre-emergencia-full');
+const nombreEmergenciaHalf = document.getElementById('nombre-emergencia-half');
+const otroParentescoInput = document.querySelector('input[name="otro_parentesco"]');
+const nombreEmergenciaInput = document.querySelector('input[name="nombre_emergencia"]');
+const nombreEmergenciaAltInput = document.querySelector('input[name="nombre_emergencia_alt"]');
+
+parentescoSelect?.addEventListener('change', function() {
   if (this.value === 'otro') {
-    otroParentesco.style.display = 'block';
-    nombreEmergenciaFull.style.display = 'none';
-    nombreEmergenciaHalf.style.display = 'block';
-    otroParentescoInput.required = true;
-    nombreEmergenciaInput.required = false;
-    nombreEmergenciaAltInput.required = true;
+    if (otroParentesco) otroParentesco.style.display = 'block';
+    if (nombreEmergenciaFull) nombreEmergenciaFull.style.display = 'none';
+    if (nombreEmergenciaHalf) nombreEmergenciaHalf.style.display = 'block';
+    if (otroParentescoInput) otroParentescoInput.required = true;
+    if (nombreEmergenciaInput) nombreEmergenciaInput.required = false;
+    if (nombreEmergenciaAltInput) {
+      nombreEmergenciaAltInput.required = true;
+      if (nombreEmergenciaInput && nombreEmergenciaInput.value.trim() && !nombreEmergenciaAltInput.value.trim()) {
+        nombreEmergenciaAltInput.value = nombreEmergenciaInput.value.trim();
+      }
+    }
   } else {
-    otroParentesco.style.display = 'none';
-    nombreEmergenciaFull.style.display = 'block';
-    nombreEmergenciaHalf.style.display = 'none';
-    otroParentescoInput.required = false;
-    nombreEmergenciaInput.required = true;
-    nombreEmergenciaAltInput.required = false;
+    if (otroParentesco) otroParentesco.style.display = 'none';
+    if (nombreEmergenciaFull) nombreEmergenciaFull.style.display = 'block';
+    if (nombreEmergenciaHalf) nombreEmergenciaHalf.style.display = 'none';
+    if (otroParentescoInput) otroParentescoInput.required = false;
+    if (nombreEmergenciaInput) {
+      nombreEmergenciaInput.required = true;
+      if (nombreEmergenciaAltInput && nombreEmergenciaAltInput.value.trim() && !nombreEmergenciaInput.value.trim()) {
+        nombreEmergenciaInput.value = nombreEmergenciaAltInput.value.trim();
+      }
+    }
+    if (nombreEmergenciaAltInput) nombreEmergenciaAltInput.required = false;
   }
+});
+
+nombreEmergenciaAltInput?.addEventListener('input', function() {
+  if (nombreEmergenciaInput) nombreEmergenciaInput.value = this.value;
+});
+nombreEmergenciaInput?.addEventListener('input', function() {
+  if (nombreEmergenciaAltInput) nombreEmergenciaAltInput.value = this.value;
 });
 </script>
 

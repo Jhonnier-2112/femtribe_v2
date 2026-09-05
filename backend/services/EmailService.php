@@ -6,9 +6,17 @@ require_once __DIR__ . '/../config/EmailConfig.php';
 
 // Cargar autoloader de vendor si es necesario
 if (!class_exists('PHPMailer\PHPMailer\PHPMailer')) {
-    $vendorPath = realpath(__DIR__ . '/../../frontend/vendor/autoload.php');
-    if ($vendorPath && file_exists($vendorPath)) {
-        require_once $vendorPath;
+    $possibleVendorPaths = [
+        __DIR__ . '/../../vendor/autoload.php',
+        dirname(dirname(__DIR__)) . '/vendor/autoload.php',
+        __DIR__ . '/../vendor/autoload.php',
+        __DIR__ . '/../../frontend/vendor/autoload.php'
+    ];
+    foreach ($possibleVendorPaths as $vp) {
+        if (file_exists($vp)) {
+            require_once $vp;
+            break;
+        }
     }
 }
 
@@ -75,16 +83,17 @@ class EmailService {
             $this->mailer->isHTML(true);
             $this->mailer->Subject = '🎉 ¡Inscripción y Pago Confirmados!' . $orderNum . ' - Corre con FEMTRIBE';
             
-            // Embeber la imagen del logo
+            // Embeber la imagen del logo oficial (verde)
             $logoPaths = [
-                __DIR__ . '/../../img/logocorreo.png',
-                __DIR__ . '/../../assets/img/logocorreo.png',
-                __DIR__ . '/../../assets/img/logocarrera.png',
                 __DIR__ . '/../../assets/img/logoverde.png',
+                __DIR__ . '/../../img/logoverde.png',
+                __DIR__ . '/../../assets/img/logocarrera.png',
+                __DIR__ . '/../../assets/img/logocorreo.png',
+                __DIR__ . '/../../img/logocorreo.png',
             ];
             foreach ($logoPaths as $lPath) {
                 if (file_exists($lPath)) {
-                    $this->mailer->addEmbeddedImage($lPath, 'femtribe_logo', 'logocorreo.png', 'base64', 'image/png');
+                    $this->mailer->addEmbeddedImage($lPath, 'femtribe_logo', 'logoverde.png', 'base64', 'image/png');
                     break;
                 }
             }
@@ -117,9 +126,16 @@ class EmailService {
             $this->mailer->isHTML(true);
             $this->mailer->Subject = '🔒 Restauración de Contraseña - FEMTRIBE';
 
-            $logoPath = __DIR__ . '/../../img/logocorreo.png';
-            if (file_exists($logoPath)) {
-                $this->mailer->addEmbeddedImage($logoPath, 'femtribe_logo', 'logocorreo.png', 'base64', 'image/png');
+            $logoPaths = [
+                __DIR__ . '/../../assets/img/logoverde.png',
+                __DIR__ . '/../../img/logoverde.png',
+                __DIR__ . '/../../img/logocorreo.png',
+            ];
+            foreach ($logoPaths as $lPath) {
+                if (file_exists($lPath)) {
+                    $this->mailer->addEmbeddedImage($lPath, 'femtribe_logo', 'logoverde.png', 'base64', 'image/png');
+                    break;
+                }
             }
 
             $this->mailer->Body = $this->generatePasswordResetTemplate($user, $resetUrl);
@@ -372,14 +388,14 @@ class EmailService {
                         <td class="td-val" style="width: 68%;">
                             <strong>Sábado, 14 de noviembre</strong><br>
                             <span style="font-size: 13px; color: #222;"><strong>Punto de encuentro:</strong> Iglesia Antigua de la Inmaculada Concepción</span><br>
-                            <span style="font-size: 12px; color: #666;">Dirección: Carrera 16 # 16-2</span>
+                            <span style="font-size: 12px; color: #666;">Dirección: Carrera 16 # 16-2 Municipio Ricaurte, Cundinamarca </span>
                         </td>
                     </tr>
                     <tr>
                         <td class="td-label" style="padding-top: 10px; color: #555;">🏃 5K y 10K:</td>
                         <td class="td-val" style="padding-top: 10px;">
                             <strong>Domingo, 15 de noviembre</strong><br>
-                            <span style="font-size: 13px; color: #222;"><strong>Punto de encuentro:</strong> Parque Biosaludable</span>
+                            <span style="font-size: 13px; color: #222;"><strong>Punto de encuentro:</strong> Parque Biosaludable Municipio Ricaurte, Cundinamarca</span>
                         </td>
                     </tr>
                 </table>

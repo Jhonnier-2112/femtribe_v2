@@ -21,6 +21,31 @@ function loadEnv($path) {
 // Cargar variables de entorno desde .env
 loadEnv(__DIR__ . '/../.env');
 
+// Autoloader universal para clases en App\
+spl_autoload_register(function ($class) {
+    $classBase = basename(str_replace('\\', '/', $class)) . '.php';
+    $backendDir = dirname(__DIR__);
+    $paths = [
+        $backendDir . '/models/'      . $classBase,
+        $backendDir . '/services/'    . $classBase,
+        $backendDir . '/controllers/' . $classBase,
+        $backendDir . '/core/'        . $classBase,
+        $backendDir . '/config/'      . $classBase,
+    ];
+    foreach ($paths as $path) {
+        if (file_exists($path)) {
+            require_once $path;
+            return;
+        }
+    }
+});
+
+// Cargar autoloader de Composer si existe
+$composerAutoload = dirname(__DIR__, 2) . '/vendor/autoload.php';
+if (file_exists($composerAutoload)) {
+    require_once $composerAutoload;
+}
+
 // Configuración general del proyecto
 if (!defined('APP_NAME')) define('APP_NAME', getenv('APP_NAME') ?: 'FEMTRIBE');
 if (!defined('APP_VERSION')) define('APP_VERSION', '1.0.0');
@@ -68,7 +93,17 @@ if (!defined('WHATSAPP_MESSAGE_TEMPLATE')) {
 }
 
 // Credenciales y Configuración de API Bancolombia / Wompi
-if (!defined('BANCOLOMBIA_WOMPI_ENV')) define('BANCOLOMBIA_WOMPI_ENV', getenv('BANCOLOMBIA_WOMPI_ENV') ?: 'sandbox');
+$envWompi = getenv('BANCOLOMBIA_WOMPI_ENV');
+if (!$envWompi) {
+    $pubKeyCheck = getenv('BANCOLOMBIA_WOMPI_PUBLIC_KEY') ?: '';
+    $prvKeyCheck = getenv('BANCOLOMBIA_WOMPI_PRIVATE_KEY') ?: '';
+    if (str_starts_with($pubKeyCheck, 'pub_prod_') || str_starts_with($prvKeyCheck, 'prv_prod_') || $isProduction) {
+        $envWompi = 'production';
+    } else {
+        $envWompi = 'sandbox';
+    }
+}
+if (!defined('BANCOLOMBIA_WOMPI_ENV')) define('BANCOLOMBIA_WOMPI_ENV', $envWompi);
 if (!defined('BANCOLOMBIA_WOMPI_PUBLIC_KEY')) define('BANCOLOMBIA_WOMPI_PUBLIC_KEY', getenv('BANCOLOMBIA_WOMPI_PUBLIC_KEY') ?: 'pub_test_QW1234567890abcdef');
 if (!defined('BANCOLOMBIA_WOMPI_PRIVATE_KEY')) define('BANCOLOMBIA_WOMPI_PRIVATE_KEY', getenv('BANCOLOMBIA_WOMPI_PRIVATE_KEY') ?: 'prv_test_ZX0987654321fedcba');
 if (!defined('BANCOLOMBIA_WOMPI_INTEGRITY_SECRET')) define('BANCOLOMBIA_WOMPI_INTEGRITY_SECRET', getenv('BANCOLOMBIA_WOMPI_INTEGRITY_SECRET') ?: 'test_integrity_SecretKey123');
