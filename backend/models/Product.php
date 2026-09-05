@@ -11,6 +11,43 @@ class Product {
     public function __construct() {
         $database = new Database();
         $this->conn = $database->getConnection();
+        $this->ensureColumns();
+    }
+
+    /**
+     * Auto-migración defensiva: asegura que las columnas nuevas existan
+     * sin romper la ejecución si aún no se ha corrido la migración manual en producción.
+     */
+    private function ensureColumns(): void {
+        if (!$this->conn) return;
+        static $checked = false;
+        if ($checked) return;
+        $checked = true;
+
+        $alters = [
+            "ALTER TABLE `products` ADD COLUMN IF NOT EXISTS `is_upcoming` TINYINT(1) NOT NULL DEFAULT 0 AFTER `is_offer`",
+            "ALTER TABLE `products` ADD COLUMN IF NOT EXISTS `size_stock` TEXT NULL AFTER `sizes`",
+            "ALTER TABLE `products` ADD COLUMN IF NOT EXISTS `colors` VARCHAR(255) NULL AFTER `type`",
+            "ALTER TABLE `products` ADD COLUMN IF NOT EXISTS `sizes` VARCHAR(255) NULL AFTER `colors`",
+            "ALTER TABLE `order_items` ADD COLUMN IF NOT EXISTS `size` VARCHAR(20) NULL AFTER `product_name`",
+            "ALTER TABLE `order_items` ADD COLUMN IF NOT EXISTS `gender` VARCHAR(20) NULL AFTER `size`",
+            "ALTER TABLE `order_items` ADD COLUMN IF NOT EXISTS `color` VARCHAR(50) NULL AFTER `gender`",
+            "ALTER TABLE `registrations` ADD COLUMN IF NOT EXISTS `modalidad_nino` VARCHAR(30) DEFAULT NULL AFTER `categoria_participante`"
+        ];
+
+        foreach ($alters as $sql) {
+            try {
+                $this->conn->exec($sql);
+            } catch (\Throwable $t) {
+                // Si la versión de MySQL no soporta IF NOT EXISTS en ALTER TABLE, intentar sin IF NOT EXISTS
+                $simpleSql = str_replace('IF NOT EXISTS ', '', $sql);
+                try {
+                    $this->conn->exec($simpleSql);
+                } catch (\Throwable $t2) {
+                    // Ignorar si la columna ya existe
+                }
+            }
+        }
     }
 
     public function paginate(int $page = 1, int $perPage = 12, array $filters = [], string $order = 'created_at DESC'): array {
@@ -99,14 +136,32 @@ class Product {
 
         $sql = "SELECT id, sku, name, slug, description, category, category_id, gender, type, colors, sizes, size_stock, price, stock, image, video, images, is_new, is_offer, is_upcoming, is_free_shipping, shipping_cost
                 FROM products $whereSql ORDER BY $orderSql LIMIT :limit OFFSET :offset";
-        $stmt = $this->conn->prepare($sql);
-        foreach ($params as $k => $v) {
-            $stmt->bindValue($k, $v);
+        try {
+            $stmt = $this->conn->prepare($sql);
+            foreach ($params as $k => $v) {
+                $stmt->bindValue($k, $v);
+            }
+            $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->execute();
+            $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (\Throwable $e) {
+            error_log("Error en Product::paginate: " . $e->getMessage());
+            // Fallback: consulta universal por si alguna columna específica aún no existe
+            try {
+                $fallbackSql = "SELECT * FROM products $whereSql ORDER BY $orderSql LIMIT :limit OFFSET :offset";
+                $stmt = $this->conn->prepare($fallbackSql);
+                foreach ($params as $k => $v) {
+                    $stmt->bindValue($k, $v);
+                }
+                $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+                $stmt->execute();
+                $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (\Throwable $e2) {
+                $items = [];
+            }
         }
-        $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
-        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-        $stmt->execute();
-        $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return [
             'items' => $items,
