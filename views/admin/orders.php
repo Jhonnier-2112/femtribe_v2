@@ -7,6 +7,26 @@ require __DIR__ . '/../layouts/header.php';
     <div class="container">
         <?php require __DIR__ . '/layout_nav.php'; ?>
 
+        <!-- Alertas de Sesión -->
+        <?php if (!empty($_SESSION['admin_success'])): ?>
+            <div class="alert alert-success alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" role="alert">
+                <i class="fas fa-check-circle me-2"></i><?= $_SESSION['admin_success']; unset($_SESSION['admin_success']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($_SESSION['admin_info'])): ?>
+            <div class="alert alert-info alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" role="alert">
+                <i class="fas fa-info-circle me-2"></i><?= $_SESSION['admin_info']; unset($_SESSION['admin_info']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($_SESSION['admin_error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show rounded-4 border-0 shadow-sm mb-4" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i><?= $_SESSION['admin_error']; unset($_SESSION['admin_error']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <?php endif; ?>
+
         <!-- Encabezado y Filtros de Estado -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 mt-3">
             <div>
@@ -14,13 +34,22 @@ require __DIR__ . '/../layouts/header.php';
                 <span class="text-muted small">Total: <?= $totalOrders ?> transacciones</span>
             </div>
             
-            <div class="d-flex gap-2">
-                <a href="/admin/compras" class="btn btn-sm rounded-pill px-3 py-2 border <?= $status === '' ? 'btn-dark' : 'btn-light' ?>">Todas</a>
-                <a href="/admin/compras?status=paid" class="btn btn-sm rounded-pill px-3 py-2 border <?= $status === 'paid' ? 'btn-success text-white border-success' : 'btn-light' ?>">Aprobadas</a>
-                <a href="/admin/compras?status=pending" class="btn btn-sm rounded-pill px-3 py-2 border <?= $status === 'pending' ? 'btn-warning text-dark border-warning' : 'btn-light' ?>">Pendientes</a>
-                <a href="/admin/compras?status=failed" class="btn btn-sm rounded-pill px-3 py-2 border <?= $status === 'failed' ? 'btn-danger text-white border-danger' : 'btn-light' ?>">Fallidas</a>
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <form action="/admin/compras/sincronizar-pendientes" method="POST" class="d-inline" onsubmit="var b=this.querySelector('button'); b.disabled=true; b.innerHTML='<i class=\'fas fa-spinner fa-spin me-1\'></i>Consultando Wompi...';">
+                    <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3 py-2 fw-bold shadow-sm" title="Consulta el estado oficial de todas las órdenes pendientes en Wompi y envía sus correos si están aprobadas">
+                        <i class="fas fa-rotate me-1"></i>Sincronizar Pendientes con Wompi
+                    </button>
+                </form>
+
+                <div class="d-flex gap-1">
+                    <a href="/admin/compras" class="btn btn-sm rounded-pill px-3 py-2 border <?= $status === '' ? 'btn-dark' : 'btn-light' ?>">Todas</a>
+                    <a href="/admin/compras?status=paid" class="btn btn-sm rounded-pill px-3 py-2 border <?= $status === 'paid' ? 'btn-success text-white border-success' : 'btn-light' ?>">Aprobadas</a>
+                    <a href="/admin/compras?status=pending" class="btn btn-sm rounded-pill px-3 py-2 border <?= $status === 'pending' ? 'btn-warning text-dark border-warning' : 'btn-light' ?>">Pendientes</a>
+                    <a href="/admin/compras?status=failed" class="btn btn-sm rounded-pill px-3 py-2 border <?= $status === 'failed' ? 'btn-danger text-white border-danger' : 'btn-light' ?>">Fallidas</a>
+                </div>
             </div>
         </div>
+
 
         <!-- Tabla de Compras -->
         <div class="card shadow border-0 rounded-4">

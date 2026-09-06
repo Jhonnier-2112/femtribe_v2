@@ -1003,36 +1003,86 @@ class AdminController extends Controller {
             $this->redirect('/admin/compras');
         }
 
-        // Si no se pasó el ID de Wompi, buscar si existe en la tabla payments
+        // 1. Si no se pasó el ID de Wompi, buscar si existe en la tabla payments
         if (empty($wompiTxId)) {
             $pStmt = $this->db->prepare("SELECT gateway_transaction_id FROM payments WHERE order_id = :oid AND gateway_transaction_id IS NOT NULL ORDER BY id DESC LIMIT 1");
             $pStmt->execute([':oid' => $order['id']]);
             $wompiTxId = $pStmt->fetchColumn() ?: '';
         }
 
-        if (empty($wompiTxId)) {
-            $_SESSION['admin_error'] = 'Para verificar con Wompi debes ingresar el ID de la transacción proporcionado por Wompi en el campo de texto.';
-            $this->redirect('/admin/compras/detalle?id=' . $order['id']);
+        $bancolombiaService = new \App\Services\BancolombiaPaymentService();
+        $txData = null;
+
+        // 2. Si tenemos ID de Wompi, consultar por ID
+        if (!empty($wompiTxId)) {
+            $txData = $bancolombiaService->getTransactionStatus($wompiTxId);
         }
 
-        $bancolombiaService = new \App\Services\BancolombiaPaymentService();
-        $txData = $bancolombiaService->getTransactionStatus($wompiTxId);
+        // 3. Si no hay ID o no se encontró, consultar por el número de referencia de la orden en Wompi
+        if (!$txData) {
+            $txData = $bancolombiaService->getTransactionByReference($order['order_number']);
+            if ($txData && !empty($txData['id'])) {
+                $wompiTxId = $txData['id'];
+            }
+        }
 
         if (!$txData) {
-            $_SESSION['admin_error'] = "No se pudo consultar la transacción con ID '{$wompiTxId}' en los servidores de Wompi. Por favor verifica el ID o apruébala manualmente.";
+            $_SESSION['admin_error'] = "No se encontraron transacciones registradas en Wompi para la orden {$order['order_number']}. Puedes verificar con el ID específico de Wompi o aprobarla manualmente.";
             $this->redirect('/admin/compras/detalle?id=' . $order['id']);
         }
 
         $status = strtoupper($txData['status'] ?? 'PENDING');
         if ($status === 'APPROVED') {
             PaymentController::processApprovedPayment($order['order_number'], 'APPROVED', $wompiTxId, $txData);
-            $_SESSION['admin_success'] = "¡Transacción verificada en Wompi como APROBADA! La orden y la inscripción fueron confirmadas exitosamente y se envió el correo de bienvenida.";
+            $_SESSION['admin_success'] = "¡Transacción verificada en Wompi como APROBADA! La orden #{$order['order_number']} y la inscripción fueron confirmadas exitosamente y se envió el correo de bienvenida.";
+        } elseif (in_array($status, ['DECLINED', 'VOIDED', 'ERROR'])) {
+            $orderModel = new Order();
+            $orderModel->updateStatus((int)$order['id'], 'failed', $order['order_number']);
+            $orderModel->updatePaymentStatus($order['order_number'], $status, $wompiTxId, $txData);
+            $_SESSION['admin_error'] = "Wompi informa que la transacción fue RECHAZADA/FALLIDA ({$status}). La orden se marcó como fallida.";
         } else {
-            $_SESSION['admin_error'] = "Wompi informa que la transacción tiene estado: {$status}.";
+            $_SESSION['admin_error'] = "Wompi informa que la transacción aún se encuentra en estado: {$status}.";
         }
 
         $this->redirect('/admin/compras/detalle?id=' . $order['id']);
     }
+
+    /**
+     * Sincroniza todas las órdenes pendientes consultando la API de Wompi (1 clic desde el Admin)
+     */
+    public function syncAllPendingOrders() {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/compras');
+        }
+
+        try {
+            $results = PaymentController::syncAllPending(50, 72);
+            $msg = "Sincronización con Wompi completada: {$results['total_checked']} órdenes revisadas. ";
+            if ($results['approved_count'] > 0) {
+                $msg .= "¡{$results['approved_count']} órdenes APROBADAS y correos enviados! ";
+            }
+            if ($results['declined_count'] > 0) {
+                $msg .= "{$results['declined_count']} rechazadas. ";
+            }
+            if ($results['still_pending_count'] > 0) {
+                $msg .= "{$results['still_pending_count']} aún pendientes en Wompi.";
+            }
+
+            if ($results['approved_count'] > 0) {
+                $_SESSION['admin_success'] = $msg;
+            } else {
+                $_SESSION['admin_info'] = $msg;
+            }
+        } catch (\Throwable $e) {
+            error_log("AdminController::syncAllPendingOrders() Error: " . $e->getMessage());
+            $_SESSION['admin_error'] = "Error al sincronizar con Wompi: " . $e->getMessage();
+        }
+
+        $this->redirect('/admin/compras');
+    }
+
 
     /**
      * Envía o reenvía el correo de confirmación de inscripción a un participante

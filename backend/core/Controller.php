@@ -146,4 +146,11 @@ class Controller {
             exit;
         }
     }
+
+    /**
+     * Traduce errores técnicos a mensajes amigables y entendibles para el usuario
+     */
+    protected function formatFriendlyError(string|\Throwable|null $error, string $default = "No fue posible procesar la solicitud en este momento. Por favor inténtalo de nuevo."): string {
+        return \App\Services\ErrorFormatter::toUserFriendly($error, $default);
+    }
 }

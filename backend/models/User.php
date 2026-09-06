@@ -14,13 +14,20 @@ class User {
         $this->conn = $database->getConnection();
     }
 
+    public static ?string $lastErrorMessage = null;
+
     /**
      * Registra un nuevo usuario en la base de datos
      */
     public static function create(array $data) {
+        self::$lastErrorMessage = null;
         try {
             $database = new Database();
             $db = $database->getConnection();
+            if (!$db) {
+                self::$lastErrorMessage = "No fue posible conectar con el servicio de base de datos.";
+                return false;
+            }
 
             // Determinar role_id UUID basándose en el campo 'role' recibido
             $roleEnum = $data['role'] ?? 'runner';
@@ -69,9 +76,13 @@ class User {
             if ($stmt->execute($insertData)) {
                 return $db->lastInsertId();
             }
+            $err = $stmt->errorInfo();
+            error_log("User::create() Failed: " . json_encode($err));
+            self::$lastErrorMessage = \App\Services\ErrorFormatter::toUserFriendly($err[2] ?? 'Error al guardar el usuario');
             return false;
         } catch (PDOException $e) {
             error_log("User::create() Error: " . $e->getMessage());
+            self::$lastErrorMessage = \App\Services\ErrorFormatter::toUserFriendly($e);
             return false;
         }
     }

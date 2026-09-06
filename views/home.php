@@ -1,5 +1,5 @@
 <?php include 'layouts/header.php'; ?>
-<?php $inscribeteUrl = !empty($_SESSION['user_id']) ? '/inscribirse' : '/registro'; ?>
+<?php $inscribeteUrl = '/inscribirse'; ?>
 <script>
   // Al estar en el home, limpiamos cualquier redirect_after_auth residual de sesiones anteriores
   // para evitar que al hacer login rediriga a /carrito o /checkout inesperadamente

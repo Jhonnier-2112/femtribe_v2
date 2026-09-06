@@ -180,6 +180,63 @@ class BancolombiaPaymentService {
     }
 
     /**
+     * Consulta las transacciones asociadas a una referencia de orden en Wompi.
+     * Retorna la transacción con estado APPROVED si existe, o la más reciente.
+     */
+    public function getTransactionByReference(string $reference): ?array {
+        $cleanRef = trim($reference);
+        if (empty($cleanRef)) {
+            return null;
+        }
+
+        $urlsToTry = [$this->baseUrl];
+        $altUrl = ($this->baseUrl === 'https://production.wompi.co/v1') 
+            ? 'https://sandbox.wompi.co/v1' 
+            : 'https://production.wompi.co/v1';
+        $urlsToTry[] = $altUrl;
+
+        $keysToTry = array_filter([$this->privateKey, $this->publicKey]);
+
+        foreach ($urlsToTry as $baseUrl) {
+            $url = $baseUrl . '/transactions?reference=' . urlencode($cleanRef);
+
+            foreach ($keysToTry as $authKey) {
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Authorization: Bearer ' . $authKey,
+                    'Content-Type: application/json',
+                    'Accept: application/json'
+                ]);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 12);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 6);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+
+                $response = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+
+                if ($httpCode === 200 && $response) {
+                    $json = json_decode($response, true);
+                    if (isset($json['data']) && is_array($json['data']) && !empty($json['data'])) {
+                        // Priorizar transacción aprobada
+                        foreach ($json['data'] as $tx) {
+                            if (isset($tx['status']) && strtoupper($tx['status']) === 'APPROVED') {
+                                return $tx;
+                            }
+                        }
+                        // Si ninguna está aprobada, devolver la más reciente
+                        return $json['data'][0];
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Valida la firma checksum recibida en el Webhook de eventos asíncronos
      * Utiliza la lista dinámica de propiedades de Wompi ('signature.properties')
      */

@@ -69,6 +69,7 @@ $router->get('/payment/response', 'PaymentController@response');
 $router->get('/payment/check-status', 'PaymentController@checkStatus');
 $router->get('/payment/webhook', 'PaymentController@webhook');
 $router->post('/payment/webhook', 'PaymentController@webhook');
+$router->get('/cron/sync-pending-payments', 'PaymentController@syncPendingPayments');
 
 // Rutas de Autenticación de Usuario (Corredores y Google Sign-In)
 $router->get('/login', 'AuthController@showLogin');
@@ -119,6 +120,7 @@ $router->get('/admin/compras', 'AdminController@orders');
 $router->get('/admin/compras/detalle', 'AdminController@orderDetail');
 $router->post('/admin/compras/aprobar', 'AdminController@manualApproveOrder');
 $router->post('/admin/compras/verificar-wompi', 'AdminController@verifyOrderWithWompi');
+$router->post('/admin/compras/sincronizar-pendientes', 'AdminController@syncAllPendingOrders');
 
 // Envío y reenvío de correos de confirmación
 $router->post('/admin/inscripciones/enviar-correo', 'AdminController@sendRegistrationEmail');

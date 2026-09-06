@@ -1197,6 +1197,24 @@ function updateStageStates() {
       }
     }
   });
+
+  const hasRegistered3K = registeredStages.some(stg => stg.distance === '3K');
+  const noticeBox = document.getElementById('additionalDistanceNotice');
+  if (noticeBox) {
+    if (hasRegistered3K) {
+      noticeBox.classList.remove('d-none');
+      noticeBox.className = 'mt-3 p-3 bg-success bg-opacity-10 rounded-3 border border-success d-block';
+      noticeBox.innerHTML = `
+        <div class="d-flex align-items-center gap-2">
+          <i class="fas fa-check-circle text-success fs-4"></i>
+          <div>
+            <strong class="text-success">¡Ya estás inscrito en la etapa 3K!</strong>
+            <div class="text-dark small">Puedes seleccionar a continuación tu <strong>Kilometraje Adicional (Adicional 5K o Adicional 10K)</strong> con tu tarifa especial de preventa/acompañante.</div>
+          </div>
+        </div>
+      `;
+    }
+  }
 }
 
 // Prevenir que Bootstrap modifique automáticamente los botones de submit
@@ -1845,25 +1863,30 @@ function performAdditionalValidation(form) {
 
         // Validación para DISTANCIA 3K PET (Mascota)
         if (currentCat === 'mascota') {
-          const petNameInput = form.querySelector('[name="nombre_mascota"]');
-          if (petNameInput && (!petNameInput.value || petNameInput.value.trim() === '')) {
-            errors.push('Ingresa el nombre de la mascota');
-            showValidationError(petNameInput, 'Por favor ingresa el nombre de tu mascota');
-            hasErrors = true;
-          } else if (petNameInput) {
-            clearValidationErrors(petNameInput);
-          }
+          const checkedCards = Array.from(form.querySelectorAll('.stage-checkbox:checked')).map(c => c.closest('.stage-card-item')).filter(Boolean);
+          const isOnlyAdicional = checkedCards.length > 0 && checkedCards.every(c => c.getAttribute('data-cat-type') === 'adicional');
 
-          const scarfInput = form.querySelector('[name="talla_panolete_mascota"]');
-          const scarfMirror = form.querySelector('#talla_panolete_mascota_mirror');
-          if (scarfInput && (!scarfInput.value || scarfInput.value.trim() === '')) {
-            errors.push('Selecciona la talla de la pañoleta de la mascota (XS o M)');
-            showValidationError(scarfInput, 'Selecciona la talla de la pañoleta');
-            if (scarfMirror) showValidationError(scarfMirror, 'Selecciona la talla de la pañoleta');
-            hasErrors = true;
-          } else if (scarfInput) {
-            clearValidationErrors(scarfInput);
-            if (scarfMirror) clearValidationErrors(scarfMirror);
+          if (!isOnlyAdicional) {
+            const petNameInput = form.querySelector('[name="nombre_mascota"]');
+            if (petNameInput && (!petNameInput.value || petNameInput.value.trim() === '')) {
+              errors.push('Ingresa el nombre de la mascota');
+              showValidationError(petNameInput, 'Por favor ingresa el nombre de tu mascota');
+              hasErrors = true;
+            } else if (petNameInput) {
+              clearValidationErrors(petNameInput);
+            }
+
+            const scarfInput = form.querySelector('[name="talla_panolete_mascota"]');
+            const scarfMirror = form.querySelector('#talla_panolete_mascota_mirror');
+            if (scarfInput && (!scarfInput.value || scarfInput.value.trim() === '')) {
+              errors.push('Selecciona la talla de la pañoleta de la mascota (XS o M)');
+              showValidationError(scarfInput, 'Selecciona la talla de la pañoleta');
+              if (scarfMirror) showValidationError(scarfMirror, 'Selecciona la talla de la pañoleta');
+              hasErrors = true;
+            } else if (scarfInput) {
+              clearValidationErrors(scarfInput);
+              if (scarfMirror) clearValidationErrors(scarfMirror);
+            }
           }
         }
         
@@ -2007,11 +2030,12 @@ function performAdditionalValidation(form) {
         if (selectedCat === 'adulto') {
           const checkedAdultStages = checkedStages.filter(chk => {
             const cardItem = chk.closest('.stage-card-item');
-            return cardItem && cardItem.getAttribute('data-cat-type') === 'adulto';
+            const cType = cardItem ? cardItem.getAttribute('data-cat-type') : '';
+            return cType === 'adulto' || cType === 'adicional';
           });
           
           if (checkedAdultStages.length === 0) {
-            errors.push('Debes seleccionar una etapa para la categoría Adulto (5K o 10K)');
+            errors.push('Debes seleccionar una etapa para la carrera (5K o 10K)');
             const container = form.querySelector('#stagesContainer');
             if (container) {
               container.classList.add('is-invalid');
@@ -2028,8 +2052,20 @@ function performAdditionalValidation(form) {
             hasErrors = true;
           }
         } else {
+          let main3KCount = 0;
+          let adicionalCount = 0;
+          checkedStages.forEach(chk => {
+            const cardItem = chk.closest('.stage-card-item');
+            const cType = cardItem ? cardItem.getAttribute('data-cat-type') : '';
+            if (cType === 'adicional') {
+              adicionalCount++;
+            } else {
+              main3KCount++;
+            }
+          });
+
           if (checkedStages.length === 0) {
-            errors.push('Debe seleccionar una etapa para inscribirse en 3K');
+            errors.push('Debe seleccionar una etapa para su inscripción');
             const container = form.querySelector('#stagesContainer');
             if (container) {
               container.classList.add('is-invalid');
@@ -2041,18 +2077,11 @@ function performAdditionalValidation(form) {
               }
             }
             hasErrors = true;
-          } else if (checkedStages.length > 1) {
-            errors.push('Solo puedes seleccionar un tipo de carrera en 3K');
-            const container = form.querySelector('#stagesContainer');
-            if (container) {
-              container.classList.add('is-invalid');
-              const feedback = container.parentNode.querySelector('.invalid-feedback') || document.createElement('div');
-              feedback.className = 'invalid-feedback d-block';
-              feedback.textContent = 'Solo puedes seleccionar una carrera';
-              if (!container.parentNode.querySelector('.invalid-feedback')) {
-                container.parentNode.appendChild(feedback);
-              }
-            }
+          } else if (main3KCount > 1) {
+            errors.push('Solo puedes seleccionar una carrera o etapa principal en 3K');
+            hasErrors = true;
+          } else if (adicionalCount > 1) {
+            errors.push('Solo puedes seleccionar un kilometraje adicional (5K o 10K)');
             hasErrors = true;
           }
         }
@@ -2313,11 +2342,11 @@ function showConfirmationModal(form) {
                   // Mostrar error si no fue exitoso
                   console.log('❌ Errores recibidos:', data.message); // Debug
                   Swal.fire({
-                    title: 'Errores en el formulario',
-                    html: data.message || 'Hubo un problema al procesar tu inscripción.',
-                    icon: 'error',
-                    confirmButtonText: 'Entendido',
-                    confirmButtonColor: '#dc3545',
+                    title: 'Verifica la información',
+                    html: data.message || 'Hubo un inconveniente al procesar tu inscripción. Por favor revisa los datos e inténtalo nuevamente.',
+                    icon: 'warning',
+                    confirmButtonText: 'Revisar formulario',
+                    confirmButtonColor: '#28a745',
                     width: '600px',
                     customClass: {
                       htmlContainer: 'text-start'
@@ -2328,21 +2357,21 @@ function showConfirmationModal(form) {
                 console.error('❌ Error parsing JSON:', e);
                 console.log('📄 Response text:', xhr.responseText);
                 Swal.fire({
-                  title: 'Error de respuesta',
-                  text: 'La respuesta del servidor no es válida.',
-                  icon: 'error',
+                  title: 'Aviso del servicio',
+                  text: 'No fue posible completar el registro en este momento. Tus datos no se han perdido; por favor inténtalo de nuevo en unos segundos.',
+                  icon: 'info',
                   confirmButtonText: 'Entendido',
-                  confirmButtonColor: '#dc3545'
+                  confirmButtonColor: '#28a745'
                 });
               }
             } else {
               console.error('❌ HTTP Error:', xhr.status);
               Swal.fire({
-                title: 'Error de conexión',
-                text: 'No se pudo conectar con el servidor. Por favor, verifica tu conexión e inténtalo de nuevo.',
-                icon: 'error',
-                confirmButtonText: 'Entendido',
-                confirmButtonColor: '#dc3545'
+                title: 'Aviso de conexión',
+                text: 'Hubo una dificultad de comunicación con el servidor. Por favor verifica tu conexión a internet e inténtalo de nuevo.',
+                icon: 'warning',
+                confirmButtonText: 'Reintentar',
+                confirmButtonColor: '#28a745'
               });
             }
           }
@@ -2707,11 +2736,13 @@ document.querySelector('input[name="telefono"]').addEventListener('blur', functi
 
     // Filtrar etapas visibles por categoría
     let autoSelected3K = false;
+    const has3KRegistered = (typeof registeredStages !== 'undefined') && registeredStages.some(stg => stg.distance === '3K');
+
     stageItems.forEach(item => {
       const type = item.getAttribute('data-cat-type');
       const chk = item.querySelector('.stage-checkbox');
       
-      const shouldShow = (type === selectedCat) || (type === 'adicional' && is3K);
+      const shouldShow = (type === selectedCat) || (type === 'adicional' && (is3K || has3KRegistered || selectedCat === 'adulto'));
 
       if (shouldShow) {
         item.style.display = 'block';

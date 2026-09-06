@@ -162,7 +162,7 @@ require __DIR__ . '/../layouts/header.php';
                                 <form action="/admin/compras/verificar-wompi" method="POST" class="mb-3">
                                     <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
                                     <div class="mb-2">
-                                        <input type="text" name="wompi_transaction_id" class="form-control form-control-sm font-monospace" placeholder="ID de Transacción Wompi (opcional)" value="<?= htmlspecialchars($payments[0]['gateway_transaction_id'] ?? '') ?>">
+                                        <input type="text" name="wompi_transaction_id" class="form-control form-control-sm font-monospace" placeholder="ID Wompi (opcional: busca por referencia)" value="<?= htmlspecialchars($payments[0]['gateway_transaction_id'] ?? '') ?>">
                                     </div>
                                     <button type="submit" class="btn btn-sm btn-outline-dark w-100 rounded-3">
                                         <i class="fas fa-search me-1"></i>Consultar Wompi y Validar

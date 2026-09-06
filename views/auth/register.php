@@ -43,7 +43,7 @@ $d = $data ?? [];
                             <ul class="mb-0 ps-3">
                                 <?php if (!empty($errors)): ?>
                                     <?php foreach ($errors as $err): ?>
-                                        <li><?= htmlspecialchars($err) ?></li>
+                                        <li><?= $err ?></li>
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                             </ul>

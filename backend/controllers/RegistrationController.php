@@ -55,6 +55,17 @@ class RegistrationController extends Controller {
         try {
             $user_id = $_SESSION['user_id'] ?? null;
             $categoria = $_POST['categoria_participante'] ?? 'adulto';
+            $documento = trim($_POST['numero_documento'] ?? '');
+
+            // Si el participante ya tiene una cuenta registrada con su cédula, vinculamos automáticamente la inscripción
+            if (empty($user_id) && !empty($documento)) {
+                $userModel = new \App\Models\User();
+                $existingUser = $userModel->findByDocument($documento);
+                if ($existingUser) {
+                    $user_id = (int)$existingUser['id'];
+                }
+            }
+
             $etapas = $_POST['etapas_seleccionadas'] ?? [];
             if (is_string($etapas)) {
                 $etapas = json_decode($etapas, true) ?: [$etapas];
@@ -85,42 +96,42 @@ class RegistrationController extends Controller {
                 : $finalNombreEmergencia;
 
             // Recopilar todos los datos del formulario
-            $data = [
-                'user_id' => $user_id,
-                'categoria_participante' => $categoria,
-                'modalidad_nino' => trim($_POST['modalidad_nino'] ?? ''),
-                'etapas' => $etapas,
-                'etapas_seleccionadas' => $etapas,
-                'etapas_preventa' => $etapasPreventa,
-                'nombre_mascota' => $_POST['nombre_mascota'] ?? '',
-                'raza_mascota' => $_POST['raza_mascota'] ?? '',
-                'talla_panolete_mascota' => trim($_POST['talla_panolete_mascota'] ?? ''),
-                'acudiente_nombre' => $rawAcudienteNombre,
-                'acudiente_documento' => trim($_POST['acudiente_documento'] ?? ''),
-                'nombres' => trim($_POST['nombres'] ?? ''),
-                'apellidos' => trim($_POST['apellidos'] ?? ''),
-                'tipo_documento' => trim($_POST['tipo_documento'] ?? 'CC'),
-                'numero_documento' => trim($_POST['numero_documento'] ?? ''),
-                'fecha_nacimiento' => trim($_POST['fecha_nacimiento'] ?? ''),
-                'edad' => trim($_POST['edad'] ?? ''),
-                'genero' => trim($_POST['genero'] ?? ''),
-                'eps' => trim($_POST['eps'] ?? ''),
-                'grupo_sanguineo' => trim($_POST['grupo_sanguineo'] ?? ''),
-                'rh' => $rh,
-                'talla_camiseta_adulto' => trim($_POST['talla_camiseta_adulto'] ?? ''),
-                'talla_camiseta_nino' => trim($_POST['talla_camiseta_nino'] ?? ''),
-                'direccion' => trim($_POST['direccion'] ?? ''),
-                'municipio' => trim($_POST['municipio'] ?? 'Cali'),
-                'departamento' => trim($_POST['departamento'] ?? 'Valle del Cauca'),
-                'email' => trim($_POST['email'] ?? ''),
-                'telefono' => trim($_POST['telefono'] ?? ''),
-                'parentesco_emergencia' => trim($_POST['parentesco_emergencia'] ?? 'familiar'),
-                'otro_parentesco' => trim($_POST['otro_parentesco'] ?? ''),
-                'nombre_emergencia' => $finalNombreEmergencia,
-                'nombre_emergencia_alt' => $finalNombreEmergenciaAlt,
-                'celular_emergencia' => trim($_POST['celular_emergencia'] ?? ''),
-                'acepta_autorizacion' => trim($_POST['acepta_autorizacion'] ?? 'si')
-            ];
+$data = [
+    'user_id' => $user_id,
+    'categoria_participante' => $categoria,
+    'modalidad_nino' => trim($_POST['modalidad_nino'] ?? ''),
+    'etapas' => $etapas,
+    'etapas_seleccionadas' => $etapas,
+    'etapas_preventa' => [],
+    'nombre_mascota' => $_POST['nombre_mascota'] ?? '',
+    'raza_mascota' => $_POST['raza_mascota'] ?? '',
+    'talla_panolete_mascota' => trim($_POST['talla_panolete_mascota'] ?? ''),
+    'acudiente_nombre' => $rawAcudienteNombre,
+    'acudiente_documento' => trim($_POST['acudiente_documento'] ?? ''),
+    'nombres' => trim($_POST['nombres'] ?? ''),
+    'apellidos' => trim($_POST['apellidos'] ?? ''),
+    'tipo_documento' => trim($_POST['tipo_documento'] ?? 'CC'),
+    'numero_documento' => trim($_POST['numero_documento'] ?? ''),
+    'fecha_nacimiento' => trim($_POST['fecha_nacimiento'] ?? ''),
+    'edad' => trim($_POST['edad'] ?? ''),
+    'genero' => trim($_POST['genero'] ?? ''),
+    'eps' => trim($_POST['eps'] ?? ''),
+    'grupo_sanguineo' => trim($_POST['grupo_sanguineo'] ?? ''),
+    'rh' => $rh,
+    'talla_camiseta_adulto' => trim($_POST['talla_camiseta_adulto'] ?? ''),
+    'talla_camiseta_nino' => trim($_POST['talla_camiseta_nino'] ?? ''),
+    'direccion' => trim($_POST['direccion'] ?? ''),
+    'municipio' => trim($_POST['municipio'] ?? 'Cali'),
+    'departamento' => trim($_POST['departamento'] ?? 'Valle del Cauca'),
+    'email' => trim($_POST['email'] ?? ''),
+    'telefono' => trim($_POST['telefono'] ?? ''),
+    'parentesco_emergencia' => trim($_POST['parentesco_emergencia'] ?? 'familiar'),
+    'otro_parentesco' => trim($_POST['otro_parentesco'] ?? ''),
+    'nombre_emergencia' => $finalNombreEmergencia,
+    'nombre_emergencia_alt' => $finalNombreEmergenciaAlt,
+    'celular_emergencia' => trim($_POST['celular_emergencia'] ?? ''),
+    'acepta_autorizacion' => trim($_POST['acepta_autorizacion'] ?? 'si')
+];
             
             // Validar datos
             $model = new Registration();
@@ -220,12 +231,14 @@ class RegistrationController extends Controller {
                 }
             } else {
                 $lastErr = \App\Models\Registration::$lastErrorMessage;
-                $msg = $lastErr ? "Error al crear la inscripción: {$lastErr}" : "Error al crear la inscripción. Por favor, inténtalo de nuevo.";
+                $msg = \App\Services\ErrorFormatter::toUserFriendly($lastErr, "No fue posible registrar la inscripción en este momento. Por favor, verifica tus datos e inténtalo de nuevo.");
                 return $this->showError([$msg]);
             }
             
-        } catch (Exception $e) {
-            return $this->showError(['Error interno del servidor. Por favor, inténtalo de nuevo.']);
+        } catch (\Throwable $e) {
+            error_log("RegistrationController::store() Exception: " . $e->getMessage());
+            $friendly = \App\Services\ErrorFormatter::toUserFriendly($e, "Ocurrió un inconveniente al procesar tu solicitud. Por favor inténtalo de nuevo.");
+            return $this->showError([$friendly]);
         }
     }
 
@@ -240,11 +253,11 @@ class RegistrationController extends Controller {
             if (is_array($errors)) {
                 $errorMessage = '<ul class="list-unstyled mb-0">';
                 foreach ($errors as $error) {
-                    $errorMessage .= '<li><i class="fas fa-exclamation-circle text-danger me-2"></i>' . htmlspecialchars($error) . '</li>';
+                    $errorMessage .= '<li class="mb-1"><i class="fas fa-exclamation-circle text-danger me-2"></i>' . $error . '</li>';
                 }
                 $errorMessage .= '</ul>';
             } else {
-                $errorMessage = '<i class="fas fa-exclamation-circle text-danger me-2"></i>' . htmlspecialchars($errors);
+                $errorMessage = '<i class="fas fa-exclamation-circle text-danger me-2"></i>' . $errors;
             }
             
             echo json_encode(['success' => false, 'message' => $errorMessage]);
@@ -350,9 +363,10 @@ class RegistrationController extends Controller {
             header('Content-Type: application/json; charset=utf-8');
             echo json_encode($response);
             
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            error_log("RegistrationController::consultarInscripcion() Error: " . $e->getMessage());
             header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['success' => false, 'message' => 'Error interno del servidor']);
+            echo json_encode(['success' => false, 'message' => 'No fue posible consultar tu inscripción en este momento. Por favor inténtalo nuevamente.']);
         }
     }
 
@@ -408,9 +422,10 @@ class RegistrationController extends Controller {
                 'registered_stages' => $stagesInfo
             ]);
             exit;
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
+            error_log("RegistrationController::checkDocumentStages() Error: " . $e->getMessage());
             header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Error interno del servidor']);
+            echo json_encode(['success' => false, 'message' => 'No fue posible verificar las etapas previas en este momento.']);
             exit;
         }
     }

@@ -174,14 +174,14 @@ class Registration {
                 return $db->lastInsertId();
             } else {
                 $err = $stmt->errorInfo();
-                self::$lastErrorMessage = "Error SQL: " . ($err[2] ?? 'Fallo al ejecutar la inserción');
                 error_log("Registration::create() execute failed: " . json_encode($err));
+                self::$lastErrorMessage = \App\Services\ErrorFormatter::toUserFriendly($err[2] ?? 'Fallo al ejecutar la inserción', 'No fue posible guardar la información de la inscripción.');
                 return false;
             }
             
         } catch (\Throwable $e) {
-            self::$lastErrorMessage = $e->getMessage();
             error_log("Registration::create() Exception: " . $e->getMessage());
+            self::$lastErrorMessage = \App\Services\ErrorFormatter::toUserFriendly($e, 'Ocurrió un inconveniente al registrar la inscripción.');
             return false;
         }
     }
@@ -277,32 +277,50 @@ class Registration {
                 $selectedStages = [$selectedStages];
             }
             
+            $allStages = self::getRaceStages();
+            $stagesMap = [];
+            foreach ($allStages as $stg) {
+                $stagesMap[(int)$stg['id']] = $stg;
+            }
+
             if ($categoria === 'adulto') {
-                $allStages = self::getRaceStages();
-                $adultStageIds = [];
-                foreach ($allStages as $stg) {
-                    if (($stg['category_type'] ?? '') === 'adulto') {
-                        $adultStageIds[] = (int)$stg['id'];
-                    }
-                }
-                
-                $selectedAdultCount = 0;
+                $selectedAdultOrAdicionalCount = 0;
                 foreach ($selectedStages as $sid) {
-                    if (in_array((int)$sid, $adultStageIds)) {
-                        $selectedAdultCount++;
+                    if (isset($stagesMap[(int)$sid])) {
+                        $catType = $stagesMap[(int)$sid]['category_type'] ?? '';
+                        if ($catType === 'adulto' || $catType === 'adicional') {
+                            $selectedAdultOrAdicionalCount++;
+                        }
                     }
                 }
                 
-                if ($selectedAdultCount === 0) {
-                    $errors[] = 'Debe seleccionar una etapa para la categoría Adulto (5K o 10K)';
-                } elseif ($selectedAdultCount > 1) {
+                if ($selectedAdultOrAdicionalCount === 0) {
+                    $errors[] = 'Debe seleccionar una etapa para la categoría Adulto o Kilometraje Adicional (5K o 10K)';
+                } elseif ($selectedAdultOrAdicionalCount > 1) {
                     $errors[] = 'Un adulto solo se puede inscribir a 10K o 5K, pero no a los dos';
                 }
             } else {
-                if (count($selectedStages) === 0) {
-                    $errors[] = 'Debe seleccionar una etapa para la categoría 3K';
-                } elseif (count($selectedStages) > 1) {
-                    $errors[] = 'Solo puedes seleccionar una carrera o etapa para tu inscripción en 3K';
+                $main3KCount = 0;
+                $adicionalCount = 0;
+                foreach ($selectedStages as $sid) {
+                    if (isset($stagesMap[(int)$sid])) {
+                        $catType = $stagesMap[(int)$sid]['category_type'] ?? '';
+                        if ($catType === 'adicional') {
+                            $adicionalCount++;
+                        } else {
+                            $main3KCount++;
+                        }
+                    }
+                }
+
+                if ($adicionalCount > 1) {
+                    $errors[] = 'Solo puedes seleccionar un kilometraje adicional (5K o 10K, no ambos)';
+                }
+                if ($main3KCount > 1) {
+                    $errors[] = 'Solo puedes seleccionar una carrera o etapa principal para tu inscripción en 3K';
+                }
+                if ($main3KCount === 0 && $adicionalCount === 0) {
+                    $errors[] = 'Debe seleccionar una etapa para la categoría 3K o kilometraje adicional';
                 }
             }
 
@@ -453,11 +471,34 @@ class Registration {
             $errors[] = 'La talla de camiseta de adulto es obligatoria';
         }
         if ($categoria === 'mascota') {
-            if (empty($data['nombre_mascota'])) {
-                $errors[] = 'El nombre de la mascota es obligatorio para la categoría Pet Run';
+            $isOnlyAdicional = false;
+            $allStages = self::getRaceStages();
+            $stagesMap = [];
+            foreach ($allStages as $stg) {
+                $stagesMap[(int)$stg['id']] = $stg;
             }
-            if (empty($data['talla_panolete_mascota'])) {
-                $errors[] = 'La talla de la pañoleta de la mascota es obligatoria';
+            $selectedStages = $data['etapas_seleccionadas'] ?? [];
+            if (!is_array($selectedStages)) {
+                $selectedStages = [$selectedStages];
+            }
+            if (!empty($selectedStages)) {
+                $onlyAdicionalCheck = true;
+                foreach ($selectedStages as $sid) {
+                    if (isset($stagesMap[(int)$sid]) && ($stagesMap[(int)$sid]['category_type'] ?? '') !== 'adicional') {
+                        $onlyAdicionalCheck = false;
+                        break;
+                    }
+                }
+                $isOnlyAdicional = $onlyAdicionalCheck;
+            }
+
+            if (!$isOnlyAdicional) {
+                if (empty($data['nombre_mascota'])) {
+                    $errors[] = 'El nombre de la mascota es obligatorio para la categoría Pet Run';
+                }
+                if (empty($data['talla_panolete_mascota'])) {
+                    $errors[] = 'La talla de la pañoleta de la mascota es obligatoria';
+                }
             }
         }
 

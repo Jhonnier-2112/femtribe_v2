@@ -137,12 +137,12 @@ class AuthController extends Controller {
 
         // Verificar si email ya existe
         if (!empty($data['email']) && $userModel->findByEmail($data['email'])) {
-            $errors[] = 'El correo electrónico ya está registrado en la plataforma.';
+            $errors[] = 'El correo electrónico ya está registrado. <a href="/login" class="alert-link fw-bold text-decoration-underline">Inicia sesión aquí</a> o ve directo a <a href="/inscribirse" class="alert-link fw-bold text-decoration-underline">Inscripción a Carrera</a>.';
         }
 
         // Verificar si documento ya existe
         if (!empty($data['numero_documento']) && $userModel->findByDocument($data['numero_documento'])) {
-            $errors[] = 'El número de documento ya tiene una cuenta asociada.';
+            $errors[] = 'Tu número de documento ya tiene una cuenta activa. <a href="/login" class="alert-link fw-bold text-decoration-underline">Inicia sesión aquí</a> o ve directo a <a href="/inscribirse" class="alert-link fw-bold text-decoration-underline">Inscripción a Carrera</a>.';
         }
 
         if (!empty($errors)) {
@@ -189,9 +189,10 @@ class AuthController extends Controller {
             }
             $this->redirect($redirectTo);
         } else {
-            $msg = 'Ocurrió un error al crear la cuenta. Por favor intenta de nuevo.';
+            $lastErr = \App\Models\User::$lastErrorMessage;
+            $msg = !empty($lastErr) ? $lastErr : 'Ocurrió un error al crear la cuenta. Por favor intenta de nuevo.';
             if ($isAjax) {
-                $this->json(['success' => false, 'message' => $msg], 500);
+                $this->json(['success' => false, 'message' => $msg, 'errors' => [$msg]], 400);
             }
             $this->view('auth/register', ['errors' => [$msg], 'data' => $data]);
         }
