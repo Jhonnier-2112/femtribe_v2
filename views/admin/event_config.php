@@ -311,7 +311,12 @@
                     <h4 class="fw-bold mb-0" style="color: #87CC3E;">
                         <i class="fas fa-users-cog me-2"></i>Usuarios Inscritos al Evento (<?= count($registrations ?? []) ?>)
                     </h4>
-                    <div class="d-flex align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <form action="/admin/inscripciones/enviar-correos-pagados" method="POST" class="d-inline" onsubmit="return confirm('¿Confirmas que deseas enviar el correo oficial de confirmación a TODOS los participantes con pago confirmado?');">
+                            <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-2" style="border-color: #87CC3E; color: #87CC3E !important;">
+                                <i class="fas fa-paper-plane"></i> Enviar a Todos los Pagados
+                            </button>
+                        </form>
                         <a href="/admin/evento/exportar" class="btn btn-sm fw-bold px-3 py-2 rounded-pill d-flex align-items-center gap-2" style="background-color: #87CC3E; border-color: #87CC3E; color: #121212;">
                             <i class="fas fa-file-excel"></i> Descargar Excel
                         </a>
@@ -343,10 +348,11 @@
                                     <th>Cédula / Documento</th>
                                     <th>Categoría</th>
                                     <th>Kilometraje / Etapa(s)</th>
-                                    <th>Talla Camiseta Adulto</th>
-                                    <th>Talla Camiseta Niño</th>
+                                    <th>Talla Adulto</th>
+                                    <th>Talla Niño</th>
                                     <th>Pago / Orden</th>
-                                    <th>Fecha Inscripción</th>
+                                    <th>Fecha</th>
+                                    <th class="text-end">Acción</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -426,6 +432,15 @@
                                         </td>
                                         <td class="text-white-50 small">
                                             <?= !empty($reg['created_at']) ? date('d/m/Y g:i A', strtotime($reg['created_at'])) : '' ?>
+                                        </td>
+                                        <td class="text-end">
+                                            <form action="/admin/inscripciones/enviar-correo" method="POST" class="d-inline" onsubmit="return confirm('¿Enviar el correo oficial de confirmación a <?= htmlspecialchars($reg['nombres']) ?> (<?= htmlspecialchars($reg['email'] ?? '') ?>)?');">
+                                                <input type="hidden" name="registration_id" value="<?= (int)$reg['id'] ?>">
+                                                <input type="hidden" name="redirect_to" value="/admin/event-config">
+                                                <button type="submit" class="btn btn-sm rounded-pill px-2.5 py-1 fw-bold text-dark d-inline-flex align-items-center gap-1" style="background-color: #87CC3E; border: none; font-size: 0.75rem;" title="Enviar correo oficial de confirmación y bienvenida">
+                                                    <i class="fas fa-paper-plane"></i> Enviar Correo
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

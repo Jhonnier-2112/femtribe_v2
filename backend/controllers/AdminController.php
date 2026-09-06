@@ -1035,6 +1035,91 @@ class AdminController extends Controller {
     }
 
     /**
+     * Envía o reenvía el correo de confirmación de inscripción a un participante
+     */
+    public function sendRegistrationEmail() {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/event-config');
+        }
+
+        $regId = isset($_POST['registration_id']) ? intval($_POST['registration_id']) : 0;
+        $orderNumber = trim($_POST['order_number'] ?? '');
+        $redirectUrl = $_POST['redirect_to'] ?? '/admin/event-config';
+
+        $registration = null;
+        if ($regId > 0) {
+            $registration = Registration::findById($regId);
+        }
+        if (!$registration && !empty($orderNumber)) {
+            $registration = Registration::findByOrderNumber($orderNumber);
+        }
+
+        if (!$registration) {
+            $_SESSION['admin_error'] = 'Inscripción no encontrada.';
+            $this->redirect($redirectUrl);
+        }
+
+        try {
+            $emailService = new \App\Services\EmailService();
+            $sent = $emailService->sendWelcomeEmail($registration);
+            if ($sent) {
+                $_SESSION['admin_success'] = '¡Correo oficial de confirmación enviado exitosamente a ' . htmlspecialchars($registration['email']) . '!';
+            } else {
+                $_SESSION['admin_error'] = 'No se pudo enviar el correo a ' . htmlspecialchars($registration['email']) . '.';
+            }
+        } catch (\Throwable $e) {
+            $_SESSION['admin_error'] = 'Error al enviar correo: ' . $e->getMessage();
+        }
+
+        $this->redirect($redirectUrl);
+    }
+
+    /**
+     * Envía en lote el correo de confirmación a todas las inscripciones en estado 'paid'
+     */
+    public function sendAllPaidEmails() {
+        $this->requireAdmin();
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->redirect('/admin/event-config');
+        }
+
+        try {
+            $stmt = $this->db->query("SELECT * FROM registrations WHERE payment_status = 'paid' ORDER BY id ASC");
+            $paidRegistrations = $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+
+            if (empty($paidRegistrations)) {
+                $_SESSION['admin_error'] = 'No se encontraron inscripciones con estado pagado.';
+                $this->redirect('/admin/event-config');
+            }
+
+            $emailService = new \App\Services\EmailService();
+            $successCount = 0;
+            $failCount = 0;
+
+            foreach ($paidRegistrations as $reg) {
+                try {
+                    if ($emailService->sendWelcomeEmail($reg)) {
+                        $successCount++;
+                    } else {
+                        $failCount++;
+                    }
+                } catch (\Throwable $e) {
+                    $failCount++;
+                }
+            }
+
+            $_SESSION['admin_success'] = "Proceso completado: {$successCount} correo(s) enviado(s) con éxito" . ($failCount > 0 ? " ({$failCount} con error)." : ".");
+        } catch (\Throwable $e) {
+            $_SESSION['admin_error'] = 'Error al enviar correos masivos: ' . $e->getMessage();
+        }
+
+        $this->redirect('/admin/event-config');
+    }
+
+    /**
      * Bitácora de accesos y visitas
      */
     public function accessLogs() {

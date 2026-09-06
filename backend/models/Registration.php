@@ -547,4 +547,19 @@ class Registration {
             return null;
         }
     }
+
+    /**
+     * Busca la inscripción mediante su ID único
+     */
+    public static function findById(int $id): ?array {
+        try {
+            $database = new Database();
+            $db = $database->getConnection();
+            $stmt = $db->prepare("SELECT * FROM registrations WHERE id = :id LIMIT 1");
+            $stmt->execute([':id' => $id]);
+            return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
+        } catch (PDOException $e) {
+            return null;
+        }
+    }
 }

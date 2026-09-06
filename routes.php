@@ -120,6 +120,10 @@ $router->get('/admin/compras/detalle', 'AdminController@orderDetail');
 $router->post('/admin/compras/aprobar', 'AdminController@manualApproveOrder');
 $router->post('/admin/compras/verificar-wompi', 'AdminController@verifyOrderWithWompi');
 
+// Envío y reenvío de correos de confirmación
+$router->post('/admin/inscripciones/enviar-correo', 'AdminController@sendRegistrationEmail');
+$router->post('/admin/inscripciones/enviar-correos-pagados', 'AdminController@sendAllPaidEmails');
+
 
 $router->get('/admin/run-db', 'AdminController@runDb');
 
